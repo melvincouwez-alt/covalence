@@ -1,0 +1,11 @@
+covalence (0.2.0-1) unstable; urgency=medium
+
+  * First public alpha release.
+  * Renamed from Tandem to Covalence; covalenced moves the settings, cache,
+    keyring key, user units and old launchers of a Tandem install on its
+    first start.
+  * Works on elementary OS 8 and 9: calls need PipeWire 1.4 or later and are
+    shown as unavailable otherwise; rclone is downloaded on request when the
+    system copy is missing or too old.
+
+ -- Melvin Couwez <301110918+melvincouwez-alt@users.noreply.github.com>  Sun, 27 Sep 2026 20:00:00 +0200

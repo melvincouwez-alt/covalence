@@ -1,0 +1,16 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: 2026 Melvin Couwez
+# rclone for Covalence's iCloud Drive and iCloud Photos mounts: the system rclone
+# when it is 1.69 or later, otherwise Covalence's own copy (see README).
+private="$HOME/.local/libexec/covalence/rclone"
+system=$(command -v rclone)
+if [ -n "$system" ]; then
+    version=$("$system" version 2>/dev/null | sed -n '1s/^rclone v\([0-9]*\)\.\([0-9]*\).*/\1 \2/p')
+    major=${version% *}
+    minor=${version#* }
+    if [ -n "$version" ] && { [ "$major" -gt 1 ] || { [ "$major" -eq 1 ] && [ "$minor" -ge 69 ]; }; }; then
+        exec "$system" "$@"
+    fi
+fi
+exec "$private" "$@"

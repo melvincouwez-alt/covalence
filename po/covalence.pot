@@ -1,0 +1,2433 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the covalence package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: covalence\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-27 18:48+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: src/About.vala:9
+msgid ""
+"Covalence est un logiciel libre et indépendant. Elle n'est ni affiliée à "
+"Apple Inc., ni approuvée, sponsorisée ou soutenue par Apple Inc., ni par "
+"elementary, Inc.\n"
+"\n"
+"Apple, iPhone, iCloud, iCloud Drive, iMessage, Apple Music, AirPods et le "
+"logo Apple sont des marques d'Apple Inc., déposées aux États-Unis et dans "
+"d'autres pays et régions. elementary est une marque d'elementary, Inc. Ces "
+"noms ne sont employés que pour décrire la compatibilité.\n"
+"\n"
+"Covalence utilise des protocoles publiés : Bluetooth HFP, MAP et PBAP ; ANCS "
+"et AMS, spécifiés par Apple ; CalDAV, CardDAV et IMAP. Deux fonctions "
+"reposent sur des interfaces non documentées : les écouteurs (protocole AAP "
+"décrit par LibrePods) et iCloud Drive et Photos (via rclone). Elles peuvent "
+"cesser de fonctionner sans préavis. Covalence n'a décompilé aucun logiciel "
+"Apple.\n"
+"\n"
+"Aucune donnée ne passe par un serveur de Covalence : il n'y en a pas.\n"
+"\n"
+"Ce programme est distribué sans aucune garantie. Utilisez-le à vos propres "
+"risques ; l'usage d'iCloud reste soumis aux conditions d'Apple."
+msgstr ""
+
+#: src/About.vala:31
+msgid ""
+"Pour utiliser un iPhone et iCloud depuis elementary OS.\n"
+"Projet libre, non affilié à Apple Inc."
+msgstr ""
+
+#: src/About.vala:34
+msgid "© 2026 Melvin Couwez et les contributeurs de Covalence"
+msgstr ""
+
+#: src/About.vala:37
+msgid "Code source"
+msgstr ""
+
+#: src/About.vala:39
+msgid "Mentions légales"
+msgstr ""
+
+#: src/About.vala:40
+msgid "Écouteurs : merci à LibrePods"
+msgstr ""
+
+#: src/About.vala:41
+msgid ""
+"Le protocole des AirPods utilisé par Covalence a été décrit par le projet "
+"LibrePods (https://github.com/librepods-org/librepods, GPL-3.0-or-later), "
+"créé par Kavish Devar. Merci à lui et à tous les contributeurs de LibrePods "
+"pour leur remarquable travail de rétro-ingénierie, sans lequel cette "
+"fonction n'existerait pas. Covalence n'est pas affiliée à LibrePods."
+msgstr ""
+
+#: src/About.vala:48
+msgid "iCloud Drive et Photos : merci à rclone"
+msgstr ""
+
+#: src/About.vala:49
+msgid ""
+"rclone, Nick Craig-Wood et contributeurs (MIT) https://github.com/rclone/"
+"rclone"
+msgstr ""
+
+#: src/About.vala:51
+msgid "Projets utilisés"
+msgstr ""
+
+#: src/About.vala:52
+msgid ""
+"LibrePods, Kavish Devar et contributeurs (GPL-3.0-or-later) https://"
+"github.com/librepods-org/librepods"
+msgstr ""
+
+#: src/About.vala:54
+msgid "BlueZ et obexd (GPL-2.0-or-later) https://github.com/bluez/bluez"
+msgstr ""
+
+#: src/AppChoice.vala:24
+msgid "Agenda"
+msgstr ""
+
+#: src/AppChoice.vala:26
+msgid "Agenda (Covalence)"
+msgstr ""
+
+#: src/AppChoice.vala:26
+msgid "Calendrier (elementary)"
+msgstr ""
+
+#: src/AppChoice.vala:30 src/AppWindow.vala:27 src/ContactsView.vala:362
+#: src/MainWindow.vala:80 src/MainWindow.vala:88 src/MainWindow.vala:182
+#: src/Onboarding.vala:301
+msgid "Contacts"
+msgstr ""
+
+#: src/AppChoice.vala:32
+msgid "Contacts (Covalence)"
+msgstr ""
+
+#: src/AppChoice.vala:32
+msgid "Contacts (elementary)"
+msgstr ""
+
+#: src/AppChoice.vala:174 src/MainWindow.vala:193 src/MainWindow.vala:195
+#: src/PhoneGuide.vala:255 src/ServicesView.vala:53 src/ServicesView.vala:75
+#: src/ServicesView.vala:243 src/ServicesView.vala:344
+#: covalenced/messages.py:845
+msgid "Ouvrir"
+msgstr ""
+
+#: src/AppChoice.vala:177
+msgid "App par défaut pour vos calendriers iCloud"
+msgstr ""
+
+#: src/AppChoice.vala:178
+msgid "App affichée dans le menu Applications"
+msgstr ""
+
+#: src/AppChoice.vala:180 src/ServicesView.vala:253
+msgid "Installer…"
+msgstr ""
+
+#: src/AppChoice.vala:181 src/ServicesView.vala:254
+msgid "Ouvrir la fiche dans AppCenter"
+msgstr ""
+
+#: src/AppChoice.vala:182
+msgid ""
+"Pas encore installée : elle deviendra l'app par défaut une fois installée"
+msgstr ""
+
+#: src/AppWindow.vala:26 src/MainWindow.vala:76 src/MainWindow.vala:86
+#: src/MainWindow.vala:180 src/MessagesView.vala:465 src/Onboarding.vala:297
+msgid "Messages"
+msgstr ""
+
+#: src/AppWindow.vala:28 src/ContactEditor.vala:82 src/MainWindow.vala:78
+#: src/MainWindow.vala:87 src/MainWindow.vala:181 src/Onboarding.vala:299
+msgid "Téléphone"
+msgstr ""
+
+#: src/AppWindow.vala:29 src/MainWindow.vala:82 src/MainWindow.vala:90
+#: src/MainWindow.vala:183 src/Onboarding.vala:303
+msgid "Écouteurs"
+msgstr ""
+
+#: src/AppWindow.vala:93
+msgid "Guide (F1)"
+msgstr ""
+
+#: src/Application.vala:200
+msgid "Open the setup assistant"
+msgstr ""
+
+#: src/Application.vala:202
+msgid "Open a tab: setup, device, messages, phone, contacts, headphones, guide"
+msgstr ""
+
+#: src/Application.vala:204
+msgid "With --page guide: open this topic of the guide"
+msgstr ""
+
+#: src/Application.vala:206
+msgid "Show the in-call window"
+msgstr ""
+
+#: src/Application.vala:208
+msgid "Write to a phone number or address (Messages)"
+msgstr ""
+
+#: src/Application.vala:210
+msgid "Open a message thread"
+msgstr ""
+
+#: src/Application.vala:212
+msgid "Open a message thread ready to answer"
+msgstr ""
+
+#: src/Application.vala:214
+msgid ""
+"Development: resolve comma-separated packages through PackageKit, install "
+"nothing"
+msgstr ""
+
+#: src/CallWindow.vala:56
+msgid "Numéro"
+msgstr ""
+
+#: src/CallWindow.vala:148
+msgid "Appel"
+msgstr ""
+
+#: src/CallWindow.vala:165
+msgid "Micro coupé"
+msgstr ""
+
+#: src/CallWindow.vala:171 src/CallWindow.vala:180
+msgid "Clavier"
+msgstr ""
+
+#: src/CallWindow.vala:172
+msgid "Audio sur ce PC"
+msgstr ""
+
+#: src/CallWindow.vala:179
+msgid "Silence"
+msgstr ""
+
+#: src/CallWindow.vala:181
+msgid "Audio PC"
+msgstr ""
+
+#: src/CallWindow.vala:190 src/CallWindow.vala:200 src/CallWindow.vala:414
+#: src/CallWindow.vala:496 covalenced/calls.py:250
+msgid "Raccrocher"
+msgstr ""
+
+#: src/CallWindow.vala:192 src/CallWindow.vala:197 src/CallWindow.vala:496
+#: covalenced/calls.py:244
+msgid "Refuser"
+msgstr ""
+
+#: src/CallWindow.vala:194 src/CallWindow.vala:198 src/CallWindow.vala:411
+#: covalenced/calls.py:244
+msgctxt "call"
+msgid "Répondre"
+msgstr ""
+
+#: src/CallWindow.vala:231 src/CallWindow.vala:343
+#, c-format
+msgid "Appel en cours · %s"
+msgstr ""
+
+#: src/CallWindow.vala:303
+msgid "Appel terminé"
+msgstr ""
+
+#: src/CallWindow.vala:310 src/CallsView.vala:51
+msgid "Aucun appel"
+msgstr ""
+
+#: src/CallWindow.vala:327 src/CallWindow.vala:503 covalenced/calls.py:29
+msgid "Appel entrant"
+msgstr ""
+
+#: src/CallWindow.vala:327 covalenced/calls.py:29 covalenced/calls.py:31
+msgid "Appel en attente"
+msgstr ""
+
+#: src/CallWindow.vala:333
+msgid "Appel en cours de numérotation…"
+msgstr ""
+
+#: src/CallWindow.vala:338 src/CallWindow.vala:504 src/MainWindow.vala:494
+msgid "En attente"
+msgstr ""
+
+#: src/CallWindow.vala:389
+msgid "Couper le micro"
+msgstr ""
+
+#: src/CallWindow.vala:396
+msgid "Son sur ce PC (sinon sur l'iPhone)"
+msgstr ""
+
+#: src/CallWindow.vala:403
+msgid "Afficher l'appel et le clavier"
+msgstr ""
+
+#: src/CallWindow.vala:458 src/CallWindow.vala:500
+#, c-format
+msgid "En cours · %02d:%02d"
+msgstr ""
+
+#: src/CallWindow.vala:504
+msgid "Appel sortant…"
+msgstr ""
+
+#: src/CallsView.vala:11
+msgid ""
+"Les appels demandent PipeWire 1.4 ou plus récent, présent dans elementary OS "
+"9."
+msgstr ""
+
+#: src/CallsView.vala:52
+msgid ""
+"Le journal d'appels vient de l'iPhone. Activez « Synchroniser les contacts » "
+"pour ce PC dans les réglages Bluetooth de l'iPhone."
+msgstr ""
+
+#: src/CallsView.vala:76
+msgid "Composer un numéro"
+msgstr ""
+
+#: src/CallsView.vala:116
+msgid "Manqué"
+msgstr ""
+
+#: src/CallsView.vala:116
+msgid "Sortant"
+msgstr ""
+
+#: src/CallsView.vala:116
+msgid "Entrant"
+msgstr ""
+
+#: src/CallsView.vala:143 src/ContactsView.vala:521
+msgid "Envoyer un message"
+msgstr ""
+
+#: src/CallsView.vala:191
+msgid "Appel impossible : l'iPhone n'est pas relié en mains libres"
+msgstr ""
+
+#: src/CallsView.vala:204
+msgid "Appeler depuis l'iPhone"
+msgstr ""
+
+#: src/CallsView.vala:206
+msgid "Appel indisponible : l'iPhone n'est pas relié en mains libres"
+msgstr ""
+
+#: src/Components.vala:29 covalenced/components.py:85
+msgid "Messages et contacts par Bluetooth (obexd)"
+msgstr ""
+
+#: src/Components.vala:30 covalenced/components.py:40
+msgid "Contacts iCloud"
+msgstr ""
+
+#: src/Components.vala:31 covalenced/components.py:108
+msgid "iCloud Drive et iCloud Photos (rclone 1.69 ou plus récent)"
+msgstr ""
+
+#: src/Components.vala:74
+msgid "Aucun de ces paquets n'est disponible dans les sources de logiciels."
+msgstr ""
+
+#: src/Components.vala:139
+msgid "Installation annulée."
+msgstr ""
+
+#: src/Components.vala:142
+msgid "PackageKit a signalé un échec."
+msgstr ""
+
+#: src/Components.vala:168
+msgid "Installer"
+msgstr ""
+
+#: src/Components.vala:178
+msgid "Composants manquants"
+msgstr ""
+
+#: src/Components.vala:202
+msgid ""
+"Covalence a besoin de ces paquets pour fonctionner entièrement. Le système "
+"demandera le mot de passe administrateur."
+msgstr ""
+
+#: src/Components.vala:204
+msgid "Ces éléments demandent une version plus récente du système."
+msgstr ""
+
+#: src/Components.vala:205
+msgid "Covalence peut télécharger cet outil pour vous."
+msgstr ""
+
+#: src/Components.vala:216
+msgid ""
+"Téléchargé depuis rclone.org (licence MIT), vérifié par empreinte SHA-256"
+msgstr ""
+
+#: src/Components.vala:218
+#, c-format
+msgid "Paquet %s"
+msgstr ""
+
+#: src/Components.vala:219
+#, c-format
+msgid "Mise à jour du système nécessaire (%s)"
+msgstr ""
+
+#: src/Components.vala:237 covalenced/drive.py:355
+msgid "Télécharger rclone"
+msgstr ""
+
+#: src/Components.vala:248
+msgid "Installation…"
+msgstr ""
+
+#: src/Components.vala:279
+#, c-format
+msgid "L'installation n'a pas abouti : %s"
+msgstr ""
+
+#: src/Components.vala:286
+msgid "Téléchargement…"
+msgstr ""
+
+#: src/Components.vala:295
+#, c-format
+msgid "Téléchargement… %s %%"
+msgstr ""
+
+#: src/Components.vala:302
+msgid "échec du téléchargement"
+msgstr ""
+
+#: src/Components.vala:309
+#, c-format
+msgid "Le téléchargement n'a pas abouti : %s"
+msgstr ""
+
+#: src/ComposeField.vala:38 src/ComposeField.vala:52
+msgid "Message texte"
+msgstr ""
+
+#: src/ComposeField.vala:77
+msgid "Émoji"
+msgstr ""
+
+#: src/ComposeField.vala:85
+msgid "Envoyer (Entrée)"
+msgstr ""
+
+#: src/ContactEditor.vala:15
+msgid "mobile"
+msgstr ""
+
+#: src/ContactEditor.vala:15 src/ContactEditor.vala:17
+msgid "domicile"
+msgstr ""
+
+#: src/ContactEditor.vala:15 src/ContactEditor.vala:17
+msgid "travail"
+msgstr ""
+
+#: src/ContactEditor.vala:15
+msgid "principal"
+msgstr ""
+
+#: src/ContactEditor.vala:15 src/ContactEditor.vala:17
+msgid "autre"
+msgstr ""
+
+#: src/ContactEditor.vala:31 src/ContactsView.vala:308
+msgid "Nouveau contact"
+msgstr ""
+
+#: src/ContactEditor.vala:31
+msgid "Modifier le contact"
+msgstr ""
+
+#: src/ContactEditor.vala:40
+msgid "Prénom"
+msgstr ""
+
+#: src/ContactEditor.vala:41
+msgid "Nom"
+msgstr ""
+
+#: src/ContactEditor.vala:42
+msgid "Entreprise"
+msgstr ""
+
+#: src/ContactEditor.vala:49
+msgid "Ajouter un numéro"
+msgstr ""
+
+#: src/ContactEditor.vala:53
+msgid "Ajouter une adresse e-mail"
+msgstr ""
+
+#: src/ContactEditor.vala:71
+msgid ""
+"La fiche est enregistrée dans iCloud, qui la transmet à l'iPhone en quelques "
+"secondes."
+msgstr ""
+
+#: src/ContactEditor.vala:85
+msgid "E-mail"
+msgstr ""
+
+#: src/ContactEditor.vala:88
+msgid "Notes"
+msgstr ""
+
+#: src/ContactEditor.vala:93 src/DriveOptions.vala:123
+#: src/PairingDialog.vala:81 covalenced/signin.py:218
+msgid "Annuler"
+msgstr ""
+
+#: src/ContactEditor.vala:95
+msgid "Enregistrer"
+msgstr ""
+
+#: src/ContactEditor.vala:105 src/ContactEditor.vala:266
+#: src/MessagesView.vala:867 src/MessagesView.vala:967
+msgid "Supprimer"
+msgstr ""
+
+#: src/ContactEditor.vala:164
+msgid "Retirer"
+msgstr ""
+
+#: src/ContactEditor.vala:213
+#, c-format
+msgid "Fiche illisible : %s"
+msgstr ""
+
+#: src/ContactEditor.vala:232
+msgid "Indiquez au moins un prénom, un nom ou une entreprise."
+msgstr ""
+
+#: src/ContactEditor.vala:252
+#, c-format
+msgid "Non enregistré : %s"
+msgstr ""
+
+#: src/ContactEditor.vala:260
+#, c-format
+msgid "Supprimer %s ?"
+msgstr ""
+
+#: src/ContactEditor.vala:260
+msgid "ce contact"
+msgstr ""
+
+#: src/ContactEditor.vala:261
+msgid ""
+"La fiche est supprimée d'iCloud, donc aussi de l'iPhone et de vos autres "
+"appareils."
+msgstr ""
+
+#: src/ContactEditor.vala:283
+#, c-format
+msgid "Non supprimé : %s"
+msgstr ""
+
+#: src/ContactsView.vala:158
+msgid "Nom, numéro ou adresse"
+msgstr ""
+
+#: src/ContactsView.vala:158 src/MessagesView.vala:338
+msgid "Rechercher"
+msgstr ""
+
+#: src/ContactsView.vala:192
+#, c-format
+msgid "Écrire à %s"
+msgstr ""
+
+#: src/ContactsView.vala:222
+msgid "Aucun contact"
+msgstr ""
+
+#: src/ContactsView.vala:223
+msgid ""
+"Les contacts viennent de l'iPhone. Activez « Synchroniser les contacts » "
+"pour ce PC dans les réglages Bluetooth de l'iPhone."
+msgstr ""
+
+#: src/ContactsView.vala:313 src/ContactsView.vala:393
+msgid "Gestion des fiches de contact"
+msgstr ""
+
+#: src/ContactsView.vala:337
+msgid "Modifier"
+msgstr ""
+
+#: src/ContactsView.vala:363
+msgid "Choisissez un contact."
+msgstr ""
+
+#: src/ContactsView.vala:405
+msgid "Lecture via Bluetooth et cache local"
+msgstr ""
+
+#: src/ContactsView.vala:406
+msgid ""
+"Aucune modification possible. Simple : repose seulement sur la connexion "
+"avec votre iPhone."
+msgstr ""
+
+#: src/ContactsView.vala:407
+msgid "Gestion via iCloud"
+msgstr ""
+
+#: src/ContactsView.vala:408
+msgid ""
+"Créer, modifier et supprimer des fiches. Nécessite le compte iCloud "
+"(Services Apple) et Internet ; iCloud transmet les changements à l'iPhone."
+msgstr ""
+
+#: src/ContactsView.vala:448
+msgid "Contacts iCloud, modifiables"
+msgstr ""
+
+#: src/ContactsView.vala:451
+msgid "Ouverture des contacts iCloud…"
+msgstr ""
+
+#: src/ContactsView.vala:454
+msgid "Compte iCloud non connecté (Services Apple)"
+msgstr ""
+
+#: src/ContactsView.vala:457
+msgid "Composant EBook manquant (gir1.2-ebook-1.2)"
+msgstr ""
+
+#: src/ContactsView.vala:460
+msgid "Contacts iCloud momentanément illisibles"
+msgstr ""
+
+#: src/ContactsView.vala:463
+msgid "Contacts de l'iPhone, lecture seule"
+msgstr ""
+
+#: src/ContactsView.vala:472
+msgid "Les changements passent par iCloud, qui les transmet à l'iPhone."
+msgstr ""
+
+#: src/ContactsView.vala:473
+msgid ""
+"Contacts lus sur l'iPhone en Bluetooth, en lecture seule. Pour les modifier, "
+"choisissez « Gestion via iCloud » dans le menu de la liste."
+msgstr ""
+
+#: src/ContactsView.vala:499
+msgid "téléphone"
+msgstr ""
+
+#: src/DriveOptions.vala:32
+msgid "1 Go"
+msgstr ""
+
+#: src/DriveOptions.vala:32
+msgid "5 Go"
+msgstr ""
+
+#: src/DriveOptions.vala:32
+msgid "10 Go"
+msgstr ""
+
+#: src/DriveOptions.vala:32
+msgid "20 Go"
+msgstr ""
+
+#: src/DriveOptions.vala:32
+msgid "50 Go"
+msgstr ""
+
+#: src/DriveOptions.vala:34
+msgid "1 heure"
+msgstr ""
+
+#: src/DriveOptions.vala:34
+msgid "1 jour"
+msgstr ""
+
+#: src/DriveOptions.vala:34
+msgid "1 semaine"
+msgstr ""
+
+#: src/DriveOptions.vala:34
+msgid "1 mois"
+msgstr ""
+
+#: src/DriveOptions.vala:34
+msgid "1 an"
+msgstr ""
+
+#: src/DriveOptions.vala:36
+msgid "Chaque minute"
+msgstr ""
+
+#: src/DriveOptions.vala:36
+msgid "Toutes les 5 minutes"
+msgstr ""
+
+#: src/DriveOptions.vala:37
+msgid "Toutes les 15 minutes"
+msgstr ""
+
+#: src/DriveOptions.vala:37
+msgid "Toutes les heures"
+msgstr ""
+
+#: src/DriveOptions.vala:39
+msgid "Sans limite"
+msgstr ""
+
+#: src/DriveOptions.vala:39
+msgid "10 Mo/s"
+msgstr ""
+
+#: src/DriveOptions.vala:39
+msgid "2 Mo/s"
+msgstr ""
+
+#: src/DriveOptions.vala:39
+msgid "512 Ko/s"
+msgstr ""
+
+#: src/DriveOptions.vala:43
+msgid "Options d'iCloud Photos"
+msgstr ""
+
+#: src/DriveOptions.vala:43
+msgid "Options d'iCloud Drive"
+msgstr ""
+
+#: src/DriveOptions.vala:53 src/ServicesView.vala:91
+msgid "iCloud Photos"
+msgstr ""
+
+#: src/DriveOptions.vala:53 src/ServicesView.vala:69
+msgid "iCloud Drive"
+msgstr ""
+
+#: src/DriveOptions.vala:67
+msgid "Changer…"
+msgstr ""
+
+#: src/DriveOptions.vala:71
+msgid "Emplacement"
+msgstr ""
+
+#: src/DriveOptions.vala:74
+msgid "Monter à l'ouverture de session"
+msgstr ""
+
+#: src/DriveOptions.vala:74
+msgid "Le dossier apparaît dès la connexion."
+msgstr ""
+
+#: src/DriveOptions.vala:80
+msgid "Lecture seule"
+msgstr ""
+
+#: src/DriveOptions.vala:80
+msgid "Consulter sans risquer de modifier ou supprimer dans iCloud."
+msgstr ""
+
+#: src/DriveOptions.vala:88
+msgid "Garder hors ligne"
+msgstr ""
+
+#: src/DriveOptions.vala:89
+msgid "Les photos ouvertes restent visibles sans Internet."
+msgstr ""
+
+#: src/DriveOptions.vala:90
+msgid "Les fichiers ouverts restent disponibles sans Internet."
+msgstr ""
+
+#: src/DriveOptions.vala:94
+msgid "Espace maximal sur ce PC"
+msgstr ""
+
+#: src/DriveOptions.vala:101
+msgid "Voir les nouvelles photos"
+msgstr ""
+
+#: src/DriveOptions.vala:102
+msgid "Délai avant qu'une photo prise sur l'iPhone apparaisse dans les albums."
+msgstr ""
+
+#: src/DriveOptions.vala:105
+msgid "Voir les changements d'iCloud"
+msgstr ""
+
+#: src/DriveOptions.vala:106
+msgid "Délai avant qu'un ajout fait ailleurs apparaisse."
+msgstr ""
+
+#: src/DriveOptions.vala:109
+msgid "Débit maximal"
+msgstr ""
+
+#: src/DriveOptions.vala:109
+msgid "Utile en partage de connexion avec l'iPhone."
+msgstr ""
+
+#: src/DriveOptions.vala:112
+msgid ""
+"iCloud Photos est en lecture seule : rien ne peut être modifié ni supprimé "
+"depuis ce PC. Chaque album est un dossier ; « All Photos » contient toute la "
+"photothèque. Les photos que vous ouvrez sont gardées hors ligne ; pour en "
+"garder une copie, copiez-la ailleurs."
+msgstr ""
+
+#: src/DriveOptions.vala:115
+msgid ""
+"Covalence ne propose pas de synchronisation complète dans les deux sens : un "
+"conflit ou une suppression massive pourrait faire perdre des fichiers. Les "
+"fichiers que vous ouvrez sont gardés hors ligne, et vos modifications sont "
+"envoyées à iCloud en quelques secondes."
+msgstr ""
+
+#: src/DriveOptions.vala:125
+msgid "Appliquer"
+msgstr ""
+
+#: src/DriveOptions.vala:137
+msgid "Dossier"
+msgstr ""
+
+#: src/DriveOptions.vala:139
+msgid "Hors ligne"
+msgstr ""
+
+#: src/DriveOptions.vala:141
+msgid "Réseau"
+msgstr ""
+
+#: src/DriveOptions.vala:220
+#, c-format
+msgid "Actuellement %s de fichiers gardés sur ce PC."
+msgstr ""
+
+#: src/DriveOptions.vala:244
+#, c-format
+msgid "Emplacement d'%s"
+msgstr ""
+
+#: src/HeadphonesView.vala:19 src/ServicesView.vala:164
+msgid "Désactivé"
+msgstr ""
+
+#: src/HeadphonesView.vala:19
+msgid "Réduction du bruit"
+msgstr ""
+
+#: src/HeadphonesView.vala:19
+msgid "Transparence"
+msgstr ""
+
+#: src/HeadphonesView.vala:19
+msgid "Adaptatif"
+msgstr ""
+
+#: src/HeadphonesView.vala:59
+msgid "Aucun écouteur appairé"
+msgstr ""
+
+#: src/HeadphonesView.vala:60
+msgid ""
+"Pour appairer vos AirPods : ouvrez le boîtier près du PC, écouteurs dedans, "
+"puis maintenez le bouton du boîtier jusqu'à ce que le voyant clignote en "
+"blanc. Choisissez-les ensuite dans les paramètres Bluetooth."
+msgstr ""
+
+#: src/HeadphonesView.vala:66
+msgid "Ouvrir les paramètres Bluetooth"
+msgstr ""
+
+#: src/HeadphonesView.vala:67
+msgid "Pour appairer de nouveaux écouteurs"
+msgstr ""
+
+#: src/HeadphonesView.vala:117 src/HeadphonesView.vala:486
+msgid "Renommer"
+msgstr ""
+
+#: src/HeadphonesView.vala:131
+msgid "Gauche"
+msgstr ""
+
+#: src/HeadphonesView.vala:132
+msgid "Droite"
+msgstr ""
+
+#: src/HeadphonesView.vala:133
+msgid "Boîtier"
+msgstr ""
+
+#: src/HeadphonesView.vala:181
+msgid "Plus de bruit"
+msgstr ""
+
+#: src/HeadphonesView.vala:182
+msgid "Moins de bruit"
+msgstr ""
+
+#: src/HeadphonesView.vala:188
+msgid "Niveau de l'audio adaptatif"
+msgstr ""
+
+#: src/HeadphonesView.vala:191
+msgid "Contrôle du bruit"
+msgstr ""
+
+#: src/HeadphonesView.vala:204
+msgid "Détection de conversation"
+msgstr ""
+
+#: src/HeadphonesView.vala:205
+msgid "Baisse le son et laisse passer les voix quand vous parlez."
+msgstr ""
+
+#: src/HeadphonesView.vala:212
+msgid "Réduction du bruit avec un seul écouteur"
+msgstr ""
+
+#: src/HeadphonesView.vala:213
+msgid "Garde la réduction du bruit quand vous ne portez qu'un écouteur."
+msgstr ""
+
+#: src/HeadphonesView.vala:222
+msgid "Pause quand vous retirez un écouteur"
+msgstr ""
+
+#: src/HeadphonesView.vala:223
+msgid "La lecture reprend quand vous le remettez."
+msgstr ""
+
+#: src/HeadphonesView.vala:233
+msgid ""
+"Un appui long sur la tige passe d'un mode coché à l'autre (au moins deux)."
+msgstr ""
+
+#: src/HeadphonesView.vala:236
+msgid "Appui long"
+msgstr ""
+
+#: src/HeadphonesView.vala:240
+msgid ""
+"Compatible avec les AirPods. Covalence n'est pas affiliée à Apple. Protocole "
+"documenté par le projet LibrePods, merci à ses contributeurs."
+msgstr ""
+
+#: src/HeadphonesView.vala:261 src/MainWindow.vala:84 src/MainWindow.vala:92
+#: src/MainWindow.vala:175
+msgid "Réglages"
+msgstr ""
+
+#: src/HeadphonesView.vala:374
+msgid ""
+"Hors de portée ou dans le boîtier fermé. Sortez-les du boîtier pour les "
+"connecter à ce PC."
+msgstr ""
+
+#: src/HeadphonesView.vala:382
+msgid "Connectés. Lecture de l'état des écouteurs…"
+msgstr ""
+
+#: src/HeadphonesView.vala:392
+#, c-format
+msgid "Micrologiciel %s"
+msgstr ""
+
+#: src/HeadphonesView.vala:430
+msgid "Dans vos oreilles"
+msgstr ""
+
+#: src/HeadphonesView.vala:433
+msgid "Un écouteur porté"
+msgstr ""
+
+#: src/HeadphonesView.vala:436
+msgid "Dans le boîtier"
+msgstr ""
+
+#: src/HeadphonesView.vala:438
+msgid "Pas dans vos oreilles"
+msgstr ""
+
+#: src/HeadphonesView.vala:479
+msgid "Renommer les écouteurs"
+msgstr ""
+
+#: src/HeadphonesView.vala:480
+msgid ""
+"Le nouveau nom est enregistré dans les écouteurs et s'affiche sur vos autres "
+"appareils."
+msgstr ""
+
+#: src/HeadphonesView.vala:561
+msgid "dans l'oreille"
+msgstr ""
+
+#: src/HeadphonesView.vala:564
+msgid "retiré"
+msgstr ""
+
+#: src/HeadphonesView.vala:567
+msgid "dans le boîtier"
+msgstr ""
+
+#: src/HeadphonesView.vala:570
+msgid "en charge"
+msgstr ""
+
+#: src/Language.vala:147 src/MainWindow.vala:214
+msgid "Langue"
+msgstr ""
+
+#: src/Language.vala:148
+msgid "bêta"
+msgstr ""
+
+#: src/Language.vala:153
+msgid ""
+"L'anglais est en bêta : quelques textes peuvent rester en français. Le guide "
+"a son propre bouton FR / EN."
+msgstr ""
+
+#: src/MainWindow.vala:38 src/MainWindow.vala:128 src/MainWindow.vala:255
+msgid "Covalence"
+msgstr ""
+
+#: src/MainWindow.vala:81 src/MainWindow.vala:89 src/MainWindow.vala:301
+msgid "Notifications"
+msgstr ""
+
+#: src/MainWindow.vala:83 src/MainWindow.vala:91 src/Onboarding.vala:45
+#: src/Onboarding.vala:241 src/ServicesView.vala:33
+msgid "Services Apple"
+msgstr ""
+
+#: src/MainWindow.vala:85
+msgid "Aperçu"
+msgstr ""
+
+#: src/MainWindow.vala:90
+msgid "Accessoires"
+msgstr ""
+
+#: src/MainWindow.vala:91
+msgid "Compte Apple"
+msgstr ""
+
+#: src/MainWindow.vala:117
+msgid "Le service Covalence ne répond pas"
+msgstr ""
+
+#: src/MainWindow.vala:118
+msgid ""
+"Démarrez-le avec « systemctl --user start covalenced », ou consultez son "
+"journal avec « journalctl --user -u covalenced »."
+msgstr ""
+
+#: src/MainWindow.vala:122 src/MessagesView.vala:278 src/MessagesView.vala:963
+msgid "Réessayer"
+msgstr ""
+
+#: src/MainWindow.vala:123
+msgid "Relancer la connexion au service"
+msgstr ""
+
+#: src/MainWindow.vala:180
+msgid "Vos conversations dans leur propre fenêtre"
+msgstr ""
+
+#: src/MainWindow.vala:181
+msgid "Clavier, journal et appel en cours"
+msgstr ""
+
+#: src/MainWindow.vala:182
+msgid "Le répertoire de l'iPhone"
+msgstr ""
+
+#: src/MainWindow.vala:183
+msgid "Batterie et réglages de vos AirPods"
+msgstr ""
+
+#: src/MainWindow.vala:185
+msgid ""
+"Chaque app a sa propre fenêtre et son icône. L'interrupteur l'affiche ou non "
+"dans le menu Applications."
+msgstr ""
+
+#: src/MainWindow.vala:192
+msgid "Configuration initiale"
+msgstr ""
+
+#: src/MainWindow.vala:193
+msgid "Relancer l'assistant pas à pas"
+msgstr ""
+
+#: src/MainWindow.vala:194
+msgid "Guide"
+msgstr ""
+
+#: src/MainWindow.vala:194
+msgid "Pas à pas, vie privée et dépannage (F1)"
+msgstr ""
+
+#: src/MainWindow.vala:196
+msgid "À propos de Covalence"
+msgstr ""
+
+#: src/MainWindow.vala:197
+#, c-format
+msgid "Version %s, licence, remerciements"
+msgstr ""
+
+#: src/MainWindow.vala:198 covalenced/calls.py:250
+msgid "Afficher"
+msgstr ""
+
+#: src/MainWindow.vala:216 src/Onboarding.vala:306
+msgid "Apps séparées"
+msgstr ""
+
+#: src/MainWindow.vala:219
+msgid "Assistance"
+msgstr ""
+
+#: src/MainWindow.vala:255
+msgid "Configurer Covalence"
+msgstr ""
+
+#: src/MainWindow.vala:281 src/MainWindow.vala:442
+msgid "Appairer un iPhone…"
+msgstr ""
+
+#: src/MainWindow.vala:283
+msgid "Reconnecter"
+msgstr ""
+
+#: src/MainWindow.vala:288
+msgid "Comment relier l'iPhone"
+msgstr ""
+
+#: src/MainWindow.vala:302
+msgid "Musique de l'iPhone"
+msgstr ""
+
+#: src/MainWindow.vala:303
+msgid "Appels"
+msgstr ""
+
+#: src/MainWindow.vala:304
+msgid "Messages et contacts"
+msgstr ""
+
+#: src/MainWindow.vala:305
+msgid "Batterie"
+msgstr ""
+
+#: src/MainWindow.vala:316 src/ServicesView.vala:106
+msgid "Guide de connexion"
+msgstr ""
+
+#: src/MainWindow.vala:319
+msgid ""
+"Tout passe directement entre ce PC et l'iPhone, en Bluetooth. Les journaux "
+"de Covalence ne contiennent jamais le texte des notifications ni des "
+"messages."
+msgstr ""
+
+#: src/MainWindow.vala:334
+msgid "Fonctions"
+msgstr ""
+
+#: src/MainWindow.vala:347
+msgid "Son de l'iPhone"
+msgstr ""
+
+#: src/MainWindow.vala:348 src/MainWindow.vala:366
+msgid "Sortie par défaut"
+msgstr ""
+
+#: src/MainWindow.vala:350
+msgid "Sortie du PC pour le son de l'iPhone"
+msgstr ""
+
+#: src/MainWindow.vala:394
+msgid "Refusé : vidéos et musique restent sur l'iPhone"
+msgstr ""
+
+#: src/MainWindow.vala:396
+msgid "En lecture sur ce PC"
+msgstr ""
+
+#: src/MainWindow.vala:398
+msgid ""
+"Choisissez ce PC dans le bouton AirPlay de l'iPhone pour y envoyer le son"
+msgstr ""
+
+#: src/MainWindow.vala:400 src/MainWindow.vala:452 src/MainWindow.vala:470
+#: src/MainWindow.vala:494
+msgid "iPhone absent"
+msgstr ""
+
+#: src/MainWindow.vala:431
+msgid "Aucun iPhone"
+msgstr ""
+
+#: src/MainWindow.vala:433
+msgid "Bluetooth indisponible"
+msgstr ""
+
+#: src/MainWindow.vala:435
+msgid "Appairez votre iPhone pour recevoir ses notifications et ses appels."
+msgstr ""
+
+#: src/MainWindow.vala:437
+#, c-format
+msgid "Connecté · batterie %d %%"
+msgstr ""
+
+#: src/MainWindow.vala:437
+msgid "Connecté"
+msgstr ""
+
+#: src/MainWindow.vala:439
+msgid "Hors de portée ou Bluetooth coupé sur l'iPhone"
+msgstr ""
+
+#: src/MainWindow.vala:442 src/PhoneGuide.vala:161
+msgid "Appairer un autre iPhone…"
+msgstr ""
+
+#: src/MainWindow.vala:451
+msgid ""
+"En attente : l'iPhone doit se connecter à « Covalence » en Bluetooth basse "
+"consommation"
+msgstr ""
+
+#: src/MainWindow.vala:455
+msgid "Désactivées"
+msgstr ""
+
+#: src/MainWindow.vala:456
+msgid "Reçues de l'iPhone, avec leurs actions"
+msgstr ""
+
+#: src/MainWindow.vala:457 src/MainWindow.vala:462
+msgid "iPhone non appairé"
+msgstr ""
+
+#: src/MainWindow.vala:460
+msgid "Désactivée"
+msgstr ""
+
+#: src/MainWindow.vala:461
+msgid "Pilotable depuis l'indicateur de son"
+msgstr ""
+
+#: src/MainWindow.vala:467 src/MainWindow.vala:497
+msgid "Désactivés"
+msgstr ""
+
+#: src/MainWindow.vala:468
+msgid "Prêt : les appels entrants s'affichent ici"
+msgstr ""
+
+#: src/MainWindow.vala:469
+msgid "Profil mains libres non connecté"
+msgstr ""
+
+#: src/MainWindow.vala:477
+msgid "Lecture depuis l'iPhone ; réponse sur l'iPhone seulement"
+msgstr ""
+
+#: src/MainWindow.vala:478
+msgid "Messages de l'iPhone lus en Bluetooth"
+msgstr ""
+
+#: src/MainWindow.vala:481
+msgid ""
+"Refusé : activez « Afficher les notifications » pour ce PC dans les réglages "
+"Bluetooth de l'iPhone"
+msgstr ""
+
+#: src/MainWindow.vala:485
+msgid "Paquet bluez-obexd manquant"
+msgstr ""
+
+#: src/MainWindow.vala:488
+msgid "Connexion…"
+msgstr ""
+
+#: src/MainWindow.vala:491
+msgid "Messages momentanément illisibles"
+msgstr ""
+
+#: src/MainWindow.vala:500
+msgid "Alertes désactivées"
+msgstr ""
+
+#: src/MainWindow.vala:501
+#, c-format
+msgid "%d %% · alerte à 20 %% et 10 %%"
+msgstr ""
+
+#: src/MainWindow.vala:502
+msgid "Niveau inconnu"
+msgstr ""
+
+#: src/MessagesView.vala:40
+msgid "Hier"
+msgstr ""
+
+#: src/MessagesView.vala:51
+#, c-format
+msgid "Aujourd'hui %s"
+msgstr ""
+
+#: src/MessagesView.vala:184
+msgid "<i>Brouillon :</i> "
+msgstr ""
+
+#: src/MessagesView.vala:187
+#, c-format
+msgid "Vous : %s"
+msgstr ""
+
+#: src/MessagesView.vala:195
+#, c-format
+msgid "%s, %u non lu"
+msgid_plural "%s, %u non lus"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/MessagesView.vala:264
+msgid "Aucune conversation"
+msgstr ""
+
+#: src/MessagesView.vala:265
+msgid "Les messages de l'iPhone apparaîtront ici."
+msgstr ""
+
+#: src/MessagesView.vala:323 src/MessagesView.vala:723
+msgid "Nouveau message"
+msgstr ""
+
+#: src/MessagesView.vala:332
+msgid "Conversations"
+msgstr ""
+
+#: src/MessagesView.vala:427
+msgid ""
+"Premier envoi depuis ce PC : Covalence saura alors si l'iPhone accepte "
+"l'envoi par Bluetooth. Le message est demandé en SMS, pas en iMessage."
+msgstr ""
+
+#: src/MessagesView.vala:458
+msgid "Envoi du message"
+msgstr ""
+
+#: src/MessagesView.vala:466
+msgid "Choisissez une conversation."
+msgstr ""
+
+#: src/MessagesView.vala:545
+msgid "Le module Messages est désactivé dans l'onglet iPhone."
+msgstr ""
+
+#: src/MessagesView.vala:548
+msgid ""
+"Le service Bluetooth OBEX (paquet bluez-obexd) est absent : installez-le "
+"pour lire les messages de l'iPhone."
+msgstr ""
+
+#: src/MessagesView.vala:552
+msgid "iPhone absent. Les messages déjà reçus restent consultables."
+msgstr ""
+
+#: src/MessagesView.vala:555
+msgid "Connexion aux messages de l'iPhone…"
+msgstr ""
+
+#: src/MessagesView.vala:558
+msgid ""
+"L'iPhone refuse l'accès aux messages. Sur l'iPhone, ouvrez Réglages > "
+"Bluetooth, touchez ⓘ à côté de ce PC et activez « Afficher les "
+"notifications », puis réessayez."
+msgstr ""
+
+#: src/MessagesView.vala:564
+msgid "Les messages de l'iPhone sont momentanément illisibles."
+msgstr ""
+
+#: src/MessagesView.vala:569
+msgid ""
+"Pour afficher les noms, activez « Synchroniser les contacts » dans les "
+"réglages Bluetooth de l'iPhone pour ce PC."
+msgstr ""
+
+#: src/MessagesView.vala:602
+msgid "Supprimer la conversation…"
+msgstr ""
+
+#: src/MessagesView.vala:722
+msgid "Conversation de groupe"
+msgstr ""
+
+#: src/MessagesView.vala:736
+msgid "Adresse non reconnue"
+msgstr ""
+
+#: src/MessagesView.vala:856
+msgid "Supprimé de Covalence, toujours sur l'iPhone"
+msgstr ""
+
+#: src/MessagesView.vala:865
+msgid "Ne plus m'avertir"
+msgstr ""
+
+#: src/MessagesView.vala:883
+msgid "Supprimer ce message de Covalence ?"
+msgstr ""
+
+#: src/MessagesView.vala:884
+msgid ""
+"Il reste sur l'iPhone : iOS ne permet pas de supprimer un message par "
+"Bluetooth. Il ne réapparaîtra pas dans Covalence."
+msgstr ""
+
+#: src/MessagesView.vala:890
+#, c-format
+msgid "Supprimer la conversation avec %s ?"
+msgstr ""
+
+#: src/MessagesView.vala:891
+msgid ""
+"Les messages restent sur l'iPhone et ne réapparaîtront pas dans Covalence. "
+"Les prochains messages s'afficheront normalement."
+msgstr ""
+
+#: src/MessagesView.vala:913
+msgid "Supprimer de Covalence"
+msgstr ""
+
+#: src/MessagesView.vala:931
+msgid ""
+"\n"
+"Début du message : le texte complet sera récupéré une fois le message lu sur "
+"l'iPhone."
+msgstr ""
+
+#: src/MessagesView.vala:935
+msgid ""
+"\n"
+"Reçu par notification"
+msgstr ""
+
+#: src/MessagesView.vala:954
+msgid "Envoi…"
+msgstr ""
+
+#: src/MessagesView.vala:960
+msgid "Non envoyé"
+msgstr ""
+
+#: src/MessagesView.vala:990
+msgid ""
+"Les conversations de groupe se lisent ici mais se répondent sur l'iPhone : "
+"le Bluetooth ne sait envoyer qu'un SMS à un seul destinataire."
+msgstr ""
+
+#: src/MessagesView.vala:993
+msgid ""
+"Pas de numéro de téléphone connu pour cette conversation : répondez depuis "
+"l'iPhone."
+msgstr ""
+
+#: src/MessagesView.vala:1001
+msgid ""
+"iPhone non connecté pour les messages : ce que vous envoyez sera gardé ici "
+"et pourra être renvoyé."
+msgstr ""
+
+#: src/MessagesView.vala:1004
+msgid "Le dernier envoi a été refusé par l'iPhone. Vous pouvez réessayer."
+msgstr ""
+
+#: src/MessagesView.vala:1006
+msgid "Premier envoi depuis ce PC : il part en SMS par l'iPhone."
+msgstr ""
+
+#: src/MessagesView.vala:1040
+msgid "Message non envoyé : il est gardé, touchez « Réessayer »"
+msgstr ""
+
+#: src/MessagesView.vala:1058
+msgid "Message trop long (2 000 caractères au plus)"
+msgstr ""
+
+#: src/NotificationsView.vala:35
+msgid "Les apps apparaissent ici dès leur première notification."
+msgstr ""
+
+#: src/NotificationsView.vala:50
+msgid "Apps de l'iPhone"
+msgstr ""
+
+#: src/NotificationsView.vala:52
+msgid "Choisissez celles qui s'affichent sur ce PC"
+msgstr ""
+
+#: src/NotificationsView.vala:76
+msgid "Aucune notification"
+msgstr ""
+
+#: src/NotificationsView.vala:77
+msgid ""
+"Les notifications de l'iPhone s'afficheront ici, tant que l'iPhone est relié "
+"à « Covalence » en Bluetooth basse consommation. Elles ne sont jamais "
+"enregistrées sur le disque."
+msgstr ""
+
+#: src/NotificationsView.vala:91
+msgid "Effacer la liste"
+msgstr ""
+
+#: src/NotificationsView.vala:93
+msgid "Vide la liste de Covalence ; rien ne change sur l'iPhone"
+msgstr ""
+
+#: src/NotificationsView.vala:140
+msgid "Toutes les apps"
+msgstr ""
+
+#: src/NotificationsView.vala:201
+#, c-format
+msgid "Afficher les notifications de %s sur ce PC"
+msgstr ""
+
+#: src/Onboarding.vala:42
+msgid "Connexion avec votre iPhone"
+msgstr ""
+
+#: src/Onboarding.vala:43
+msgid "Par Bluetooth : notifications, musique, messages, contacts et appels."
+msgstr ""
+
+#: src/Onboarding.vala:46
+msgid ""
+"Par Internet, avec votre compte Apple : courriel, agendas, rappels, contacts "
+"et fichiers iCloud."
+msgstr ""
+
+#: src/Onboarding.vala:51
+msgid "Retour"
+msgstr ""
+
+#: src/Onboarding.vala:53
+msgid "Passer la configuration"
+msgstr ""
+
+#: src/Onboarding.vala:56 src/Onboarding.vala:141
+msgid "Commencer"
+msgstr ""
+
+#: src/Onboarding.vala:142
+msgid "Ouvrir Covalence"
+msgstr ""
+
+#: src/Onboarding.vala:143
+msgid "Continuer"
+msgstr ""
+
+#: src/Onboarding.vala:187
+msgid "Bienvenue dans Covalence"
+msgstr ""
+
+#: src/Onboarding.vala:191
+msgid ""
+"Votre iPhone et iCloud sur elementary OS : notifications, messages, appels, "
+"contacts, musique, courriel, agendas et fichiers iCloud."
+msgstr ""
+
+#: src/Onboarding.vala:193
+msgid ""
+"Tout passe directement entre ce PC, votre iPhone et Apple. Covalence "
+"n'utilise aucun serveur et ne conserve ni ne journalise le contenu de vos "
+"messages ailleurs que sur ce PC."
+msgstr ""
+
+#: src/Onboarding.vala:199
+msgid "Projet libre et indépendant, non affilié à Apple Inc."
+msgstr ""
+
+#: src/Onboarding.vala:204
+msgid "Ouvrir le guide"
+msgstr ""
+
+#: src/Onboarding.vala:239
+msgid "Votre iPhone"
+msgstr ""
+
+#: src/Onboarding.vala:240
+msgid ""
+"Par Bluetooth : notifications, musique, messages, contacts et appels sur ce "
+"PC."
+msgstr ""
+
+#: src/Onboarding.vala:242
+msgid "Par Internet : courriel, agendas, rappels, contacts et iCloud Drive."
+msgstr ""
+
+#: src/Onboarding.vala:247
+msgid "Que voulez-vous connecter ?"
+msgstr ""
+
+#: src/Onboarding.vala:248
+msgid "Les deux sont indépendants : vous pourrez ajouter l'autre plus tard."
+msgstr ""
+
+#: src/Onboarding.vala:264
+msgid ""
+"Une étape peut attendre : chaque réglage reste disponible dans Covalence."
+msgstr ""
+
+#: src/Onboarding.vala:298
+msgid ""
+"Vos conversations dans leur propre fenêtre, avec leur icône dans le dock."
+msgstr ""
+
+#: src/Onboarding.vala:300
+msgid ""
+"Clavier, journal d'appels et appel en cours, avec une pastille des appels "
+"manqués."
+msgstr ""
+
+#: src/Onboarding.vala:302
+msgid "Le répertoire de l'iPhone, pour appeler ou écrire."
+msgstr ""
+
+#: src/Onboarding.vala:304
+msgid "Batterie, contrôle du bruit et réglages de vos AirPods."
+msgstr ""
+
+#: src/Onboarding.vala:307
+msgid ""
+"Messages, Téléphone, Contacts et Écouteurs sont toujours dans Covalence. "
+"Vous pouvez aussi les avoir comme apps à part dans le menu des applications "
+"et le dock."
+msgstr ""
+
+#: src/Onboarding.vala:317
+msgid "C'est prêt"
+msgstr ""
+
+#: src/Onboarding.vala:318
+msgid ""
+"Covalence tourne en arrière-plan : les notifications, messages et appels "
+"arrivent même fenêtre fermée. Pour refaire cette configuration, ouvrez le "
+"menu en haut à droite de Covalence."
+msgstr ""
+
+#: src/PairingDialog.vala:23 src/PairingDialog.vala:36
+msgid "Appairer un iPhone"
+msgstr ""
+
+#: src/PairingDialog.vala:39
+msgid "Gardez l'iPhone déverrouillé, à côté de ce PC."
+msgstr ""
+
+#: src/PairingDialog.vala:40
+msgid ""
+"Sur l'iPhone, touchez « Covalence » dans Réglages > Bluetooth. S'il n'y "
+"figure pas, ouvrez nRF Connect, lancez un scan et touchez « Connect » à côté "
+"de « Covalence »."
+msgstr ""
+
+#: src/PairingDialog.vala:43
+msgid ""
+"Comparez le code ci-dessous avec celui de l'iPhone, puis touchez « Jumeler »."
+msgstr ""
+
+#: src/PairingDialog.vala:45
+msgid "Acceptez que Covalence reçoive les notifications de l'iPhone."
+msgstr ""
+
+#: src/PairingDialog.vala:53
+msgid "En attente de l'iPhone…"
+msgstr ""
+
+#: src/PairingDialog.vala:62
+msgid "C'est fait"
+msgstr ""
+
+#: src/PairingDialog.vala:63
+msgid ""
+"L'iPhone est appairé. Ses notifications arriveront ici, et les appels dès "
+"que le profil mains libres sera connecté."
+msgstr ""
+
+#: src/PairingDialog.vala:67
+msgid "L'appairage n'a pas abouti"
+msgstr ""
+
+#: src/PairingDialog.vala:68
+msgid ""
+"Le délai est écoulé. Vérifiez que le Bluetooth de l'iPhone est actif, puis "
+"recommencez."
+msgstr ""
+
+#: src/PairingDialog.vala:101
+msgid "Le même code doit s'afficher sur l'iPhone"
+msgstr ""
+
+#: src/PairingDialog.vala:114 covalenced/signin.py:280
+msgid "Fermer"
+msgstr ""
+
+#: src/PhoneGuide.vala:133
+msgid "Appairer l'iPhone"
+msgstr ""
+
+#: src/PhoneGuide.vala:134
+msgid ""
+"Gardez l'iPhone déverrouillé près de ce PC. Un code s'affiche ici et sur "
+"l'iPhone : vérifiez qu'ils sont identiques."
+msgstr ""
+
+#: src/PhoneGuide.vala:136 src/PhoneGuide.vala:161
+msgid "Appairer…"
+msgstr ""
+
+#: src/PhoneGuide.vala:138
+msgid "Autoriser messages et contacts"
+msgstr ""
+
+#: src/PhoneGuide.vala:139
+#, c-format
+msgid ""
+"Sur l'iPhone : Réglages › Bluetooth › ⓘ à côté de « %s », activez "
+"<b>Afficher les notifications</b> (messages) et <b>Synchroniser les "
+"contacts</b> (noms, photos, journal d'appels)."
+msgstr ""
+
+#: src/PhoneGuide.vala:142
+msgid "Vérifier"
+msgstr ""
+
+#: src/PhoneGuide.vala:143
+msgid "Notifications et musique"
+msgstr ""
+
+#: src/PhoneGuide.vala:144
+msgid ""
+"L'iPhone se connecte à « Covalence » en Bluetooth basse consommation. S'il "
+"ne le propose pas dans Réglages › Bluetooth, ouvrez l'app nRF Connect, "
+"lancez un scan et touchez <b>Connect</b> à côté de « Covalence »."
+msgstr ""
+
+#: src/PhoneGuide.vala:147
+msgid "Appels sur ce PC"
+msgstr ""
+
+#: src/PhoneGuide.vala:148
+msgid ""
+"Le profil mains libres se connecte seul. Les appels sonnent alors ici ; "
+"pendant l'appel, le son passe par ce PC ou reste sur l'iPhone, au choix."
+msgstr ""
+
+#: src/PhoneGuide.vala:187
+msgid "Créer un mot de passe pour app"
+msgstr ""
+
+#: src/PhoneGuide.vala:188
+msgid ""
+"Sur la page de votre compte Apple, ouvrez <b>Connexion et sécurité</b> › "
+"<b>Mots de passe pour les apps</b>, touchez <b>+</b>, nommez-le "
+"« Covalence » et copiez le code <tt>xxxx-xxxx-xxxx-xxxx</tt>. La double "
+"authentification doit être active."
+msgstr ""
+
+#: src/PhoneGuide.vala:191
+msgid "Ouvrir la page Apple…"
+msgstr ""
+
+#: src/PhoneGuide.vala:194
+msgid "Courriel, agendas, rappels et contacts"
+msgstr ""
+
+#: src/PhoneGuide.vala:195
+msgid ""
+"Saisissez votre identifiant Apple et ce mot de passe pour app : Covalence le "
+"vérifie auprès d'Apple et le range dans le trousseau. Vos comptes "
+"apparaissent alors dans Courriel, Tâches et Agenda."
+msgstr ""
+
+#: src/PhoneGuide.vala:198 src/PhoneGuide.vala:232 src/ServicesView.vala:45
+#: src/ServicesView.vala:174
+msgid "Se connecter…"
+msgstr ""
+
+#: src/PhoneGuide.vala:200
+msgid "iCloud Drive (facultatif)"
+msgstr ""
+
+#: src/PhoneGuide.vala:201
+msgid ""
+"Vos fichiers iCloud comme un dossier dans Fichiers. Demande le mot de passe "
+"du <b>compte Apple</b> et un code affiché sur l'iPhone, et la <b>Protection "
+"avancée des données</b> désactivée."
+msgstr ""
+
+#: src/PhoneGuide.vala:204 src/PhoneGuide.vala:239
+msgid "Connecter iCloud Drive…"
+msgstr ""
+
+#: src/PhoneGuide.vala:232 src/ServicesView.vala:174
+msgid "Se reconnecter…"
+msgstr ""
+
+#: src/PhoneGuide.vala:239
+msgid "Ouvrir le dossier"
+msgstr ""
+
+#: src/PhoneGuide.vala:260
+#, c-format
+msgid "Afficher %s dans le menu des applications"
+msgstr ""
+
+#: src/QuickReply.vala:29 covalenced/messages.py:849
+msgid "Répondre"
+msgstr ""
+
+#: src/QuickReply.vala:42
+msgid "Messages · Covalence"
+msgstr ""
+
+#: src/QuickReply.vala:50
+msgid "Fermer (Échap)"
+msgstr ""
+
+#: src/QuickReply.vala:81
+msgid "J'arrive"
+msgstr ""
+
+#: src/QuickReply.vala:81
+msgid "Je te rappelle"
+msgstr ""
+
+#: src/QuickReply.vala:81
+msgid "OK 👍"
+msgstr ""
+
+#: src/QuickReply.vala:81
+msgid "Merci !"
+msgstr ""
+
+#: src/QuickReply.vala:81
+msgid "Je suis occupé, je te réponds vite"
+msgstr ""
+
+#: src/QuickReply.vala:159
+msgid "Répondez aux groupes depuis l'iPhone."
+msgstr ""
+
+#: src/QuickReply.vala:160
+msgid "Pas de numéro de téléphone : répondez depuis l'iPhone."
+msgstr ""
+
+#: src/QuickReply.vala:203
+msgid ""
+"Non envoyé : le message est gardé dans la conversation, où vous pourrez le "
+"renvoyer."
+msgstr ""
+
+#: src/ServicesView.vala:34
+msgid ""
+"Votre compte Apple par Internet : courriel, agendas, rappels, contacts, "
+"fichiers iCloud et Apple Music dans les apps d'elementary. Indépendant de "
+"l'iPhone."
+msgstr ""
+
+#: src/ServicesView.vala:47
+msgid "Compte iCloud"
+msgstr ""
+
+#: src/ServicesView.vala:48
+msgid "Mot de passe pour app : comment faire"
+msgstr ""
+
+#: src/ServicesView.vala:55 src/ServicesView.vala:77 src/ServicesView.vala:183
+#: src/ServicesView.vala:195
+msgid "Connecter…"
+msgstr ""
+
+#: src/ServicesView.vala:59
+msgid "Déconnecter iCloud Drive"
+msgstr ""
+
+#: src/ServicesView.vala:65
+msgid "Options d'iCloud Drive : emplacement, hors ligne, réseau"
+msgstr ""
+
+#: src/ServicesView.vala:70
+msgid "iCloud Drive et Photos : à lire avant de vous connecter"
+msgstr ""
+
+#: src/ServicesView.vala:81
+msgid "Déconnecter iCloud Photos"
+msgstr ""
+
+#: src/ServicesView.vala:87
+msgid "Options d'iCloud Photos : emplacement, hors ligne, réseau"
+msgstr ""
+
+#: src/ServicesView.vala:118
+msgid "Connexions"
+msgstr ""
+
+#: src/ServicesView.vala:125
+msgid "Apps par défaut"
+msgstr ""
+
+#: src/ServicesView.vala:127
+msgid "Apps"
+msgstr ""
+
+#: src/ServicesView.vala:155
+msgid "Connecté : courriel, agendas, rappels et contacts"
+msgstr ""
+
+#: src/ServicesView.vala:158
+msgid "Connecté, mais une source n'a pas pu s'authentifier"
+msgstr ""
+
+#: src/ServicesView.vala:161
+msgid "Mot de passe pour app refusé : créez-en un nouveau"
+msgstr ""
+
+#: src/ServicesView.vala:167
+msgid "Evolution Data Server indisponible"
+msgstr ""
+
+#: src/ServicesView.vala:170 src/ServicesView.vala:180
+msgid "Non connecté"
+msgstr ""
+
+#: src/ServicesView.vala:178
+#, c-format
+msgid "Dans Fichiers : dossier « %s »"
+msgstr ""
+
+#: src/ServicesView.vala:179 src/ServicesView.vala:191
+msgid "Connecté, dossier non monté pour l'instant"
+msgstr ""
+
+#: src/ServicesView.vala:183 src/ServicesView.vala:195
+msgid "Reconnecter…"
+msgstr ""
+
+#: src/ServicesView.vala:189
+#, c-format
+msgid "Dans Fichiers : dossier « %s », en lecture seule"
+msgstr ""
+
+#: src/ServicesView.vala:192
+msgid "Non connecté : vos albums en lecture seule dans Fichiers"
+msgstr ""
+
+#: src/ServicesView.vala:211
+msgid "Courriel"
+msgstr ""
+
+#: src/ServicesView.vala:211
+msgid "Votre boîte iCloud"
+msgstr ""
+
+#: src/ServicesView.vala:212
+msgid "Tâches"
+msgstr ""
+
+#: src/ServicesView.vala:212
+msgid "Vos rappels iCloud"
+msgstr ""
+
+#: src/ServicesView.vala:213
+msgid "Fichiers"
+msgstr ""
+
+#: src/ServicesView.vala:213
+msgid "iCloud Drive dans la barre latérale"
+msgstr ""
+
+#: src/ServicesView.vala:214
+msgid "Photos"
+msgstr ""
+
+#: src/ServicesView.vala:214
+msgid "Vos images, y compris celles d'iCloud Drive"
+msgstr ""
+
+#: src/ServicesView.vala:216
+msgid "Apple Music"
+msgstr ""
+
+#: src/ServicesView.vala:216
+msgid "Écouter avec Aria, votre compte Apple Music"
+msgstr ""
+
+#: src/ServicesView.vala:283
+msgid "Déconnecter iCloud Photos ?"
+msgstr ""
+
+#: src/ServicesView.vala:283
+msgid "Déconnecter iCloud Drive ?"
+msgstr ""
+
+#: src/ServicesView.vala:284
+msgid ""
+"Le dossier disparaît de Fichiers et la connexion est oubliée sur ce PC. Vos "
+"photos restent dans iCloud."
+msgstr ""
+
+#: src/ServicesView.vala:286
+msgid ""
+"Le dossier disparaît de Fichiers et la connexion est oubliée sur ce PC. Vos "
+"fichiers restent dans iCloud."
+msgstr ""
+
+#: src/ServicesView.vala:292
+msgid "Déconnecter"
+msgstr ""
+
+#: src/ServicesView.vala:343
+msgid "Non installée"
+msgstr ""
+
+#: covalenced/ancs.py:188
+msgid "Effacer"
+msgstr ""
+
+#: covalenced/calls.py:30
+msgid "Appel sortant"
+msgstr ""
+
+#: covalenced/calls.py:31
+msgid "Appel en cours"
+msgstr ""
+
+#: covalenced/calls.py:233 covalenced/messages.py:86
+msgid "Numéro masqué"
+msgstr ""
+
+#: covalenced/calls.py:242
+#, python-brace-format
+msgid "Sur {device}"
+msgstr ""
+
+#: covalenced/calls.py:297
+msgid "Appel de démonstration"
+msgstr ""
+
+#: covalenced/components.py:39
+msgid "Comptes iCloud (Evolution Data Server)"
+msgstr ""
+
+#: covalenced/components.py:41
+msgid "Fiches de contact iCloud"
+msgstr ""
+
+#: covalenced/components.py:42
+msgid "Trousseau (mots de passe)"
+msgstr ""
+
+#: covalenced/components.py:81
+msgid "Bluetooth (BlueZ)"
+msgstr ""
+
+#: covalenced/components.py:91
+msgid "Liaison Python de GLib (PyGObject)"
+msgstr ""
+
+#: covalenced/components.py:99
+msgid "Outil du trousseau (secret-tool)"
+msgstr ""
+
+#: covalenced/components.py:103
+msgid "Evolution Data Server"
+msgstr ""
+
+#: covalenced/components.py:105
+msgid "Montage d'iCloud Drive et iCloud Photos (FUSE)"
+msgstr ""
+
+#: covalenced/components.py:113
+msgid "Son (PipeWire)"
+msgstr ""
+
+#: covalenced/components.py:115
+#, python-format
+msgid "PipeWire %d.%d ou plus récent pour les appels (installé : %d.%d)"
+msgstr ""
+
+#: covalenced/components.py:119
+msgid "Son et appels par Bluetooth (PipeWire)"
+msgstr ""
+
+#: covalenced/components.py:121
+msgid "Gestion des périphériques audio (WirePlumber)"
+msgstr ""
+
+#: covalenced/daemon.py:285
+#, python-brace-format
+msgid "Batterie de {device} faible"
+msgstr ""
+
+#: covalenced/daemon.py:286
+#, python-brace-format
+msgid "Il reste {level} %."
+msgstr ""
+
+#: covalenced/drive.py:249
+msgid ""
+"Apple refuse l'accès : la Protection avancée des données semble active sur "
+"ce compte. Désactivez-la sur l'iPhone (Réglages › votre nom › iCloud) puis "
+"réessayez."
+msgstr ""
+
+#: covalenced/drive.py:252
+msgid "Identifiant ou mot de passe refusé par Apple."
+msgstr ""
+
+#: covalenced/drive.py:254
+msgid "Code de vérification refusé ou expiré. Recommencez la connexion."
+msgstr ""
+
+#: covalenced/drive.py:255
+#, python-brace-format
+msgid "Connexion impossible : {error}"
+msgstr ""
+
+#: covalenced/drive.py:272
+#, python-brace-format
+msgid "{service} est connecté"
+msgstr ""
+
+#: covalenced/drive.py:301
+#, python-brace-format
+msgid "Connecter {service}"
+msgstr ""
+
+#: covalenced/drive.py:302
+#, python-brace-format
+msgid ""
+"Le <b>mot de passe pour app</b> ne suffit pas pour {service} : saisissez le "
+"mot de passe de votre <b>compte Apple</b>. Apple enverra ensuite un code sur "
+"votre iPhone. La <b>Protection avancée des données</b> doit être désactivée."
+msgstr ""
+
+#: covalenced/drive.py:307
+msgid "Identifiant Apple"
+msgstr ""
+
+#: covalenced/drive.py:309
+msgid "Mot de passe du compte Apple"
+msgstr ""
+
+#: covalenced/drive.py:312
+msgid ""
+"Le mot de passe va directement à rclone, qui le garde dans une configuration "
+"chiffrée dont la clé est dans votre trousseau. Il n'est jamais écrit en "
+"clair ni transmis ailleurs qu'à Apple."
+msgstr ""
+
+#: covalenced/drive.py:318
+#, python-brace-format
+msgid ""
+"{service} passe par rclone, un outil tiers qui se connecte comme le site "
+"icloud.com, avec le mot de passe de votre compte Apple. Apple ne propose pas "
+"officiellement cet accès : ses conditions d'utilisation d'iCloud limitent "
+"l'accès automatisé et l'autorisent à suspendre un compte. Il faut aussi "
+"désactiver la Protection avancée des données, ce qui réduit le chiffrement "
+"de bout en bout de vos données iCloud. Vous utilisez cette fonction à vos "
+"risques."
+msgstr ""
+
+#: covalenced/drive.py:327
+msgid "J'ai compris et j'accepte ces risques"
+msgstr ""
+
+#: covalenced/drive.py:328
+msgid "Se connecter"
+msgstr ""
+
+#: covalenced/drive.py:333
+msgid ""
+"Fonctionne grâce à <a href=\"https://github.com/rclone/rclone\">rclone</a> "
+"(Nick Craig-Wood et contributeurs, licence MIT)."
+msgstr ""
+
+#: covalenced/drive.py:347
+msgid "rclone est nécessaire"
+msgstr ""
+
+#: covalenced/drive.py:348
+#, python-brace-format
+msgid ""
+"{service} passe par rclone 1.69 ou plus récent, absent de ce système. "
+"Covalence peut télécharger la version officielle depuis <a href=\"https://"
+"rclone.org\">rclone.org</a> (licence MIT, environ 25 Mo) et vérifier son "
+"empreinte avant de l'installer pour vous seul."
+msgstr ""
+
+#: covalenced/drive.py:383
+#, python-brace-format
+msgid "Le téléchargement n'a pas abouti : {error}"
+msgstr ""
+
+#: covalenced/drive.py:392
+msgid "Code de vérification"
+msgstr ""
+
+#: covalenced/drive.py:393
+msgid "Saisissez le code à six chiffres affiché sur votre iPhone."
+msgstr ""
+
+#: covalenced/drive.py:399
+msgid "Valider"
+msgstr ""
+
+#: covalenced/drive.py:409 covalenced/drive.py:454
+msgid "Connexion à Apple…"
+msgstr ""
+
+#: covalenced/drive.py:469
+msgid "Vérification du code…"
+msgstr ""
+
+#: covalenced/drive.py:487
+#, python-brace-format
+msgid "Lecture d'{service}…"
+msgstr ""
+
+#: covalenced/drive.py:502
+#, python-brace-format
+msgid ""
+"Il apparaît dans Fichiers, dans le dossier « {folder} » (lecture seule)."
+msgstr ""
+
+#: covalenced/drive.py:504
+#, python-brace-format
+msgid "Il apparaît dans Fichiers, dans le dossier « {folder} »."
+msgstr ""
+
+#: covalenced/drive.py:506
+#, python-brace-format
+msgid ""
+"Le dossier « {service} » n'a pas pu être monté : voir « journalctl --user -u "
+"{unit} »."
+msgstr ""
+
+#: covalenced/drive.py:508
+#, python-brace-format
+msgid "{count} album"
+msgid_plural "{count} albums"
+msgstr[0] ""
+msgstr[1] ""
+
+#: covalenced/drive.py:509
+#, python-brace-format
+msgid "{count} élément à la racine"
+msgid_plural "{count} éléments à la racine"
+msgstr[0] ""
+msgstr[1] ""
+
+#: covalenced/drive.py:524
+#, python-brace-format
+msgid "{service} retiré de la configuration de Covalence."
+msgstr ""
+
+#: covalenced/headphones.py:62
+msgid "AirPods (1re génération)"
+msgstr ""
+
+#: covalenced/headphones.py:63
+msgid "AirPods (2e génération)"
+msgstr ""
+
+#: covalenced/headphones.py:64
+msgid "AirPods (3e génération)"
+msgstr ""
+
+#: covalenced/icloud.py:131
+msgid "iCloud a refusé le mot de passe pour app"
+msgstr ""
+
+#: covalenced/icloud.py:132
+msgid ""
+"Créez un nouveau mot de passe pour app puis reconnectez iCloud dans "
+"Covalence."
+msgstr ""
+
+#: covalenced/icloud.py:163
+msgid "iCloud n'est plus connecté"
+msgstr ""
+
+#: covalenced/icloud.py:164
+msgid "Reconnectez iCloud depuis Covalence."
+msgstr ""
+
+#: covalenced/link.py:262
+msgid "Appairage avec l'iPhone"
+msgstr ""
+
+#: covalenced/link.py:263
+#, python-brace-format
+msgid "Vérifiez que l'iPhone affiche le code {code}"
+msgstr ""
+
+#: covalenced/messages.py:548
+#, python-brace-format
+msgid "{n} nouveau message"
+msgid_plural "{n} nouveaux messages"
+msgstr[0] ""
+msgstr[1] ""
+
+#: covalenced/messages.py:839 covalenced/messages.py:947
+#: covalenced/store.py:229
+msgid "Inconnu"
+msgstr ""
+
+#: covalenced/rclone_fetch.py:42
+#, python-brace-format
+msgid "architecture non prise en charge : {arch}"
+msgstr ""
+
+#: covalenced/rclone_fetch.py:48
+msgid "adresse non sécurisée refusée"
+msgstr ""
+
+#: covalenced/rclone_fetch.py:57
+msgid "version de rclone illisible"
+msgstr ""
+
+#: covalenced/rclone_fetch.py:60
+msgid "la dernière version publiée est trop ancienne"
+msgstr ""
+
+#: covalenced/rclone_fetch.py:70
+#, python-brace-format
+msgid "{file} absent de SHA256SUMS"
+msgstr ""
+
+#: covalenced/rclone_fetch.py:100
+msgid "l'empreinte SHA-256 du fichier téléchargé ne correspond pas"
+msgstr ""
+
+#: covalenced/rclone_fetch.py:105
+msgid "binaire rclone absent de l'archive"
+msgstr ""
+
+#: covalenced/service.py:311
+msgid "écouteurs non connectés ou réglage refusé"
+msgstr ""
+
+#: covalenced/service.py:415
+msgid "contacts iCloud non disponibles"
+msgstr ""
+
+#: covalenced/signin.py:180 covalenced/signin.py:190
+msgid "Connecter iCloud"
+msgstr ""
+
+#: covalenced/signin.py:194
+msgid ""
+"Mail, calendriers, rappels et contacts iCloud apparaîtront dans les applis "
+"d'elementary. Utilisez un mot de passe pour app, jamais celui de votre "
+"identifiant Apple."
+msgstr ""
+
+#: covalenced/signin.py:202
+msgid "Identifiant Apple (adresse iCloud)"
+msgstr ""
+
+#: covalenced/signin.py:204
+msgid "Nom affiché dans vos e-mails"
+msgstr ""
+
+#: covalenced/signin.py:206
+msgid "Mot de passe pour app"
+msgstr ""
+
+#: covalenced/signin.py:210
+msgid "Créer un mot de passe pour app…"
+msgstr ""
+
+#: covalenced/signin.py:220
+msgid "Connecter"
+msgstr ""
+
+#: covalenced/signin.py:250
+msgid "Renseignez l'identifiant Apple et le mot de passe pour app."
+msgstr ""
+
+#: covalenced/signin.py:254
+msgid "Vérification auprès d'iCloud…"
+msgstr ""
+
+#: covalenced/signin.py:261
+msgid "Identifiant ou mot de passe pour app refusé par iCloud."
+msgstr ""
+
+#: covalenced/signin.py:265
+msgid ""
+"Calendriers OK, mais iCloud Mail refuse la connexion. iCloud Mail est-il "
+"activé sur ce compte ?"
+msgstr ""
+
+#: covalenced/signin.py:271
+msgid "iCloud est connecté. Ouvrez Mail ou Tâches."
+msgstr ""
+
+#: covalenced/signin.py:273
+#, python-brace-format
+msgid "Échec : {error}"
+msgstr ""

@@ -1,0 +1,6 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: 2026 Melvin Couwez
+[D-BUS Service]
+Name=io.github.melvincouwez.Covalence.Daemon
+Exec=@BINDIR@/covalenced
+SystemdService=covalenced.service

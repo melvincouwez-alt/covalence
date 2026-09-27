@@ -1,0 +1,143 @@
+<!doctype html>
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Melvin Couwez -->
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Covalence : votre iPhone et iCloud sur elementary OS</title>
+  <meta name="description" content="Covalence amène les notifications, messages, appels, contacts, AirPods de l'iPhone et iCloud sur elementary OS. Logiciel libre, sans serveur ni télémétrie.">
+  <link rel="icon" href="../icon.svg" type="image/svg+xml">
+  <link rel="alternate" hreflang="en" href="../">
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <header class="wrap bar">
+    <a class="brand" href="./"><img src="../icon.svg" alt="">Covalence</a>
+    <nav>
+      <a class="section" href="#iphone">iPhone</a>
+      <a class="section" href="#apple">Services Apple</a>
+      <a class="section" href="#installation">Installation</a>
+      <a href="https://github.com/melvincouwez-alt/covalence">GitHub</a>
+      <a class="lang" href="../" hreflang="en" lang="en">English</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="wrap hero">
+      <img class="icon" src="../icon.svg" alt="Icône de Covalence">
+      <div><span class="badge">Version 0.2 alpha</span></div>
+      <h1>Covalence</h1>
+      <p class="lead">Votre iPhone et votre compte Apple, chez eux sur elementary OS.</p>
+      <div class="actions">
+        <a class="button primary" href="https://github.com/melvincouwez-alt/covalence/releases/latest">Télécharger le .deb</a>
+        <a class="button" href="https://github.com/melvincouwez-alt/covalence">Code source</a>
+      </div>
+      <p class="small">Logiciel libre pour elementary OS 8 et 9. Pas de compte, pas de serveur, pas de télémétrie.</p>
+      <img class="shot" src="../screenshots/fr/device.png" width="1044" height="740" alt="Covalence affiche un iPhone connecté et ses fonctions">
+      <p class="small">Captures réalisées avec des données fictives.</p>
+    </div>
+
+    <section id="iphone" class="alt">
+      <div class="wrap">
+        <h2>Connexion iPhone</h2>
+        <p class="intro">En Bluetooth, directement entre votre ordinateur et votre iPhone.</p>
+        <div class="grid">
+          <div class="card"><h3>Notifications</h3><p>Toutes les notifications de l'iPhone sur votre bureau, avec leurs actions et l'icône de l'app qui les envoie. Vous choisissez les apps.</p></div>
+          <div class="card"><h3>Messages</h3><p>Lire vos conversations SMS, répondre à une personne, garder des brouillons, chercher. Supprimer dans Covalence sans toucher à l'iPhone.</p></div>
+          <div class="card"><h3>Téléphone</h3><p>Répondre et appeler avec le micro et les haut-parleurs de l'ordinateur. Clavier et journal d'appels.</p></div>
+          <div class="card"><h3>Contacts</h3><p>Les contacts de l'iPhone en Bluetooth, ou vos contacts iCloud, modifiables.</p></div>
+          <div class="card"><h3>AirPods</h3><p>Batterie de chaque écouteur et du boîtier, contrôle du bruit, détection de conversation et des oreilles.</p></div>
+          <div class="card"><h3>Lecture en cours</h3><p>Pochette, progression et volume de ce que joue l'iPhone, et un mini-lecteur au-dessus de Réglages. Lecture relance la musique de l'iPhone.</p></div>
+          <div class="card"><h3>Son et batterie</h3><p>Le son de l'iPhone sur vos haut-parleurs, sa batterie dans le panneau.</p></div>
+        </div>
+        <div class="pair">
+          <img src="../screenshots/fr/messages.png" width="1044" height="740" alt="Messages">
+          <img src="../screenshots/nowplaying.png" width="1044" height="740" alt="Lecture en cours">
+          <img src="../screenshots/notifications.png" width="1044" height="740" alt="Notifications de l'iPhone">
+          <img src="../screenshots/phone.png" width="1044" height="740" alt="Téléphone : clavier et journal d'appels">
+          <img src="../screenshots/headphones.png" width="1044" height="740" alt="Batterie et contrôle du bruit des AirPods">
+        </div>
+      </div>
+    </section>
+
+    <section id="apple">
+      <div class="wrap">
+        <h2>Connexion Services Apple</h2>
+        <p class="intro">Par Internet, entre votre ordinateur et iCloud, dans les apps que vous utilisez déjà.</p>
+        <div class="grid">
+          <div class="card"><h3>Courriel, agendas, rappels, contacts</h3><p>Ajoutés aux apps d'elementary par Evolution Data Server, avec un mot de passe pour app.</p></div>
+          <div class="card"><h3>iCloud Drive</h3><p>Un dossier dans Fichiers, grâce à <a href="https://rclone.org">rclone</a>.</p></div>
+          <div class="card"><h3>iCloud Photos</h3><p>Vos albums dans Fichiers, en lecture seule, grâce à rclone.</p></div>
+        </div>
+        <div class="pair">
+          <img src="../screenshots/services.png" width="1044" height="740" alt="Page Services Apple">
+          <img src="../screenshots/guide.png" width="1044" height="740" alt="Le guide intégré">
+        </div>
+        <p class="note"><strong>À propos d'iCloud Drive et Photos.</strong> rclone se connecte comme le site icloud.com, avec le mot de passe de votre compte Apple et la double authentification. Apple ne propose pas cet accès officiellement : ses conditions d'utilisation d'iCloud limitent l'accès automatisé et l'autorisent à suspendre un compte. Il faut désactiver la Protection avancée des données, ce qui réduit le chiffrement de bout en bout de vos données iCloud. Le jeton de connexion expire environ une fois par mois. À utiliser à vos risques.</p>
+      </div>
+    </section>
+
+    <section id="installation" class="alt">
+      <div class="wrap">
+        <h2>Installation</h2>
+        <ol class="steps">
+          <li>Téléchargez <a href="https://github.com/melvincouwez-alt/covalence/releases/latest"><code>covalence_0.2.0-1_amd64.deb</code></a>.</li>
+          <li>Double-cliquez dessus. Eddy sur elementary OS, ou l'App Center sur Ubuntu, installe Covalence et tout ce qu'il lui faut. En terminal : <code>sudo apt install ./covalence_*.deb</code></li>
+          <li>Fermez puis rouvrez votre session, puis ouvrez Covalence. L'assistant vous guide pour appairer l'iPhone et vous connecter à iCloud.</li>
+        </ol>
+        <p>Un composant manque plus tard ? Covalence l'affiche et l'installe en un clic. Un guide intégré, en français et en anglais, explique chaque étape (touche F1).</p>
+        <table>
+          <tr><th>Système</th><th>État</th></tr>
+          <tr><td>elementary OS 9</td><td>Tout fonctionne.</td></tr>
+          <tr><td>elementary OS 8</td><td>Tout sauf les appels (ils demandent PipeWire 1.4 ou plus récent).</td></tr>
+          <tr><td>Ubuntu 24.04 ou plus récent</td><td>Demande Granite 7.7 ou plus récent. Les appels demandent PipeWire 1.4 ou plus récent.</td></tr>
+        </table>
+      </div>
+    </section>
+
+    <section id="questions">
+      <div class="wrap">
+        <h2>Questions</h2>
+        <details><summary>Puis-je envoyer des iMessages ?</summary><p>Non. Le Bluetooth ne permet à un ordinateur que d'envoyer un SMS à une seule personne. Les réponses de groupe et les pièces jointes restent sur l'iPhone.</p></details>
+        <details><summary>Et le presse-papiers universel, Handoff ou AirDrop ?</summary><p>Impossible : il leur faut le chiffrement et la pile Wi-Fi d'Apple.</p></details>
+        <details><summary>Où vont mes messages ?</summary><p>Nulle part ailleurs que sur votre ordinateur. Covalence n'a pas de serveur et n'envoie aucune statistique. Lisez la <a href="https://github.com/melvincouwez-alt/covalence/blob/HEAD/docs/confidentialite.md">notice de confidentialité</a>.</p></details>
+        <details><summary>Mon iPhone ne voit pas l'ordinateur dans ses réglages Bluetooth.</summary><p>C'est normal pour ce type d'accessoire. Le guide montre comment appairer avec l'app gratuite nRF Connect.</p></details>
+      </div>
+    </section>
+
+    <section class="alt">
+      <div class="wrap who">
+        <h2>Fait par un passionné</h2>
+        <p>Je ne suis pas développeur. Je suis un passionné d'elementary OS avec quelques idées et un iPhone dans la poche, et je construis Covalence en « vibe coding » avec Claude, l'assistant d'Anthropic. Je décris ce que je veux, je teste tous les jours sur mon propre ordinateur, et on corrige ensemble. Le code est ouvert pour que les personnes qui s'y connaissent mieux puissent le lire, signaler les erreurs et aider. Signalements et conseils bienveillants sont les bienvenus.</p>
+        <p>Melvin Couwez</p>
+        <h3>Merci</h3>
+        <p>Covalence repose sur
+          <a href="https://github.com/rclone/rclone">rclone</a>,
+          <a href="https://github.com/librepods-org/librepods">LibrePods</a>,
+          <a href="https://github.com/bluez/bluez">BlueZ</a>,
+          <a href="https://gitlab.freedesktop.org/pipewire/pipewire">PipeWire</a>,
+          <a href="https://gitlab.freedesktop.org/pipewire/wireplumber">WirePlumber</a>,
+          <a href="https://gitlab.gnome.org/GNOME/evolution-data-server">Evolution Data Server</a>,
+          <a href="https://gitlab.gnome.org/GNOME/libsecret">libsecret</a>,
+          <a href="https://gitlab.gnome.org/GNOME/gtk">GTK</a>,
+          <a href="https://github.com/elementary/granite">Granite</a>,
+          <a href="https://gitlab.gnome.org/GNOME/vala">Vala</a> et
+          <a href="https://gitlab.gnome.org/GNOME/pygobject">PyGObject</a>.
+          Un merci particulier à l'équipe de LibrePods pour son travail de rétro-ingénierie sur les AirPods.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <p>Covalence est un logiciel libre sous <a href="https://github.com/melvincouwez-alt/covalence/blob/HEAD/LICENSE">licence GNU GPL version 3 ou ultérieure</a>, fourni sans aucune garantie.</p>
+      <p>Covalence est un projet indépendant, ni affilié à Apple Inc. ou à elementary, Inc., ni approuvé, sponsorisé ou soutenu par eux. Apple, iPhone, iCloud, iMessage, AirPods, AirPlay et Apple Music sont des marques d'Apple Inc., déposées aux États-Unis et dans d'autres pays et régions.</p>
+      <h3>Mentions légales</h3>
+      <p>Éditeur : Melvin Couwez, particulier, projet non commercial. Contact : <a href="https://github.com/melvincouwez-alt/covalence/issues">page Issues du projet</a>.</p>
+      <p>Hébergeur : GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis.</p>
+      <p>Ce site ne dépose aucun cookie et ne collecte aucune donnée. GitHub peut conserver des journaux techniques d'accès, voir <a href="https://docs.github.com/fr/site-policy/privacy-policies/github-general-privacy-statement">sa déclaration de confidentialité</a>. Pour l'application : <a href="https://github.com/melvincouwez-alt/covalence/blob/HEAD/docs/confidentialite.md">notice de confidentialité</a>.</p>
+    </div>
+  </footer>
+</body>
+</html>

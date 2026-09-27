@@ -1,0 +1,6 @@
+# Paths kept in the private repository only, never copied into the public one.
+# One path or glob per line, relative to the repository root.
+docs/dossier-de-conception.md
+traces/
+prototypes/__pycache__/
+prototypes/*.log

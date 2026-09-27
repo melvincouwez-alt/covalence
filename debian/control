@@ -1,0 +1,51 @@
+Source: covalence
+Section: utils
+Priority: optional
+Maintainer: Melvin Couwez <301110918+melvincouwez-alt@users.noreply.github.com>
+Build-Depends: debhelper-compat (= 13),
+               meson (>= 1.0),
+               valac,
+               libglib2.0-dev,
+               libgtk-4-dev,
+               libgranite-7-dev (>= 7.7),
+               python3,
+               gettext,
+               desktop-file-utils,
+               appstream
+Standards-Version: 4.7.0
+Homepage: https://github.com/melvincouwez-alt/covalence
+Rules-Requires-Root: no
+
+Package: covalence
+Architecture: any
+Depends: ${shlibs:Depends},
+         ${misc:Depends},
+         bluez,
+         bluez-obexd,
+         python3,
+         python3-gi,
+         gir1.2-glib-2.0,
+         gir1.2-gtk-4.0,
+         gir1.2-granite-7.0,
+         gir1.2-edataserver-1.2,
+         gir1.2-ebook-1.2,
+         gir1.2-ebookcontacts-1.2,
+         gir1.2-secret-1,
+         libsecret-tools,
+         evolution-data-server,
+         fuse3,
+         pipewire,
+         wireplumber,
+         libspa-0.2-bluetooth
+Recommends: heif-gdk-pixbuf
+Suggests: rclone (>= 1.69)
+Description: iPhone and iCloud companion for elementary OS
+ Covalence links an iPhone to the desktop over Bluetooth: notifications,
+ media controls, messages (MAP), contacts and call history (PBAP), calls
+ through PipeWire's hands-free gateway, battery, and AirPods controls.
+ .
+ It also connects iCloud mail, calendars, reminders and contacts through
+ Evolution Data Server, and mounts iCloud Drive and iCloud Photos with
+ rclone (1.69 or later).
+ .
+ Covalence is independent free software, not affiliated with Apple Inc.

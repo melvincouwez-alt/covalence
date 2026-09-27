@@ -1,0 +1,17 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: 2026 Melvin Couwez
+[Desktop Entry]
+Type=Application
+Name=Covalence
+GenericName=Phone Link
+GenericName[fr]=Lien avec le téléphone
+Comment=Use your iPhone and iCloud from elementary OS
+Comment[fr]=Utiliser un iPhone et iCloud depuis elementary OS
+Exec=@BINDIR@/@APP_ID@
+Icon=@APP_ID@
+Terminal=false
+Categories=Utility;Settings;GTK;
+Keywords=iPhone;Bluetooth;iCloud;notifications;calls;phone;
+Keywords[fr]=iPhone;Bluetooth;iCloud;notifications;appels;téléphone;
+StartupNotify=true
+X-GNOME-UsesNotifications=true

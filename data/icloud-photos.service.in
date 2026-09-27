@@ -1,0 +1,33 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: 2026 Melvin Couwez
+[Unit]
+Description=Covalence: iCloud Photos in Files (rclone mount, read-only)
+Documentation=file://@PKGDATADIR@/guide/en/09-apple.md
+After=graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+Type=notify
+# Defaults; Covalence's iCloud Photos options write their own values in photos.env
+# (the sign-in writes the real Pictures folder there, whatever its name).
+Environment="COVALENCE_PHOTOS_DIR=%h/Images/iCloud Photos"
+Environment=RCLONE_VFS_CACHE_MODE=full
+Environment=RCLONE_VFS_CACHE_MAX_SIZE=5G
+Environment=RCLONE_VFS_CACHE_MAX_AGE=168h
+Environment=RCLONE_DIR_CACHE_TIME=15m
+Environment=RCLONE_BWLIMIT=off
+EnvironmentFile=-%h/.config/covalence/photos.env
+ExecStartPre=/usr/bin/mkdir -p "${COVALENCE_PHOTOS_DIR}"
+# Always read-only: albums are folders, and "All Photos" holds the whole library.
+# The config is encrypted; its key comes from the keyring through secret-tool.
+ExecStart=@BINDIR@/covalence-rclone mount icloud-photos:PrimarySync "${COVALENCE_PHOTOS_DIR}" \
+    --read-only \
+    --config %h/.config/covalence/rclone.conf \
+    --password-command "secret-tool lookup application io.github.melvincouwez.Covalence kind rclone-config" \
+    --ask-password=false --volname "iCloud Photos"
+ExecStop=/usr/bin/fusermount3 -uz "${COVALENCE_PHOTOS_DIR}"
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=graphical-session.target

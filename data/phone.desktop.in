@@ -1,0 +1,17 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: 2026 Melvin Couwez
+[Desktop Entry]
+Type=Application
+Name=Téléphone
+Name[en]=Phone
+GenericName=Phone Calls
+GenericName[fr]=Appels téléphoniques
+Comment=Call and answer from your computer through your iPhone
+Comment[fr]=Appeler et répondre depuis l'ordinateur, par l'iPhone
+Exec=@BINDIR@/@APP_ID@.Phone
+Icon=@APP_ID@.Phone
+Terminal=false
+Categories=Network;Telephony;GTK;
+Keywords=phone;call;iPhone;dial;
+Keywords[fr]=téléphone;appel;iPhone;composer;numéro;
+StartupNotify=true

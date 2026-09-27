@@ -1,0 +1,17 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: 2026 Melvin Couwez
+[Desktop Entry]
+Type=Application
+Name=Headphones
+Name[fr]=Écouteurs
+GenericName=Headphone Settings
+GenericName[fr]=Réglages des écouteurs
+Comment=Battery, noise control and settings of your AirPods
+Comment[fr]=Batterie, contrôle du bruit et réglages de vos AirPods
+Exec=@BINDIR@/@APP_ID@.Headphones
+Icon=@APP_ID@.Headphones
+Terminal=false
+Categories=Settings;HardwareSettings;GTK;
+Keywords=AirPods;headphones;earbuds;Bluetooth;battery;noise cancellation;
+Keywords[fr]=AirPods;écouteurs;casque;Bluetooth;batterie;réduction du bruit;transparence;
+StartupNotify=true

@@ -1,0 +1,11 @@
+#!/usr/bin/make -f
+# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: 2026 Melvin Couwez
+
+%:
+	dh $@ --buildsystem=meson
+
+# User units: only covalenced is enabled for every user (postinst). The iCloud
+# Drive and iCloud Photos mounts are enabled by Covalence per user, after sign-in.
+override_dh_installsystemduser:
+	dh_installsystemduser --no-enable

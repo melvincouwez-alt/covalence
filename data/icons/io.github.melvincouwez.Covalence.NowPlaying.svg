@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 Melvin Couwez -->
+<defs>
+<radialGradient id="sh" cx="64" cy="118" r="50" gradientTransform="matrix(1 0 0 .12 0 103.8)" gradientUnits="userSpaceOnUse"><stop offset="0"/><stop offset="1" stop-opacity="0"/></radialGradient>
+<radialGradient id="vinyl" cx="64" cy="60" r="52" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#4d4d4d"/><stop offset="1" stop-color="#1a1a1a"/></radialGradient>
+<linearGradient id="orange" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffc27d"/><stop offset="1" stop-color="#f37329"/></linearGradient>
+<linearGradient id="shine" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".22"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+<linearGradient id="alu" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fafafa"/><stop offset="1" stop-color="#abacae"/></linearGradient>
+</defs>
+<ellipse cx="64" cy="116" rx="48" ry="6" fill="url(#sh)" opacity=".3"/>
+<!-- record -->
+<circle cx="64" cy="60" r="52" fill="url(#vinyl)" stroke="#000" stroke-opacity=".6" stroke-width="1.5"/>
+<g fill="none" stroke="#fff" stroke-opacity=".07" stroke-width="1.5"><circle cx="64" cy="60" r="44"/><circle cx="64" cy="60" r="38"/><circle cx="64" cy="60" r="32"/><circle cx="64" cy="60" r="26"/></g>
+<path d="M28 24 A52 52 0 0 1 100 24 L64 60 Z" fill="url(#shine)"/>
+<path d="M28 96 A52 52 0 0 0 100 96 L64 60 Z" fill="url(#shine)" opacity=".6"/>
+<!-- label with a pair of electrons -->
+<circle cx="64" cy="60" r="18" fill="url(#orange)" stroke="#a62100" stroke-opacity=".4"/>
+<circle cx="64" cy="54" r="3" fill="#fff"/><circle cx="64" cy="66" r="3" fill="#fff"/>
+<!-- tonearm -->
+<circle cx="108" cy="16" r="7" fill="url(#alu)" stroke="#7e8087" stroke-opacity=".6"/>
+<path d="M108 16 L98 62 L86 74" fill="none" stroke="url(#alu)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="78" y="70" width="12" height="9" rx="2" transform="rotate(45 84 74)" fill="#555"/>
+</svg>

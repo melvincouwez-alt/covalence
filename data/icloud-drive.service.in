@@ -1,0 +1,31 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: 2026 Melvin Couwez
+[Unit]
+Description=Covalence: iCloud Drive in Files (rclone mount)
+Documentation=file://@PKGDATADIR@/guide/en/09-apple.md
+After=graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+Type=notify
+# Defaults; Covalence's iCloud Drive options write their own values in drive.env.
+Environment="COVALENCE_DRIVE_DIR=%h/iCloud Drive"
+Environment=RCLONE_VFS_CACHE_MODE=full
+Environment=RCLONE_VFS_CACHE_MAX_SIZE=5G
+Environment=RCLONE_VFS_CACHE_MAX_AGE=168h
+Environment=RCLONE_DIR_CACHE_TIME=5m
+Environment=RCLONE_READ_ONLY=false
+Environment=RCLONE_BWLIMIT=off
+EnvironmentFile=-%h/.config/covalence/drive.env
+ExecStartPre=/usr/bin/mkdir -p "${COVALENCE_DRIVE_DIR}"
+# The config is encrypted; its key comes from the keyring through secret-tool.
+ExecStart=@BINDIR@/covalence-rclone mount icloud: "${COVALENCE_DRIVE_DIR}" \
+    --config %h/.config/covalence/rclone.conf \
+    --password-command "secret-tool lookup application io.github.melvincouwez.Covalence kind rclone-config" \
+    --ask-password=false --volname "iCloud Drive"
+ExecStop=/usr/bin/fusermount3 -uz "${COVALENCE_DRIVE_DIR}"
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=graphical-session.target

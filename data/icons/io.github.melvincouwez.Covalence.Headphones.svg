@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128"><defs><radialGradient id="sh" cx="64" cy="118" r="50" gradientTransform="matrix(1 0 0 .12 0 103.8)" gradientUnits="userSpaceOnUse"><stop offset="0"/><stop offset="1" stop-opacity="0"/></radialGradient>
+<linearGradient id="grape" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d1a8f4"/><stop offset=".5" stop-color="#a56de2"/><stop offset="1" stop-color="#452981"/></linearGradient>
+<linearGradient id="tip" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fafafa"/><stop offset="1" stop-color="#abacae"/></linearGradient>
+<linearGradient id="hl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".85"/><stop offset=".3" stop-color="#fff" stop-opacity=".2"/><stop offset="1" stop-color="#fff" stop-opacity=".25"/></linearGradient></defs>
+<ellipse cx="64" cy="112" rx="48" ry="6" fill="url(#sh)" opacity=".35"/>
+<!-- left earbud, seen from the side: round shell, short nozzle and silicone tip to the right -->
+<g transform="translate(40 80) rotate(-70) scale(.88)">
+ <path d="M14 -9h8a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3h-8z" fill="#7e5bb3" stroke="#452981" stroke-opacity=".7" stroke-width="1.2"/>
+ <path d="M24 -13c7 0 11 5 11 13s-4 13-11 13c-3 0-4-3-4-13s1-13 4-13z" fill="url(#tip)" stroke="#555761" stroke-opacity=".6" stroke-width="1.2"/>
+ <ellipse cx="0" cy="0" rx="22" ry="26" fill="url(#grape)" stroke="#452981" stroke-opacity=".75" stroke-width="1.3"/>
+ <ellipse cx="0" cy="0" rx="20.6" ry="24.6" fill="none" stroke="url(#hl)" stroke-width="1.3"/>
+ <ellipse cx="-3" cy="2" rx="10" ry="13" fill="#fff" opacity=".18"/>
+ <circle cx="-3" cy="-1" r="3" fill="#fff" opacity=".6"/>
+</g>
+<!-- right earbud, mirrored -->
+<g transform="translate(86 50) rotate(20) scale(-.88 .88)">
+ <path d="M14 -9h8a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3h-8z" fill="#7e5bb3" stroke="#452981" stroke-opacity=".7" stroke-width="1.2"/>
+ <path d="M24 -13c7 0 11 5 11 13s-4 13-11 13c-3 0-4-3-4-13s1-13 4-13z" fill="url(#tip)" stroke="#555761" stroke-opacity=".6" stroke-width="1.2"/>
+ <ellipse cx="0" cy="0" rx="22" ry="26" fill="url(#grape)" stroke="#452981" stroke-opacity=".75" stroke-width="1.3"/>
+ <ellipse cx="0" cy="0" rx="20.6" ry="24.6" fill="none" stroke="url(#hl)" stroke-width="1.3"/>
+ <ellipse cx="-3" cy="2" rx="10" ry="13" fill="#fff" opacity=".18"/>
+ <circle cx="-3" cy="-1" r="3" fill="#fff" opacity=".6"/>
+</g>
+</svg>

@@ -1,0 +1,18 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: 2026 Melvin Couwez
+[Desktop Entry]
+Type=Application
+Name=Messages
+Name[fr]=Messages
+GenericName=Text Messages
+GenericName[fr]=Messages texte
+Comment=Read and answer SMS and iMessages received on your iPhone
+Comment[fr]=Lire et répondre aux SMS et iMessages de l'iPhone
+Exec=@BINDIR@/@APP_ID@.Messages
+Icon=@APP_ID@.Messages
+Terminal=false
+Categories=Network;InstantMessaging;GTK;
+Keywords=SMS;iMessage;iPhone;message;chat;
+Keywords[fr]=SMS;iMessage;iPhone;message;conversation;texto;
+StartupNotify=true
+X-GNOME-UsesNotifications=true

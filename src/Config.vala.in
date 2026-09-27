@@ -1,0 +1,10 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 Melvin Couwez
+namespace Covalence.Config {
+    public const string APP_ID = "@APP_ID@";
+    public const string VERSION = "@VERSION@";
+    public const string PKGDATADIR = "@PKGDATADIR@";
+    public const string BINDIR = "@BINDIR@";
+    public const string GETTEXT_PACKAGE = "@GETTEXT_PACKAGE@";
+    public const string LOCALEDIR = "@LOCALEDIR@";
+}

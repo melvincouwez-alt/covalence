@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SPDX-License-Identifier: CC0-1.0 -->
+<!-- SPDX-FileCopyrightText: 2026 Melvin Couwez -->
+<component type="desktop-application">
+  <id>@APP_ID@</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <name>Covalence</name>
+  <summary>Use your iPhone and iCloud from elementary OS</summary>
+  <summary xml:lang="fr">Utiliser un iPhone et iCloud depuis elementary OS</summary>
+  <description>
+    <p>Covalence brings notifications, messages, calls, contacts and music from your iPhone, and your iCloud mail, calendars, reminders, contacts and files, to elementary OS. It also shows the battery and settings of AirPods paired with the computer. Everything goes directly between your computer, your iPhone and Apple: there is no Covalence server.</p>
+    <p xml:lang="fr">Covalence apporte à elementary OS les notifications, messages, appels, contacts et la musique de votre iPhone, ainsi que votre courriel, vos agendas, rappels, contacts et fichiers iCloud. Elle affiche aussi la batterie et les réglages des AirPods jumelés à l'ordinateur. Tout passe directement entre votre ordinateur, votre iPhone et Apple : il n'y a pas de serveur Covalence.</p>
+    <p>Covalence is an independent free software project. It is not affiliated with, endorsed, sponsored or approved by Apple Inc. Apple, iPhone, iCloud, iMessage, Apple Music and AirPods are trademarks of Apple Inc., registered in the U.S. and other countries and regions. AirPods support follows the protocol documented by the LibrePods project; thanks to its creator and contributors.</p>
+    <p xml:lang="fr">Covalence est un projet libre et indépendant. Elle n'est ni affiliée à Apple Inc., ni approuvée, sponsorisée ou soutenue par Apple Inc. Apple, iPhone, iCloud, iMessage, Apple Music et AirPods sont des marques d'Apple Inc., déposées aux États-Unis et dans d'autres pays et régions. La prise en charge des AirPods suit le protocole documenté par le projet LibrePods ; merci à son créateur et à ses contributeurs.</p>
+  </description>
+  <launchable type="desktop-id">@APP_ID@.desktop</launchable>
+  <developer id="io.github.melvincouwez">
+    <name>Melvin Couwez</name>
+  </developer>
+  <url type="homepage">https://github.com/melvincouwez-alt/covalence</url>
+  <url type="vcs-browser">https://github.com/melvincouwez-alt/covalence</url>
+  <content_rating type="oars-1.1"/>
+  <releases>
+    <release version="@VERSION@" date="2026-09-27" type="development">
+      <description>
+        <p>First public alpha release.</p>
+        <p xml:lang="fr">Première version alpha publique.</p>
+      </description>
+    </release>
+  </releases>
+</component>

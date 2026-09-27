@@ -1,0 +1,13 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: 2026 Melvin Couwez
+set -e
+
+if [ "$1" = "purge" ]; then
+    # Leftover link if the unit file was already gone when prerm ran.
+    rm -f /etc/systemd/user/graphical-session.target.wants/covalenced.service
+fi
+
+#DEBHELPER#
+
+exit 0

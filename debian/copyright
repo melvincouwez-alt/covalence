@@ -1,0 +1,37 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Covalence
+Source: https://github.com/melvincouwez-alt/covalence
+
+Files: *
+Copyright: 2026 Melvin Couwez
+License: GPL-3.0-or-later
+
+Files: covalenced/headphones.py
+Copyright: 2026 Melvin Couwez
+           2025 LibrePods contributors
+Comment: The AirPods protocol (AAP over L2CAP, handshake, battery, ear detection,
+ listening modes, conversation awareness) follows the work and documentation
+ of LibrePods (https://github.com/librepods-org/librepods), GPL-3.0-or-later.
+ Many thanks to Kavish Devar and the LibrePods contributors.
+License: GPL-3.0-or-later
+
+Files: data/icons/io.github.melvincouwez.Covalence.svg
+Copyright: 2026 Melvin Couwez
+           elementary, Inc.
+Comment: The display and the phone come from the elementary icon theme
+ (https://github.com/elementary/icons), GPL-3.0.
+License: GPL-3.0-or-later
+
+License: GPL-3.0-or-later
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ .
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ .
+ On Debian systems, the full text of the GNU General Public License
+ version 3 can be found in "/usr/share/common-licenses/GPL-3".

@@ -1,0 +1,18 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: 2026 Melvin Couwez
+[Unit]
+Description=Covalence daemon (iPhone link: notifications, media, calls, battery, iCloud)
+Documentation=file://@PKGDATADIR@
+PartOf=graphical-session.target
+After=graphical-session.target pipewire.service wireplumber.service
+
+[Service]
+Type=dbus
+BusName=io.github.melvincouwez.Covalence.Daemon
+ExecStart=@BINDIR@/covalenced
+Restart=on-failure
+RestartSec=5
+# Logs never contain notification text, phone numbers or secrets.
+
+[Install]
+WantedBy=graphical-session.target

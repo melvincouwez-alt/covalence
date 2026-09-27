@@ -1,0 +1,11 @@
+traces/
+prototypes/*.log
+__pycache__/
+.claude/
+build*/
+dist/
+debian/.debhelper/
+debian/covalence/
+debian/files
+debian/*.substvars
+debian/debhelper-build-stamp

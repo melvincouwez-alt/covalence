@@ -1,0 +1,6 @@
+tar-ignore
+tar-ignore = "build"
+tar-ignore = "build-deb"
+tar-ignore = "traces"
+tar-ignore = ".claude"
+tar-ignore = "__pycache__"

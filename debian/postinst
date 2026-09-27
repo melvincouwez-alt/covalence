@@ -1,0 +1,13 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: 2026 Melvin Couwez
+set -e
+
+if [ "$1" = "configure" ]; then
+    # Start the Covalence daemon with every graphical session.
+    systemctl --global enable covalenced.service >/dev/null 2>&1 || true
+fi
+
+#DEBHELPER#
+
+exit 0
