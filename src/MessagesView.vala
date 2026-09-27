@@ -333,6 +333,7 @@ namespace Covalence {
             var sidebar_title = new Gtk.Label (_("Conversations")) { xalign = 0, hexpand = true };
             sidebar_title.add_css_class (Granite.HeaderLabel.Size.H4.to_string ());
             sidebar_header.append (sidebar_title);
+            sidebar_header.append (build_sync_button ());
             sidebar_header.append (new_button);
 
             search = new Gtk.SearchEntry () {
@@ -988,6 +989,77 @@ namespace Covalence {
             }
         }
 
+        private static bool warn_on_read_full () {
+            var prefs = new KeyFile ();
+            try {
+                prefs.load_from_file (prefs_path (), KeyFileFlags.NONE);
+                return prefs.get_boolean ("messages", "warn-on-read-full");
+            } catch (Error e) {
+                return true;
+            }
+        }
+
+        private static void stop_warning_on_read_full () {
+            var prefs = new KeyFile ();
+            try {
+                prefs.load_from_file (prefs_path (), KeyFileFlags.NONE);
+            } catch (Error e) {
+                // first choice
+            }
+            prefs.set_boolean ("messages", "warn-on-read-full", false);
+            try {
+                DirUtils.create_with_parents (Path.get_dirname (prefs_path ()), 0700);
+                prefs.save_to_file (prefs_path ());
+            } catch (Error e) {
+                warning ("cannot save the read warning choice: %s", e.message);
+            }
+        }
+
+        /* The iPhone lists only the first 120 characters of an unread message; the whole text
+           comes by downloading it, which marks it read on the iPhone. */
+        private void confirm_read_full (string id, Gtk.Button button) {
+            if (!warn_on_read_full ()) {
+                read_full.begin (id, button);
+                return;
+            }
+            var dialog = new Granite.MessageDialog.with_image_from_icon_name (
+                _("Lire le message en entier ?"),
+                _("L'iPhone ne donne que les 120 premiers caractères d'un message non lu. Pour "
+                  + "récupérer la suite, Covalence doit le télécharger : le message passera alors "
+                  + "en lu sur l'iPhone."),
+                Config.APP_ID + ".Messages", Gtk.ButtonsType.CANCEL) {
+                transient_for = get_root () as Gtk.Window,
+                modal = true
+            };
+            var quiet = new Gtk.CheckButton.with_label (_("Ne plus afficher"));
+            dialog.custom_bin.append (quiet);
+            var go = dialog.add_button (_("Tout lire"), Gtk.ResponseType.ACCEPT);
+            go.add_css_class (Granite.CssClass.SUGGESTED);
+            dialog.response.connect ((response) => {
+                var accepted = response == Gtk.ResponseType.ACCEPT;
+                if (accepted && quiet.active) {
+                    stop_warning_on_read_full ();
+                }
+                dialog.destroy ();
+                if (accepted) {
+                    read_full.begin (id, button);
+                }
+            });
+            dialog.present ();
+        }
+
+        private async void read_full (string id, Gtk.Button button) {
+            button.sensitive = false;
+            button.label = _("Récupération…");
+            var ok = yield daemon.call ("ReadFullText", new Variant ("(s)", id));
+            if (!ok) {
+                button.sensitive = true;
+                button.label = _("Tout lire");
+                toast.title = _("Texte complet indisponible pour l'instant");
+                toast.send_notification ();
+            }
+        }
+
         /* A reaction leaves as an SMS in the iPhone's words: say so until told not to. */
         private void react_to (string id, string emoji) {
             if (!warn_on_reaction ()) {
@@ -1028,7 +1100,65 @@ namespace Covalence {
             }
         }
 
+        /* A reaction to a message Covalence does not have (sent from the iPhone): one short line. */
+        private Gtk.Widget reaction_note (VariantDict d) {
+            var note = new Gtk.Label (dict_string (d, "note")) {
+                halign = Gtk.Align.CENTER,
+                wrap = true,
+                justify = Gtk.Justification.CENTER,
+                margin_top = 6,
+                margin_bottom = 2,
+                tooltip_text = long_time (dict_int64 (d, "time"))
+            };
+            note.add_css_class (Granite.CssClass.DIM);
+            note.add_css_class (Granite.CssClass.SMALL);
+            return note;
+        }
+
+        /* Sync: list the iPhone's messages again, full texts, contacts and calls. */
+        private Gtk.Widget build_sync_button () {
+            var button = new Gtk.Button.from_icon_name ("view-refresh-symbolic") {
+                tooltip_text = _("Synchroniser avec l'iPhone")
+            };
+            button.add_css_class ("flat");
+            var spinner = new Gtk.Spinner () {
+                spinning = false,
+                tooltip_text = _("Synchronisation…"),
+                width_request = 16,
+                height_request = 16
+            };
+            var stack = new Gtk.Stack () {
+                transition_type = Gtk.StackTransitionType.CROSSFADE,
+                valign = Gtk.Align.CENTER
+            };
+            stack.add_named (button, "button");
+            stack.add_named (spinner, "spinner");
+            button.clicked.connect (() => run_sync.begin (stack, spinner));
+            return stack;
+        }
+
+        private async void run_sync (Gtk.Stack stack, Gtk.Spinner spinner) {
+            stack.visible_child_name = "spinner";
+            spinner.spinning = true;
+            try {
+                var count = yield daemon.sync_all ();
+                toast.title = count == 0 ? _("Synchronisé : aucun nouveau message")
+                    : ngettext ("Synchronisé : %u nouveau message", "Synchronisé : %u nouveaux messages",
+                                count).printf (count);
+            } catch (Error e) {
+                DBusError.strip_remote_error (e);
+                toast.title = _("Synchronisation impossible : %s").printf (e.message);
+            }
+            toast.send_notification ();
+            spinner.spinning = false;
+            stack.visible_child_name = "button";
+            yield reload_threads ();
+        }
+
         private Gtk.Widget bubble (VariantDict d, bool outgoing, string? sender, bool follows) {
+            if (dict_string (d, "note") != "") {
+                return reaction_note (d);
+            }
             var body = dict_string (d, "body");
             var complete = dict_bool (d, "complete");
             var label = new Gtk.Label (linkify (complete ? body : body + "…")) {
@@ -1163,7 +1293,118 @@ namespace Covalence {
                 line.append (drop);
                 column.append (line);
             }
-            return column;
+            if (outgoing && dict_string (d, "source") == "map") {
+                // The iPhone lists it among its sent messages: Covalence has checked it left.
+                var sent = new Gtk.Image.from_icon_name ("object-select-symbolic") {
+                    pixel_size = 12,
+                    halign = Gtk.Align.END,
+                    margin_end = 6,
+                    tooltip_text = _("Envoyé : l'iPhone confirme l'envoi")
+                };
+                sent.add_css_class ("sent-check");
+                sent.update_property (Gtk.AccessibleProperty.LABEL, _("Envoyé"), -1);
+                column.append (sent);
+            }
+            if (!outgoing && !complete && dict_string (d, "source") == "map") {
+                var more = new Gtk.Button.with_label (_("Tout lire")) {
+                    halign = Gtk.Align.START,
+                    tooltip_text = _("Récupérer le texte complet (le message passera en lu sur l'iPhone)")
+                };
+                more.add_css_class ("flat");
+                more.add_css_class (Granite.CssClass.SMALL);
+                more.clicked.connect (() => confirm_read_full (id, more));
+                column.append (more);
+            }
+            if (status == "sending") {
+                return column;
+            }
+            // Hover: reactions (received messages) with Copy and Delete below, beside the bubble.
+            var can_react = !outgoing && current_can_send && !current_group && status != "failed"
+                && daemon.get_bool ("ReactionsSend");
+            var tools = hover_tools (id, body, label, can_react);
+            var row = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 6) {
+                halign = column.halign,
+                margin_top = column.margin_top
+            };
+            column.margin_top = 0;
+            if (outgoing) {
+                row.append (tools);
+                row.append (column);
+            } else {
+                row.append (column);
+                row.append (tools);
+            }
+            var motion = new Gtk.EventControllerMotion ();
+            motion.enter.connect (() => {
+                tools.opacity = 1;
+                tools.can_target = true;
+            });
+            motion.leave.connect (() => {
+                tools.opacity = 0;
+                tools.can_target = false;
+            });
+            row.add_controller (motion);
+            return row;
+        }
+
+        private Gtk.Widget hover_tools (string id, string body, Gtk.Widget bubble, bool can_react) {
+            var tools = new Gtk.Box (Gtk.Orientation.VERTICAL, 2) {
+                valign = Gtk.Align.CENTER,
+                opacity = 0,
+                can_target = false
+            };
+            tools.add_css_class ("hover-tools");
+            if (can_react) {
+                var reactions = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0);
+                reactions.add_css_class ("reaction-strip");
+                foreach (var emoji in QUICK_REACTIONS) {
+                    var button = new Gtk.Button.with_label (emoji) {
+                        tooltip_text = _("Réagir %s").printf (emoji)
+                    };
+                    button.add_css_class ("flat");
+                    button.add_css_class ("reaction-choice");
+                    button.clicked.connect (() => react_to (id, button.label));
+                    reactions.append (button);
+                }
+                var more = new Gtk.Button.from_icon_name ("list-add-symbolic") {
+                    tooltip_text = _("Autre emoji…")
+                };
+                more.add_css_class ("flat");
+                more.add_css_class ("reaction-choice");
+                more.clicked.connect (() => {
+                    var chooser = new Gtk.EmojiChooser ();
+                    chooser.set_parent (bubble);
+                    chooser.emoji_picked.connect ((emoji) => react_to (id, emoji));
+                    chooser.closed.connect (() => Idle.add (() => {
+                        chooser.unparent ();
+                        return Source.REMOVE;
+                    }));
+                    chooser.popup ();
+                });
+                reactions.append (more);
+                tools.append (reactions);
+            }
+            var actions = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 0) {
+                halign = can_react ? Gtk.Align.START : Gtk.Align.CENTER
+            };
+            var copy = new Gtk.Button.from_icon_name ("edit-copy-symbolic") { tooltip_text = _("Copier") };
+            copy.add_css_class ("flat");
+            copy.add_css_class (Granite.CssClass.SMALL);
+            copy.clicked.connect (() => {
+                bubble.get_clipboard ().set_text (body);
+                toast.title = _("Copié");
+                toast.send_notification ();
+            });
+            var remove = new Gtk.Button.from_icon_name ("user-trash-symbolic") {
+                tooltip_text = _("Supprimer de Covalence…")
+            };
+            remove.add_css_class ("flat");
+            remove.add_css_class (Granite.CssClass.SMALL);
+            remove.clicked.connect (() => confirm_delete_message (id));
+            actions.append (copy);
+            actions.append (remove);
+            tools.append (actions);
+            return tools;
         }
 
         // --- compose -----------------------------------------------------------------

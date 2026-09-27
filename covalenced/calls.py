@@ -51,6 +51,7 @@ class Calls:
         self.on_calls = None  # callable() when calls, audio route or mute change
         self.on_started = None  # callable(path) when a call starts ringing out or is answered
         self.on_show = None  # callable() to bring the call window up
+        self.ringer = None  # sounds.Sounds: the ringtone chosen in Réglages
         self.started = {}  # call path -> monotonic time it became active
         self.transport = {}  # gateway path -> {"State", "RejectSCO"}
         # org.pipewire.Telephony first shipped in PipeWire 1.4;
@@ -244,7 +245,8 @@ class Calls:
             actions = [("answer", pgettext("call", "Répondre")), ("hangup", _("Refuser"))]
             hints = {"urgency": GLib.Variant("y", 2),
                      "category": GLib.Variant("s", "call.incoming"),
-                     "resident": GLib.Variant("b", True)}
+                     "resident": GLib.Variant("b", True),
+                     "suppress-sound": GLib.Variant("b", True)}
             timeout = 0
         else:
             actions = [("show", _("Afficher")), ("hangup", _("Raccrocher"))]
@@ -252,10 +254,23 @@ class Calls:
                      "resident": GLib.Variant("b", True),
                      "suppress-sound": GLib.Variant("b", True)}
             timeout = 0
+        self._update_ring()
         self.notifications[path] = self.notifier.notify(
             f"Covalence ({self.device_name})", "io.github.melvincouwez.Covalence.Phone", summary, body, actions, hints,
             replaces=self.notifications.get(path, 0), timeout=timeout,
             on_action=lambda key, p=path: self._on_action(p, key))
+
+    def _update_ring(self):
+        """Ring while a call is incoming (not a second call waiting during one), unless the
+        iPhone already rings in-band: its ringtone then comes over the hands-free audio."""
+        if self.ringer is None:
+            return
+        incoming = any(c.get("State") == "incoming" for c in self.calls.values())
+        in_band = any(t.get("State") == "active" for t in self.transport.values())
+        if incoming and not in_band:
+            self.ringer.start_ring()
+        else:
+            self.ringer.stop_ring()
 
     def _on_action(self, path, key):
         if key in ("show", "default"):
@@ -280,6 +295,7 @@ class Calls:
         self.transport.setdefault(path, {}).update(changed)
         if "State" in changed:
             log(f"appels : audio {'sur ce PC' if changed['State'] == 'active' else 'hors du PC'}")
+            self._update_ring()
         self._changed()
 
     def _changed(self):
@@ -435,6 +451,9 @@ class Calls:
 
     def _call_gone(self, path, keep_record=False):
         self.notifier.close(self.notifications.pop(path, 0))
+        if self.ringer is not None and not any(
+                p != path and c.get("State") == "incoming" for p, c in self.calls.items()):
+            self.ringer.stop_ring()
         self.started.pop(path, None)
         if not any(p != path and c.get("State") in STATE_LABELS for p, c in self.calls.items()):
             if path in self.demo:

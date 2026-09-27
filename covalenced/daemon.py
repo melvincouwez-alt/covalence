@@ -22,6 +22,8 @@ from .notifications import Notifications
 from .nowplaying import NowPlaying
 from .mpris import MprisPlayer
 from .service import Service
+from .sounds import Sounds
+from .updates import Updates
 from .i18n import _
 from .util import Notifier, log
 
@@ -35,6 +37,7 @@ class Daemon:
         self.system = Gio.bus_get_sync(Gio.BusType.SYSTEM)
         self.config = Config()
         self.notifier = Notifier(self.session)
+        self.sounds = Sounds(self.config)
         self.battery_warned = set()
         self.battery_note = 0
         self.refresh_pending = False
@@ -42,6 +45,7 @@ class Daemon:
         self.link = None
         self.service = Service(self.session, self)
         self.calls = Calls(self.session, self.system, self.notifier, self.link_changed)
+        self.calls.ringer = self.sounds
         self.icloud = ICloud(self.notifier, self.link_changed)
         self.mpris = MprisPlayer(self.session, "iPhone")
         self.messages = Messages(self.session, self.notifier, self)
@@ -56,6 +60,7 @@ class Daemon:
         self.contact_book = ContactBook(self.config, self._contacts_changed)
         self.headphones = Headphones(self.system, self.session, self.config, self._headphones_changed)
         self.audio = PhoneAudio(self.system, self.config, self.link_changed)
+        self.updates = Updates(self.config, self.notifier, self.link_changed)
         self.link = Link(self.system, self.notifier, self.config, self)
         self.now_playing.attach(self.link)
         if self.config.module_enabled("calls"):
@@ -91,6 +96,7 @@ class Daemon:
             "MicMuted": self.calls.muted,
             "MessagesSend": self.messages.send_state(),
             "ReactionsSend": self.messages.reactions_enabled(),
+            "OneTimeCodes": self.messages.code_mode(),
             "ContactsState": self.messages.contacts_state,
             "UnreadMessages": self.messages.unread_total() if self.config.module_enabled("messages") else 0,
             "MissedCalls": self.messages.missed_unseen() if self.config.module_enabled("messages") else 0,
@@ -99,7 +105,11 @@ class Daemon:
             "PhoneAudio": self.audio.state(),
             "PhoneAudioOutput": self.audio.output,
             "Modules": self.config.modules(),
+            "AlphaFeatures": self.config.alpha_features(),
+            "FetchUnread": self.config.boolean("messages", "fetch_unread"),
+            "Sounds": self.sounds.settings(),
             "NowPlaying": self.now_playing.state(),
+            "Update": self.updates.state(),
         }
 
     def link_changed(self):
@@ -150,8 +160,16 @@ class Daemon:
 
     # --- iPhone notifications (ANCS hooks) ------------------------------------------
 
-    def notification_seen(self, uid, app_id, app_name, title, body, category):
-        return self.notifications.seen(uid, app_id, app_name, title, body, category)
+    def notification_seen(self, uid, app_id, app_name, title, body, category, actions=None):
+        return self.notifications.seen(uid, app_id, app_name, title, body, category, actions)
+
+    def notification_action(self, uid, key):
+        """Alpha « ancs_actions »: the iPhone's positive/negative action, from the app."""
+        ancs = self.link.ancs if self.link else None
+        if not ancs or key not in ("positive", "negative"):
+            return False
+        ancs.perform_action(uid, key)
+        return True
 
     def notification_app_named(self, app_id, name):
         self.notifications.app_named(app_id, name)
@@ -235,6 +253,33 @@ class Daemon:
         self.service.headphones_changed()
         return False
 
+    def contacts_changed(self):
+        self._contacts_changed()
+
+    def play_sound(self, kind):
+        """Messages and iPhone notifications: True when Covalence played the sound itself."""
+        return self.sounds.play(kind)
+
+    def set_sound(self, kind, value):
+        self.sounds.set(kind, value)
+        self.link_changed()
+
+    def set_fetch_unread(self, enabled):
+        self.config.set_boolean("messages", "fetch_unread", enabled)
+        log(f"messages : texte complet des non-lus {'activé' if enabled else 'désactivé'}")
+        if enabled and self.messages.enabled:
+            self.messages._fetch_bodies()
+        self.link_changed()
+
+    def set_alpha(self, name, enabled):
+        self.config.set_alpha(name, enabled)
+        log(f"fonction alpha {name} {'activée' if enabled else 'désactivée'}")
+        if name == "pbap_favorites":
+            self._contacts_changed()
+        elif name == "ancs_actions":
+            self._notifications_changed()
+        self.link_changed()
+
     def _contacts_changed(self):
         self.link_changed()
         self.service.contacts_changed()
@@ -246,10 +291,14 @@ class Daemon:
             if not store:
                 return self.contact_book.cards
             # iCloud photos EDS has not downloaded yet: the iPhone's (PBAP) one if known.
-            return [dict(c, photo=c["photo"] or next(
+            return self._with_favorites([dict(c, photo=c["photo"] or next(
                 (p for p in map(store.photo, c["addresses"]) if p), ""))
-                for c in self.contact_book.cards]
-        return self.messages.contacts()
+                for c in self.contact_book.cards])
+        return self._with_favorites(self.messages.contacts())
+
+    def _with_favorites(self, cards):
+        favorites = self.messages.favorites()
+        return [dict(c, favorite=any(a in favorites for a in c["addresses"])) for c in cards]
 
     def device_chosen(self, device_path):
         self.audio.set_device(device_path)
@@ -352,6 +401,7 @@ class Daemon:
         GLib.unix_signal_add(GLib.PRIORITY_DEFAULT, signal.SIGINT, self.stop)
         GLib.unix_signal_add(GLib.PRIORITY_DEFAULT, signal.SIGTERM, self.stop)
         log(f"covalenced {__version__} démarré")
+        self.updates.start()
         self.loop.run()
 
     def _on_name_lost(self, _conn, _name):

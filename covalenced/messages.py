@@ -30,6 +30,7 @@ database, stays on the main thread.
 """
 
 import hashlib
+import json
 import os
 import queue
 import shutil
@@ -42,6 +43,7 @@ from gi.repository import Gio, GLib
 
 from . import bmsg
 from . import i18n
+from . import otp
 from . import reactions
 from . import store as store_module
 from .store import Store
@@ -78,6 +80,10 @@ NOTIFY_BURST = 3
 SEND_CONFIRM = 45  # seconds before looking for a sent message in outbox/sent
 SEND_TIMEOUT = 45
 MAX_TEXT = 2000  # characters: beyond that an SMS becomes a long chain of parts
+SYNC_TIMEOUT = 150  # seconds: a manual sync not over by then is reported as failed
+HISTORY_PAGE = 500  # alpha « map_history »: listing pages beyond the usual one
+HISTORY_PAGES = 6
+HISTORY_DAYS = 365
 
 
 def format_number(address):
@@ -98,6 +104,56 @@ def _is_unsupported(message):
     return _is_forbidden(message) or any(
         k in text for k in ("0x51", "0x4f", "0x50", "not implemented", "not supported",
                             "unsupported", "not acceptable", "0x46"))
+
+
+def favorite_addresses(cards):
+    """Addresses of the cards pulled from the PBAP « fav » folder."""
+    return {a for card in cards or [] for a in card.get("addresses", []) if a}
+
+
+def history_listing(list_messages, base, now=None):
+    """Alpha « map_history »: ask the iPhone for more than the default listing.
+
+    list_messages(filters) returns {path: props} (may raise). base: what the usual listing
+    gave. Returns (extra listing, counters); only the counters are logged: how many new
+    messages each approach brought, -1 when the iPhone refused it.
+    """
+    extra, counts = {}, {}
+
+    def new_ones(page):
+        return {k: v for k, v in page.items() if k not in base and k not in extra}
+
+    # 1. Pages after the first one (Offset). iOS may ignore the offset and repeat itself.
+    offset, found = len(base), 0
+    try:
+        for _page in range(HISTORY_PAGES):
+            page = list_messages({"Offset": GLib.Variant("q", min(offset, 0xFFFF)),
+                                  "MaxCount": GLib.Variant("q", HISTORY_PAGE)})
+            fresh = new_ones(page)
+            if not fresh:
+                break
+            extra.update(fresh)
+            found += len(fresh)
+            offset += len(page)
+            if len(page) < HISTORY_PAGE or offset >= 0xFFFF:
+                break
+        counts["offset"] = found
+    except (GLib.Error, RuntimeError) as error:
+        counts["offset"] = found or -1
+        log(f"messages (alpha) : pagination refusée ({getattr(error, 'message', error)})")
+    # 2. A period filter, then read messages only: iOS may list more when asked precisely.
+    begin = time.strftime("%Y%m%dT%H%M%S",
+                          time.localtime((now or time.time()) - HISTORY_DAYS * 86400))
+    for name, filters in (("period", {"PeriodBegin": GLib.Variant("s", begin)}),
+                          ("read", {"Read": GLib.Variant("b", True)})):
+        try:
+            fresh = new_ones(list_messages(dict(filters, MaxCount=GLib.Variant("q", INITIAL_COUNT))))
+            extra.update(fresh)
+            counts[name] = len(fresh)
+        except (GLib.Error, RuntimeError) as error:
+            counts[name] = -1
+            log(f"messages (alpha) : filtre {name} refusé ({getattr(error, 'message', error)})")
+    return extra, counts
 
 
 class Worker(threading.Thread):
@@ -144,6 +200,7 @@ class Messages:
         self.syncing = False
         self.sync_again = None
         self.listed = set()  # handles seen in listings of this session
+        self.read_anyway = set()  # unread messages the user asked to read in full
         self.announced = set()  # handles announced by MNS, not yet listed
         self.event_timer = 0
         self.periodic_timer = 0
@@ -153,6 +210,11 @@ class Messages:
         self.first_sync_done = False
         self.viewing = ""
         self.pbap_busy = False
+        self.sync_waiters = []  # manual syncs: (on_done(new count, error), messages before)
+        self.manual_again = False
+        self.manual_after_open = False
+        self.waiters_timer = 0
+        self.codes = otp.OneTimeCodes()  # latest one-time code, in memory only
 
     # --- lifecycle ------------------------------------------------------------------------
 
@@ -166,6 +228,7 @@ class Messages:
             self.store.db.execute(
                 "UPDATE messages SET status='failed' WHERE source='covalence' AND status='sending'")
             self.store.commit()
+            self._classify_all()
             count, threads = self.store.counts()
             log(f"messages : cache ouvert ({count} messages, {threads} fils)")
         if self.worker is None:
@@ -371,6 +434,9 @@ class Messages:
             self.map_state = state
             if self.address:
                 self._schedule_retry(FORBIDDEN_RETRY if forbidden else ERROR_RETRY)
+            self.manual_after_open = False
+            self._finish_waiters(_("accès aux messages refusé par l'iPhone") if forbidden
+                                 else _("iPhone injoignable"))
             self.hooks.messages_changed()
             return
         if not self.address or not self.enabled:
@@ -383,7 +449,8 @@ class Messages:
         self.first_sync_done = False
         log("messages : session MAP ouverte")
         self.hooks.messages_changed()
-        self.sync(initial=True)
+        manual, self.manual_after_open = self.manual_after_open, False
+        self.sync(initial=True, manual=manual)
         if not self.periodic_timer:
             self.periodic_timer = GLib.timeout_add_seconds(PERIODIC_SYNC, self._periodic)
 
@@ -416,47 +483,109 @@ class Messages:
             if self.contacts_state == "forbidden":
                 self.contacts_state = "unknown"
 
+    def manual_sync(self, on_done):
+        """The Sync button: list the folders again (after UpdateInbox), fetch full texts, read
+        contacts and the call history. on_done(new messages, error) once it is over."""
+        if not self.enabled or not self.store:
+            on_done(None, _("module Messages désactivé"))
+            return
+        if not self.address or not self.obex_owner:
+            on_done(None, _("iPhone non connecté"))
+            return
+        self.sync_waiters.append((on_done, self.store.counts()[0]))
+        if not self.waiters_timer:
+            self.waiters_timer = GLib.timeout_add_seconds(SYNC_TIMEOUT, self._waiters_timeout)
+        if self.session:
+            self.sync(manual=True)
+        else:
+            self.manual_after_open = True
+            self.map_state = "idle"
+            if self.contacts_state == "forbidden":
+                self.contacts_state = "unknown"
+            self._open_session()
+
+    def _waiters_timeout(self):
+        self.waiters_timer = 0
+        self._finish_waiters(_("l'iPhone ne répond pas"))
+        return False
+
+    def _finish_waiters(self, error=None):
+        if self.waiters_timer:
+            GLib.source_remove(self.waiters_timer)
+            self.waiters_timer = 0
+        waiters, self.sync_waiters = self.sync_waiters, []
+        now = self.store.counts()[0] if self.store and not error else 0
+        for on_done, before in waiters:
+            if error:
+                on_done(None, error)
+            else:
+                on_done(max(0, now - before), None)
+
     # --- listing and merge --------------------------------------------------------------------------
 
-    def sync(self, initial=False, count=EVENT_COUNT):
+    def _alpha(self, name):
+        config = getattr(self.hooks, "config", None)
+        return bool(config and hasattr(config, "alpha") and config.alpha(name))
+
+    def sync(self, initial=False, count=EVENT_COUNT, manual=False):
         if not self.session:
             return
         if self.syncing:
             self.sync_again = max(self.sync_again or 0, count)
+            self.manual_again = self.manual_again or manual
             return
         self.syncing = True
         session = self.session
-        max_count = INITIAL_COUNT if initial else count
+        max_count = INITIAL_COUNT if initial or manual else count
+        history = (initial or manual) and self._alpha("map_history")
 
         def job():
+            if manual:
+                try:  # ask the iPhone to refresh its listing first; may not be supported
+                    self._call(session, MAP, "UpdateInbox")
+                except GLib.Error as error:
+                    log(f"messages : UpdateInbox non pris en charge ({error.message})")
             self._call(session, MAP, "SetFolder", GLib.Variant("(s)", ("/telecom/msg",)))
             available = [f["Name"] for f in self._call(
                 session, MAP, "ListFolders", GLib.Variant("(a{sv})", ({},)), "(aa{sv})")[0]]
-            listing = {}
+            listing, counts = {}, {}
             for folder in FOLDERS:
                 if folder not in available:
                     continue
-                listing[folder] = self._call(
-                    session, MAP, "ListMessages",
-                    GLib.Variant("(sa{sv})", (folder, {
-                        "MaxCount": GLib.Variant("q", max_count),
-                        "SubjectLength": GLib.Variant("y", 255),
-                    })), "(a{oa{sv}})", timeout=60000)[0]
-            return available, listing
 
-        self.worker.submit(job, lambda r, e: self._on_listing(session, initial, r, e))
+                def list_messages(filters, folder=folder):
+                    filters = dict(filters, SubjectLength=GLib.Variant("y", 255))
+                    return self._call(session, MAP, "ListMessages",
+                                      GLib.Variant("(sa{sv})", (folder, filters)),
+                                      "(a{oa{sv}})", timeout=60000)[0]
 
-    def _on_listing(self, session, initial, result, error):
+                listing[folder] = list_messages({"MaxCount": GLib.Variant("q", max_count)})
+                if history:
+                    extra, counts[folder] = history_listing(list_messages, listing[folder])
+                    listing[folder].update(extra)
+            return available, listing, counts
+
+        self.worker.submit(job, lambda r, e: self._on_listing(session, initial, r, e, manual))
+
+    def _on_listing(self, session, initial, result, error, manual=False):
         self.syncing = False
         if session != self.session:
+            if manual:
+                self._finish_waiters(_("connexion à l'iPhone perdue"))
             return
         if error:
             log(f"messages : lecture des dossiers impossible ({error})")
             if _is_forbidden(error):
                 self.map_state = "forbidden"
                 self.hooks.messages_changed()
+            if manual:
+                self._finish_waiters(_("lecture des messages impossible"))
         else:
-            available, listing = result
+            available, listing, counts = result
+            if counts:
+                log("messages (alpha) : historique étendu, nouveaux messages par méthode : "
+                    + " ; ".join(f"{folder} {c}" for folder, c in counts.items()))
+            initial = initial or manual  # notify only what arrived since the last sync
             if initial:
                 total = sum(len(v) for v in listing.values())
                 kinds = {}
@@ -470,10 +599,13 @@ class Messages:
             self._merge(listing, initial)
             self._fetch_bodies()
             if initial:
-                self._maybe_pull_contacts()
-        if self.sync_again:
-            count, self.sync_again = self.sync_again, None
-            self.sync(count=count)
+                self._maybe_pull_contacts(force=manual)
+            if manual:
+                self._finish_waiters()
+        if self.sync_again or self.manual_again:
+            count, self.sync_again = self.sync_again or EVENT_COUNT, None
+            manual, self.manual_again = self.manual_again, False
+            self.sync(count=count, manual=manual)
 
     def _entries(self, listing):
         entries = []
@@ -544,7 +676,7 @@ class Messages:
             m = store.message(key)
             if m and (m["thread"], key) in fresh:
                 fresh.remove((m["thread"], key))
-                if not found["removed"]:
+                if not found["removed"] and not found["duplicate"]:
                     reacted.append((m["thread"], key, found))
         store.set_meta("last_sync", int(time.time()))
         store.commit()
@@ -570,8 +702,9 @@ class Messages:
     def _fetch_bodies(self):
         config = getattr(self.hooks, "config", None)
         unread = bool(config and config.boolean("messages", "fetch_unread"))
-        wanted = [m for m in self.store.needing_body(BODY_FETCH_LIMIT, unread)
-                  if m["handle"] in self.listed]
+        wanted = [m for m in self.store.needing_body(BODY_FETCH_LIMIT, True)
+                  if m["handle"] in self.listed and
+                  (unread or m["phone_read"] or m["outgoing"] or m["key"] in self.read_anyway)]
         if not wanted or not self.session:
             return
         session, tmp = self.session, self.store.tmp
@@ -595,6 +728,16 @@ class Messages:
 
         self.worker.submit(job, self._on_bodies)
 
+    def read_full(self, key):
+        """The user asked for the whole text of an unread message (it may turn read on the
+        iPhone: MAP lets a phone mark a downloaded message read)."""
+        m = self.store.message(key) if self.store else None
+        if not m or m["complete"] or m["source"] != "map":
+            return False
+        self.read_anyway.add(key)
+        self._fetch_bodies()
+        return True
+
     def _on_bodies(self, results, error):
         if error or not results:
             return
@@ -602,6 +745,7 @@ class Messages:
         selves = store.self_addresses()
         got = 0
         for key, parsed in results.items():
+            self.read_anyway.discard(key)
             m = store.message(key)
             if m is None or parsed is None:
                 continue
@@ -679,14 +823,15 @@ class Messages:
 
     # --- contacts (PBAP) ---------------------------------------------------------------------------
 
-    def _maybe_pull_contacts(self, calls_only=False):
+    def _maybe_pull_contacts(self, calls_only=False, force=False):
         """PBAP: the phone book at most once a day, the call history every time."""
         if not self.address or self.contacts_state == "forbidden" or self.pbap_busy:
             return
         age = time.time() - int(self.store.meta("contacts_time", "0") or 0)
         if self.store.meta("contacts_schema") != store_module.CONTACTS_SCHEMA:
             age = CONTACTS_MAX_AGE  # older cache without photos: pull again
-        want_book = not calls_only and age >= CONTACTS_MAX_AGE
+        want_book = not calls_only and (force or age >= CONTACTS_MAX_AGE)
+        want_favorites = want_book and self._alpha("pbap_favorites")
         if age < CONTACTS_MAX_AGE:
             self.contacts_state = "ready"
         address, tmp = self.address, self.store.tmp
@@ -718,7 +863,15 @@ class Messages:
                     if want_book else None
                 history = bmsg.parse_call_history(
                     pull(session, "cch", ["FN", "N", "TEL", "X-IRMC-CALL-DATETIME"], CALLS_MAX))
-                return cards, history
+                favorites = None
+                if want_favorites:
+                    try:  # PBAP « fav » folder (PBAP 1.2): iOS may not expose it
+                        favorites = favorite_addresses(bmsg.parse_vcards(
+                            pull(session, "fav", ["FN", "N", "TEL", "EMAIL"])))
+                    except (GLib.Error, OSError, RuntimeError) as error:
+                        log(f"contacts (alpha) : favoris non disponibles "
+                            f"({getattr(error, 'message', error)})")
+                return cards, history, favorites
             finally:
                 self._call(OBEX_ROOT, CLIENT, "RemoveSession", GLib.Variant("(o)", (session,)))
 
@@ -729,14 +882,29 @@ class Messages:
         if error:
             self._on_contacts(None, error)
             return
-        cards, history = result
+        cards, history, favorites = result
         if cards is not None:
             self._on_contacts(cards, None)
+        if favorites is not None:
+            self.store.set_meta("pbap_favorites", json.dumps(sorted(favorites)))
+            log(f"contacts (alpha) : {len(favorites)} adresse(s) en favori sur l'iPhone")
+            changed = getattr(self.hooks, "contacts_changed", None)
+            if changed:
+                changed()
         self.store.replace_calls(history)
         self.store.commit()
         missed = sum(1 for c in history if c["kind"] == "missed")
         log(f"appels : journal lu ({len(history)} appels, {missed} manqués)")
         self.hooks.calls_changed()
+
+    def favorites(self):
+        """Addresses in the iPhone's favourites (alpha « pbap_favorites »), else empty."""
+        if not self.store or not self._alpha("pbap_favorites"):
+            return set()
+        try:
+            return set(json.loads(self.store.meta("pbap_favorites", "[]") or "[]"))
+        except ValueError:
+            return set()
 
     def call_history(self):
         if not self.store:
@@ -844,7 +1012,7 @@ class Messages:
             log("messages : message reçu par notification (ANCS)")
             self.hooks.messages_changed(threads=True)
             if found is not None:
-                if not found["removed"]:
+                if not found["removed"] and not found["duplicate"]:
                     self._notify_reaction(tid, key, found)
                 return
             self._notify(tid, key, subtitle=entry["subtitle"])
@@ -857,6 +1025,12 @@ class Messages:
         thread = self.store.thread(tid)
         if not m or not thread:
             return
+        code = None
+        if not m["outgoing"] and self.code_mode() != "off":
+            code = otp.detect(m["body"] or "")
+            if code:
+                self.codes.remember(code, key)
+                log("messages : code à usage unique reçu")  # never the code itself
         if tid == self.viewing:
             return  # the conversation is on screen: the new bubble is enough
         sender = self.store.display_name(m["sender"], m["sender_name"] or _("Inconnu"))
@@ -866,7 +1040,11 @@ class Messages:
             summary = self.store.thread_title(thread) or sender
         body = "\n".join(filter(None, [subtitle, m["body"] or ""]))
         actions = [("default", _("Ouvrir"))]
-        if self.can_send(thread):
+        if code:
+            # As on the iPhone: the code is one click away; nobody answers these senders.
+            actions += [("copy-code", _("Copier le code")),
+                        ("copy-code-delete", _("Copier et supprimer"))]
+        elif self.can_send(thread):
             inline = "inline-reply" in self.notifier.capabilities() \
                 if hasattr(self.notifier, "capabilities") else False
             actions.append(("inline-reply" if inline else "reply", _("Répondre")))
@@ -874,11 +1052,62 @@ class Messages:
         photo = self.store.photo(m["sender"] or "")
         if photo:
             hints["image-path"] = GLib.Variant("s", photo)
+        self._sound(hints)
         self.notifications[tid] = self.notifier.notify(
             f"Covalence ({self.hooks.device_name})", "io.github.melvincouwez.Covalence.Messages", summary, body, actions, hints,
             replaces=self.notifications.get(tid, 0),
-            on_action=lambda action, t=tid: self._on_notification_action(t, action),
+            on_action=lambda action, t=tid, k=key: self._on_notification_action(t, action, k),
             on_closed=lambda t=tid: self.notifications.pop(t, None))
+
+    def _sound(self, hints):
+        """The sound chosen in Réglages, played by the daemon; the server stays silent."""
+        play = getattr(self.hooks, "play_sound", None)
+        if play:
+            play("messages")
+            hints["suppress-sound"] = GLib.Variant("b", True)
+
+    # --- one-time codes ----------------------------------------------------------------------------
+
+    def code_mode(self):
+        """off | copy (notification with a copy button) | browser (also offered in the browser)."""
+        config = getattr(self.hooks, "config", None)
+        mode = config.string("messages", "one_time_codes", "copy") if config else "copy"
+        return mode if mode in ("off", "copy", "browser") else "copy"
+
+    def set_code_mode(self, mode):
+        config = getattr(self.hooks, "config", None)
+        if mode not in ("off", "copy", "browser") or not config:
+            return
+        config.set_string("messages", "one_time_codes", mode)
+        if mode == "off":
+            self.codes.forget()
+
+    def latest_code(self, purpose):
+        """(code, age in seconds) for the Covalence app ("copy") or the browser extension
+        ("browser"); ("", 0) when there is none, it is too old, or the setting refuses it."""
+        mode = self.code_mode()
+        if mode == "off" or (purpose == "browser" and mode != "browser"):
+            return "", 0
+        code, age, _key = self.codes.latest()
+        return code, age
+
+    def _copy_code(self, key, delete):
+        """The daemon has no clipboard: the Covalence app copies the code and clears it later."""
+        app = self._app_path((APP_ID,))
+        if not app:
+            log("messages : application Covalence introuvable")
+            return
+        launcher = Gio.SubprocessLauncher.new(Gio.SubprocessFlags.NONE)
+        if os.environ.get("DISPLAY"):
+            # Wayland gives the clipboard to the focused window only; XWayland shares it anyway.
+            launcher.setenv("GDK_BACKEND", "x11", True)
+        try:
+            launcher.spawnv([app, "--copy-code"])
+        except GLib.Error as error:
+            log(f"messages : copie du code impossible ({error.message})")
+            return
+        if delete and key:
+            self.delete_message(key)
 
     # --- reactions ---------------------------------------------------------------------------------
 
@@ -889,25 +1118,77 @@ class Messages:
         m = store.message(key) if store else None
         if not m or m["kind"] == "reaction" or m["status"] == "failed":
             return None
-        found = reactions.parse(m["body"])
+        names = []
+        if not m["outgoing"]:
+            full = store.display_name(m["sender"], m["sender_name"] or "") if m["sender"] \
+                else (m["sender_name"] or "")
+            for name in (full, m["sender_name"] or ""):
+                if name:
+                    names += [name, name.split()[0]]
+        found = reactions.parse(m["body"], names)
         if found is None:
             return None
         target = store.reaction_target(m["thread"], found["quote"], m["time"], exclude=key)
-        if target is None:
-            return None  # nothing to attach it to: it stays an ordinary bubble
         author = "" if m["outgoing"] else (m["sender"] or ("name:" + (m["sender_name"] or "")))
+        thread = store.thread(m["thread"])
+        if author and thread and not thread["is_group"]:
+            # One person on the other side: MAP (number) and ANCS (name) copies share an author.
+            people = thread["participants"] or []
+            if len(people) == 1 and people[0]:
+                author = people[0]
+        if target is None:
+            # The quoted message is not here (sent from the iPhone, MAP does not list it): the
+            # reaction stays as a short note; a second copy (MAP + ANCS) is hidden behind it.
+            note = None
+            for row in store.db.execute(
+                    "SELECT key, body, sender, sender_name, outgoing FROM messages "
+                    "WHERE thread=? AND kind='reaction-note' AND key<>? AND ABS(time-?)<600",
+                    (m["thread"], key, m["time"])):
+                other = reactions.parse(row["body"], names)
+                if other and other["emoji"] == found["emoji"] and \
+                        other["removed"] == found["removed"] and \
+                        reactions.normalize(other["quote"] or "") == \
+                        reactions.normalize(found["quote"] or ""):
+                    note = row["key"]
+                    break
+            if note is None:
+                store.db.execute("UPDATE messages SET kind='reaction-note' WHERE key=?", (key,))
+                return dict(found, target=None, author=author, duplicate=False)
+            store.add_reaction(key, "note:" + note, m["thread"], author, found["emoji"],
+                               m["time"], found["removed"])
+            return dict(found, target=None, author=author, duplicate=True)
+        # The same reaction reported by MAP and by the notification: shown and notified once.
+        duplicate = store.db.execute(
+            "SELECT 1 FROM reactions WHERE thread=? AND target=? AND COALESCE(author, '')=? "
+            "AND emoji=? AND removed=? AND key<>? AND ABS(time-?)<600",
+            (m["thread"], target, author, found["emoji"], int(found["removed"]), key,
+             m["time"])).fetchone() is not None
         store.add_reaction(key, target, m["thread"], author, found["emoji"], m["time"],
                            found["removed"])
         log("messages : réaction reconnue")
-        return dict(found, target=target, author=author)
+        return dict(found, target=target, author=author, duplicate=duplicate)
+
+    def _classify_all(self):
+        """Reactions stored as bubbles (older parser, ANCS copies): make them badges."""
+        store = self.store
+        rows = store.db.execute(
+            "SELECT key FROM messages WHERE COALESCE(kind, '')<>'reaction' "
+            "AND COALESCE(status, '')<>'failed' ORDER BY time DESC LIMIT 2000").fetchall()
+        count = 0
+        for row in reversed(rows):
+            found = self._classify(row["key"])
+            count += bool(found and (found["target"] or found["duplicate"]))
+        if count:
+            store.commit()
+            log(f"messages : {count} réaction(s) rattachée(s) au message cité")
 
     def _notify_reaction(self, tid, key, found):
-        m, target, thread = (self.store.message(key), self.store.message(found["target"]),
-                             self.store.thread(tid))
-        if not m or not target or not thread or tid == self.viewing:
+        m, thread = self.store.message(key), self.store.thread(tid)
+        target = self.store.message(found["target"]) if found["target"] else None
+        if not m or not thread or tid == self.viewing:
             return
         name = self.store.display_name(m["sender"], m["sender_name"] or _("Inconnu"))
-        quote = reactions.quote_of(target["body"] or "")
+        quote = reactions.quote_of(target["body"] if target else found["quote"] or "")
         body = _("{name} a réagi {emoji} à « {quote} »").format(
             name=name, emoji=found["emoji"], quote=quote)
         summary = self.store.thread_title(thread) or name
@@ -915,6 +1196,7 @@ class Messages:
         photo = self.store.photo(m["sender"] or "")
         if photo:
             hints["image-path"] = GLib.Variant("s", photo)
+        self._sound(hints)
         self.notifications[tid] = self.notifier.notify(
             f"Covalence ({self.hooks.device_name})", "io.github.melvincouwez.Covalence.Messages",
             summary, body, [("default", _("Ouvrir"))], hints,
@@ -938,20 +1220,27 @@ class Messages:
             return on_done("invalid emoji")
         self.send(m["thread"], reactions.build(emoji, m["body"] or "", i18n.language()), on_done)
 
-    def _on_notification_action(self, tid, action):
+    @staticmethod
+    def _app_path(names):
+        for name in names:
+            path = os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])), name)
+            app = path if os.access(path, os.X_OK) else (shutil.which(name) or "")
+            if app:
+                return app
+        return ""
+
+    def _on_notification_action(self, tid, action, key=""):
         self.notifications.pop(tid, None)
+        if action in ("copy-code", "copy-code-delete"):
+            self._copy_code(key, action == "copy-code-delete")
+            return
         if action.startswith("inline-reply:"):
             # Typed in the notification itself: that is the user's explicit request.
             self.send(tid, action.split(":", 1)[1],
                       lambda error: error and log("messages : réponse rapide non envoyée"))
             self.mark_seen(tid)
             return
-        app = ""
-        for name in (APP_ID + ".Messages", APP_ID):  # the Messages app, else Covalence
-            path = os.path.join(os.path.dirname(os.path.abspath(sys.argv[0])), name)
-            app = path if os.access(path, os.X_OK) else (shutil.which(name) or "")
-            if app:
-                break
+        app = self._app_path((APP_ID + ".Messages", APP_ID))  # the Messages app, else Covalence
         if not app:
             log("messages : application Covalence introuvable")
             return
@@ -1033,8 +1322,27 @@ class Messages:
                 "avatar": "" if m["outgoing"] else self.store.photo(m["sender"] or ""),
                 "reactions": [(emoji, self._author_name(author), not author, pending)
                               for emoji, author, pending in badges.get(m["key"], [])],
+                "note": self._reaction_note(m) if m["kind"] == "reaction-note" else "",
             })
         return result
+
+    def _reaction_note(self, m):
+        """« Alice a réagi ❤️ à « … » » for a reaction whose message is not in Covalence."""
+        name = self.store.display_name(m["sender"], m["sender_name"] or "") if m["sender"] \
+            else (m["sender_name"] or "")
+        names = [name, name.split()[0]] if name else []
+        found = reactions.parse(m["body"] or "", names)
+        if not found:
+            return ""
+        who = _("Moi") if m["outgoing"] else (name or _("Inconnu"))
+        if found["removed"]:
+            text = _("{name} a retiré {emoji}")
+        else:
+            text = _("{name} a réagi {emoji}")
+        text = text.format(name=who, emoji=found["emoji"])
+        if found["quote"]:
+            text += " " + _("à « {quote} »").format(quote=reactions.quote_of(found["quote"]))
+        return text
 
     def _author_name(self, author):
         if not author:
@@ -1048,6 +1356,45 @@ class Messages:
             self.store.mark_seen(tid)
             self.notifier.close(self.notifications.pop(tid, 0))
             self.hooks.messages_changed(threads=True)
+            if self._alpha("mark_read"):
+                self._mark_read_on_phone(tid)
+
+    def _read_candidates(self, tid):
+        """Unread received messages of the thread that this MAP session has listed."""
+        rows = self.store.db.execute(
+            "SELECT key, handle FROM messages WHERE thread=? AND source='map' AND outgoing=0 "
+            "AND phone_read=0 AND COALESCE(handle, '')<>''", (tid,)).fetchall()
+        return [(row["key"], row["handle"]) for row in rows if row["handle"] in self.listed]
+
+    def _mark_read_on_phone(self, tid):
+        """Alpha « mark_read »: MAP Message1.Read = true on the iPhone for this thread."""
+        session = self.session
+        wanted = self._read_candidates(tid) if session and self.worker else []
+        if not wanted:
+            return
+
+        def job():
+            done = []
+            for key, handle in wanted:
+                try:
+                    self._call(f"{session}/message{handle}", "org.freedesktop.DBus.Properties",
+                               "Set", GLib.Variant("(ssv)", (MESSAGE, "Read", GLib.Variant("b", True))))
+                    done.append(key)
+                except GLib.Error as error:
+                    log(f"messages (alpha) : marquage lu refusé ({error.message})")
+            return done
+
+        def finished(done, error):
+            if error or not done:
+                return
+            for key in done:
+                self.store.db.execute("UPDATE messages SET phone_read=1 WHERE key=?", (key,))
+            self.store.commit()
+            log(f"messages (alpha) : {len(done)}/{len(wanted)} message(s) marqué(s) lu(s) "
+                "sur l'iPhone")
+            self.hooks.messages_changed(threads=True)
+
+        self.worker.submit(job, finished)
 
     def send(self, tid, text, on_done, retry_key=None):
         """Send one SMS through MAP PushMessage, only on the user's request.

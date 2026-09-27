@@ -8,6 +8,8 @@ sys.path.insert(0, "@PKGDATADIR@")
 if sys.argv[1:] == ["--check-components"]:
     # Must work even when the daemon cannot start: import nothing else first.
     from covalenced.components import main  # noqa: E402
+elif sys.argv[1:] == ["--install-browser-host"]:
+    from covalenced.browser_host import install_main as main  # noqa: E402
 elif sys.argv[1:] == ["--fetch-rclone"]:
     from covalenced.rclone_fetch import main  # noqa: E402
 else:

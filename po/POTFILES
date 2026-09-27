@@ -21,6 +21,8 @@ src/MessagesView.vala
 src/ModuleRow.vala
 src/NotificationsView.vala
 src/NowPlayingView.vala
+src/OneTimeCodes.vala
+src/SoundsCard.vala
 src/Onboarding.vala
 src/PairingDialog.vala
 src/PhoneGuide.vala
@@ -28,6 +30,7 @@ src/QuickReply.vala
 src/ServicesView.vala
 src/SetupParts.vala
 src/Sidebar.vala
+src/Updates.vala
 covalenced/ams.py
 covalenced/ancs.py
 covalenced/appicons.py
@@ -49,5 +52,8 @@ covalenced/notifications.py
 covalenced/rclone_fetch.py
 covalenced/service.py
 covalenced/signin.py
+covalenced/sounds.py
 covalenced/store.py
 covalenced/util.py
+covalenced/updates.py
+src/WhatsNew.vala

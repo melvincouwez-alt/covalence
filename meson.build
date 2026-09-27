@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2026 Melvin Couwez
 project('io.github.melvincouwez.Covalence', 'vala', 'c',
-  version: '0.2.0',
+  version: '0.3.2',
   license: 'GPL-3.0-or-later',
   meson_version: '>= 1.0',
 )
@@ -30,14 +30,22 @@ add_project_arguments('-DGETTEXT_PACKAGE="@0@"'.format(gettext_package), languag
 
 # Daemon (Python + Gio): see README for why it is not Vala yet.
 install_subdir('covalenced', install_dir: pkgdatadir, exclude_directories: ['__pycache__'])
-foreach script : ['covalenced', 'covalence-icloud-signin', 'covalence-icloud-drive', 'covalence-rclone']
+foreach script : ['covalenced', 'covalence-icloud-signin', 'covalence-icloud-drive', 'covalence-rclone',
+               'covalence-otp-host']
   configure_file(input: 'bin' / script + '.in', output: script, configuration: conf,
                  install: true, install_dir: bindir, install_mode: 'rwxr-xr-x')
 endforeach
 
 install_subdir('data' / 'guide', install_dir: pkgdatadir)
 
-install_data('docs' / 'mentions-legales.md', 'docs' / 'confidentialite.md',
+# Browser extension (one-time codes, alpha): Chromium and Firefox builds from one source.
+meson.add_install_script(python, files('extension' / 'build.py'), '--install',
+                         pkgdatadir / 'extension')
+
+# Sounds shipped with Covalence (credits: docs/credits-sons.md, data/sounds/LICENSES).
+install_subdir('data' / 'sounds', install_dir: pkgdatadir)
+
+install_data('docs' / 'mentions-legales.md', 'docs' / 'confidentialite.md', 'docs' / 'credits-sons.md',
              'docs' / 'privacy.md', 'LICENSE',
              install_dir: pkgdatadir / 'docs')
 

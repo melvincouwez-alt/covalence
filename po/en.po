@@ -2325,3 +2325,426 @@ msgstr "React %s"
 
 msgid "Réaction non envoyée"
 msgstr "Reaction not sent"
+
+msgid "Copier le code"
+msgstr "Copy code"
+
+msgid "Copier et supprimer"
+msgstr "Copy and delete"
+
+msgid "Codes SMS"
+msgstr "SMS codes"
+
+msgid "Notification avec copie"
+msgstr "Notification with copy"
+
+msgid "Notification et navigateur (alpha)"
+msgstr "Notification and browser (alpha)"
+
+msgid "Codes de vérification"
+msgstr "Verification codes"
+
+msgid ""
+"Quand un SMS contient un code, la notification propose « Copier le code ». "
+"Le presse-papiers est vidé au bout de 2 minutes."
+msgstr ""
+"When an SMS contains a code, the notification offers “Copy code”. The "
+"clipboard is cleared after 2 minutes."
+
+msgid "Installer l'intégration navigateur"
+msgstr "Install browser integration"
+
+msgid "Ouvrir le dossier de l'extension"
+msgstr "Open the extension folder"
+
+msgid ""
+"Chrome, Chromium, Edge et Firefox. Installez l'intégration, puis chargez "
+"l'extension (mode d'emploi dans le dossier). Le code n'est mis dans la page "
+"que si vous cliquez dessus."
+msgstr ""
+"Chrome, Chromium, Edge and Firefox. Install the integration, then load the "
+"extension (instructions in the folder). The code goes into the page only "
+"when you click it."
+
+msgid "Remplissage dans le navigateur (alpha)"
+msgstr "Fill in the browser (alpha)"
+
+msgid "Aucun navigateur pris en charge trouvé (Chrome, Chromium, Edge, Firefox)."
+msgstr "No supported browser found (Chrome, Chromium, Edge, Firefox)."
+
+#, c-format
+msgid ""
+"Installée pour : %s. Chargez maintenant l'extension, le mode d'emploi est "
+"dans le dossier."
+msgstr ""
+"Installed for: %s. Now load the extension, the instructions are in the "
+"folder."
+
+#, c-format
+msgid "Installation impossible : %s"
+msgstr "Cannot install: %s"
+
+msgid "Sons"
+msgstr "Sounds"
+
+msgid "SMS reçus"
+msgstr "Text messages received"
+
+msgid "Notifications de l'iPhone"
+msgstr "iPhone notifications"
+
+msgid "Autres apps de l'iPhone"
+msgstr "Other iPhone apps"
+
+msgid "Sonnerie, répétée tant que l'appel sonne"
+msgstr "Ringtone, repeated while the call rings"
+
+msgid "Aucun son en mode Ne pas déranger. Si l'iPhone fait déjà sonner l'appel sur ce PC, la sonnerie de Covalence se tait."
+msgstr "No sound in Do Not Disturb. If the iPhone already rings the call on this PC, Covalence's ringtone stays quiet."
+
+msgid "Aucun"
+msgstr "None"
+
+msgid "Par défaut"
+msgstr "Default"
+
+msgid "Choisir un fichier…"
+msgstr "Choose a file…"
+
+msgid "Choisir un son"
+msgstr "Choose a sound"
+
+msgid "Écouter"
+msgstr "Listen"
+
+msgid "Arrêter"
+msgstr "Stop"
+
+msgid "son introuvable"
+msgstr "sound not found"
+
+msgid "lecture impossible"
+msgstr "cannot play"
+
+msgid "Message instantané"
+msgstr "Instant message"
+
+msgid "Message"
+msgstr "Message"
+
+msgid "Information"
+msgstr "Information"
+
+msgid "Avertissement"
+msgstr "Warning"
+
+msgid "Erreur"
+msgstr "Error"
+
+msgid "Cloche"
+msgstr "Bell"
+
+msgid "Terminé"
+msgstr "Complete"
+
+msgid "Occupé"
+msgstr "Busy"
+
+msgid "Raccrochage"
+msgstr "Hang up"
+
+msgid "Réveil"
+msgstr "Alarm clock"
+
+msgid "Attention"
+msgstr "Attention"
+
+msgid "Question"
+msgstr "Question"
+
+msgid "Appareil photo"
+msgstr "Camera"
+
+msgid "Appareil branché"
+msgstr "Device plugged in"
+
+msgid "Appareil débranché"
+msgstr "Device unplugged"
+
+msgid "Réseau connecté"
+msgstr "Network connected"
+
+msgid "Réseau perdu"
+msgstr "Network lost"
+
+msgid "Secteur branché"
+msgstr "Power plugged in"
+
+msgid "Secteur débranché"
+msgstr "Power unplugged"
+
+msgid "Capture d'écran"
+msgstr "Screenshot"
+
+msgid "Connexion"
+msgstr "Log in"
+
+msgid "Déconnexion"
+msgstr "Log out"
+
+msgid "Erreur de mise en veille"
+msgstr "Suspend error"
+
+msgid "Corbeille vidée"
+msgstr "Trash emptied"
+
+msgid "En savoir plus"
+msgstr "Learn more"
+
+msgid "Mettre à jour maintenant"
+msgstr "Update now"
+
+msgid "Rechercher maintenant"
+msgstr "Check now"
+
+msgid "Mises à jour automatiques : rechercher"
+msgstr "Automatic updates: check"
+
+#, c-format
+msgid "Version installée : %s"
+msgstr "Installed version: %s"
+
+#, c-format
+msgid "vérifié %s"
+msgstr "checked %s"
+
+msgid "jamais vérifié"
+msgstr "never checked"
+
+msgid "Mise à jour installée : relancez Covalence pour l'utiliser"
+msgstr "Update installed: restart Covalence to use it"
+
+msgid "Recherche de mises à jour…"
+msgstr "Checking for updates…"
+
+#, c-format
+msgid "Version installée : %s, %s"
+msgstr "Installed version: %s, %s"
+
+#, c-format
+msgid "Covalence est à jour : %s, %s"
+msgstr "Covalence is up to date: %s, %s"
+
+msgid "Mise à jour installée"
+msgstr "Update installed"
+
+msgid "Relancez Covalence pour passer à la nouvelle version."
+msgstr "Restart Covalence to switch to the new version."
+
+msgid "Relancer Covalence"
+msgstr "Restart Covalence"
+
+msgid "préversion"
+msgstr "pre-release"
+
+msgid "Installation… Votre mot de passe peut être demandé."
+msgstr "Installing… You may be asked for your password."
+
+msgid "Pas de paquet vérifiable pour cette version : installez-la depuis GitHub."
+msgstr "No verifiable package for this version: install it from GitHub."
+
+msgid "Voir sur GitHub"
+msgstr "View on GitHub"
+
+msgid "à l'instant"
+msgstr "just now"
+
+#, c-format
+msgid "il y a %d min"
+msgstr "%d min ago"
+
+#, c-format
+msgid "il y a %d h"
+msgstr "%d h ago"
+
+#, c-format
+msgid "le %s"
+msgstr "on %s"
+
+msgid "Recherche impossible ({reason})"
+msgstr "Cannot check ({reason})"
+
+msgid "Voir les nouveautés"
+msgstr "What's new"
+
+msgid "Covalence {version} est disponible"
+msgstr "Covalence {version} is available"
+
+msgid "La mise à jour se trouve dans Réglages."
+msgstr "The update is in Settings."
+
+msgid "aucune mise à jour à installer"
+msgstr "no update to install"
+
+msgid "pas de paquet vérifiable pour cette version : installez-la depuis la page GitHub"
+msgstr "no verifiable package for this version: install it from the GitHub page"
+
+msgid "adresse de téléchargement inattendue"
+msgstr "unexpected download address"
+
+msgid "Téléchargement impossible ({reason})"
+msgstr "Cannot download ({reason})"
+
+msgid "Installation impossible ({reason})"
+msgstr "Cannot install ({reason})"
+
+msgid "Installation annulée"
+msgstr "Installation cancelled"
+
+msgid "Réactions"
+msgstr "Reactions"
+
+msgid "Les réactions reçues s'affichent sur le bon message, sans doublon, et se cumulent. Au survol d'un message : réagir, copier ou supprimer."
+msgstr "Reactions you receive show on the right message, once, and add up. Hover a message to react, copy or delete it."
+
+msgid "Un code reçu par SMS se copie depuis la notification. En alpha : remplissage dans Chrome, Chromium, Edge et Firefox (Réglages › Codes SMS)."
+msgstr "A code received by SMS can be copied from the notification. In alpha: fill-in for Chrome, Chromium, Edge and Firefox (Settings › SMS codes)."
+
+msgid "Messages en entier"
+msgstr "Whole messages"
+
+msgid "« Tout lire » récupère la suite d'un message long non lu, ou toujours, au choix dans Réglages. Le message passe alors en lu sur l'iPhone."
+msgstr "“Read all” fetches the rest of a long unread message, or always, as set in Settings. The message then turns read on the iPhone."
+
+msgid "Synchroniser"
+msgstr "Sync"
+
+msgid "Un bouton dans Messages relit les messages, les contacts et le journal d'appels."
+msgstr "A button in Messages reloads messages, contacts and the call log."
+
+msgid "Choisissez le son des messages, des notifications de l'iPhone et la sonnerie des appels, dont 8 sons libres fournis avec Covalence (Réglages › Sons)."
+msgstr "Choose the sound for messages, iPhone notifications and the ringtone for calls, including 8 free sounds shipped with Covalence (Settings › Sounds)."
+
+msgid "Mises à jour"
+msgstr "Updates"
+
+msgid "Covalence recherche les nouvelles versions et s'installe depuis Réglages."
+msgstr "Covalence looks for new versions and installs them from Settings."
+
+msgid "Fonctions alpha"
+msgstr "Alpha features"
+
+msgid "À essayer dans Réglages : historique étendu, marquer comme lu sur l'iPhone, actions des notifications, favoris des contacts."
+msgstr "To try in Settings: extended history, mark read on the iPhone, notification actions, contact favourites."
+
+msgid "Nouveautés de Covalence %s"
+msgstr "What's new in Covalence %s"
+
+msgid "Ce qui change dans cette version."
+msgstr "What changes in this version."
+
+msgid "Nouveautés"
+msgstr "What's new"
+
+msgid "Ce qui change dans la version %s"
+msgstr "What changes in version %s"
+
+msgid "Tout lire"
+msgstr "Read all"
+
+msgid "Récupérer le texte complet (le message passera en lu sur l'iPhone)"
+msgstr "Fetch the whole text (the message will turn read on the iPhone)"
+
+msgid "Lire le message en entier ?"
+msgstr "Read the whole message?"
+
+msgid "L'iPhone ne donne que les 120 premiers caractères d'un message non lu. Pour récupérer la suite, Covalence doit le télécharger : le message passera alors en lu sur l'iPhone."
+msgstr "The iPhone only gives the first 120 characters of an unread message. To get the rest, Covalence has to download it: the message will then turn read on the iPhone."
+
+msgid "Récupération…"
+msgstr "Fetching…"
+
+msgid "Texte complet indisponible pour l'instant"
+msgstr "Whole text not available yet"
+
+msgid "Toujours lire les messages en entier"
+msgstr "Always read whole messages"
+
+msgid "Récupère tout de suite le texte complet des messages de plus de 120 caractères. Ils passent alors en lu sur l'iPhone."
+msgstr "Fetches the whole text of messages over 120 characters right away. They then turn read on the iPhone."
+
+msgid "Toujours lire les messages en entier ?"
+msgstr "Always read whole messages?"
+
+msgid "Pour avoir le texte complet d'un message non lu, Covalence doit le télécharger : il passera en lu sur l'iPhone dès son arrivée, même si vous ne l'avez pas ouvert."
+msgstr "To get the whole text of an unread message, Covalence has to download it: it will turn read on the iPhone as soon as it arrives, even if you have not opened it."
+
+msgid "Activer"
+msgstr "Turn on"
+
+msgid "Copié"
+msgstr "Copied"
+
+msgid "{name} a retiré {emoji}"
+msgstr "{name} removed {emoji}"
+
+msgid "{name} a réagi {emoji}"
+msgstr "{name} reacted {emoji}"
+
+msgid "à « {quote} »"
+msgstr "to “{quote}”"
+
+msgid "Rosée"
+msgstr "Dew"
+
+msgid "Envol"
+msgstr "Takeoff"
+
+msgid "Vague"
+msgstr "Wave"
+
+msgid "Carillon"
+msgstr "Chime"
+
+msgid "Cristal"
+msgstr "Crystal"
+
+msgid "Aurore (sonnerie)"
+msgstr "Dawn (ringtone)"
+
+msgid "Orbite (sonnerie)"
+msgstr "Orbit (ringtone)"
+
+msgid "Horizon (sonnerie)"
+msgstr "Horizon (ringtone)"
+
+msgid "Covalence · {name}"
+msgstr "Covalence · {name}"
+
+msgid ""
+"Rosée, Envol, Vague, Aurore, Orbite et Horizon : The Android Open Source "
+"Project (Apache-2.0) https://android.googlesource.com/platform/frameworks/"
+"base/+/main/data/sounds"
+msgstr ""
+"Dew, Takeoff, Wave, Dawn, Orbit and Horizon: The Android Open Source Project "
+"(Apache-2.0) https://android.googlesource.com/platform/frameworks/base/+/main/"
+"data/sounds"
+
+msgid ""
+"Carillon et Cristal : Kenney, pack Interface Sounds (CC0) https://kenney.nl/"
+"assets/interface-sounds"
+msgstr ""
+"Chime and Crystal: Kenney, Interface Sounds pack (CC0) https://kenney.nl/"
+"assets/interface-sounds"
+
+msgid "Envoyé"
+msgstr "Sent"
+
+msgid "Envoyé : l'iPhone confirme l'envoi"
+msgstr "Sent: the iPhone confirms it"
+
+msgid "Messages envoyés"
+msgstr "Sent messages"
+
+msgid "Une petite coche apparaît sous un message dès que l'iPhone confirme son envoi."
+msgstr "A small check appears under a message as soon as the iPhone confirms it was sent."

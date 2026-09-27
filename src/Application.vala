@@ -31,6 +31,27 @@ public class Covalence.Application : Gtk.Application {
         .reaction-badge.pending {
             opacity: 0.6;
         }
+        .reaction-strip {
+            border-radius: 9999px;
+            padding: 1px 3px;
+            background-color: @base_color;
+            border: 1px solid alpha(@fg_color, 0.12);
+            box-shadow: 0 1px 3px alpha(black, 0.15);
+        }
+        .reaction-choice {
+            font-size: 1.15em;
+            min-width: 28px;
+            min-height: 28px;
+            padding: 0;
+            border-radius: 9999px;
+        }
+        .sent-check {
+            color: alpha(@fg_color, 0.45);
+            margin-top: -1px;
+        }
+        .hover-tools {
+            transition: opacity 120ms ease-out;
+        }
         .unread-dot {
             min-width: 9px;
             min-height: 9px;
@@ -504,6 +525,9 @@ public class Covalence.Application : Gtk.Application {
 
     public static int main (string[] args) {
         Language.apply ();
+        if (args.length == 2 && args[1] == "--copy-code") {
+            return CodeCopy.run ();  // from a code notification (covalenced), no window
+        }
         return new Application (Mode.from_program (args[0])).run (args);
     }
 }

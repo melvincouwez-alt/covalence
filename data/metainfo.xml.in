@@ -24,6 +24,34 @@
   <releases>
     <release version="@VERSION@" date="2026-09-27" type="development">
       <description>
+        <p>A check under sent messages once the iPhone confirms them.</p>
+        <p xml:lang="fr">Une coche sous les messages envoyés dès que l'iPhone les confirme.</p>
+      </description>
+    </release>
+    <release version="0.3.1" date="2026-09-27" type="development">
+      <description>
+        <p>Reactions, one-time codes, sounds and updates.</p>
+        <p xml:lang="fr">Réactions, codes SMS, sons et mises à jour.</p>
+        <ul>
+          <li>Reactions show on the right message, once, and add up; hover a message to react, copy or delete it.</li>
+          <li xml:lang="fr">Les réactions s'affichent sur le bon message, sans doublon, et se cumulent ; au survol d'un message : réagir, copier ou supprimer.</li>
+          <li>One-time SMS codes: copy from the notification; browser fill-in for Chrome, Chromium, Edge and Firefox (alpha).</li>
+          <li xml:lang="fr">Codes SMS : copie depuis la notification ; remplissage dans Chrome, Chromium, Edge et Firefox (alpha).</li>
+          <li>Read in full: the rest of a long unread message on request, or always.</li>
+          <li xml:lang="fr">Tout lire : la suite d'un long message non lu, à la demande ou toujours.</li>
+          <li>Sync button in Messages.</li>
+          <li xml:lang="fr">Bouton Synchroniser dans Messages.</li>
+          <li>Sounds for messages, iPhone notifications and incoming calls.</li>
+          <li xml:lang="fr">Sons des messages, des notifications de l'iPhone et des appels.</li>
+          <li>Update checker and installer in Settings.</li>
+          <li xml:lang="fr">Recherche et installation des mises à jour dans Réglages.</li>
+          <li>Alpha features in Settings: extended history, mark read on the iPhone, notification actions, favourites.</li>
+          <li xml:lang="fr">Fonctions alpha dans Réglages : historique étendu, marquer lu sur l'iPhone, actions des notifications, favoris.</li>
+        </ul>
+      </description>
+    </release>
+    <release version="0.2.0" date="2026-09-27" type="development">
+      <description>
         <p>First public alpha release.</p>
         <p xml:lang="fr">Première version alpha publique.</p>
       </description>

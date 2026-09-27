@@ -243,6 +243,34 @@ public class Covalence.NotificationsView : Gtk.Box {
         text.append (top);
         text.append (title);
         text.append (body);
+        // Alpha: the iPhone's own actions (e.g. « Marquer comme lu », « Supprimer »).
+        var uid = d.lookup_value ("uid", VariantType.UINT32);
+        if (uid != null && daemon.alpha_enabled ("ancs_actions")) {
+            var actions = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 6) { margin_top = 4 };
+            foreach (var key in new string[] { "positive", "negative" }) {
+                var label = dict_string (d, key);
+                if (label == "") {
+                    continue;
+                }
+                var button = new Gtk.Button.with_label (label) {
+                    tooltip_text = _("Action envoyée à l'iPhone (expérimental)")
+                };
+                button.add_css_class (Granite.CssClass.SMALL);
+                if (key == "negative") {
+                    button.add_css_class ("destructive-action");
+                }
+                var action = key;
+                button.clicked.connect (() => {
+                    button.sensitive = false;
+                    daemon.call.begin ("NotificationAction",
+                                       new Variant ("(us)", uid.get_uint32 (), action));
+                });
+                actions.append (button);
+            }
+            if (actions.get_first_child () != null) {
+                text.append (actions);
+            }
+        }
         var row = new Gtk.ListBoxRow () { child = text, activatable = false };
         row.set_data<string> ("app", dict_string (d, "app"));
         return row;

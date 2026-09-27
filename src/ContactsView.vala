@@ -12,6 +12,7 @@ namespace Covalence {
         public string photo { get; construct; }
         public string[] addresses { get; construct; }
         public string uid { get; construct; }  /* iCloud card id, "" for the iPhone's */
+        public bool favorite { get; set; default = false; }  /* alpha: iPhone favourites (PBAP) */
 
         public Contact (string name, string photo, string[] addresses, string uid = "") {
             Object (name: name, photo: photo, addresses: addresses, uid: uid);
@@ -21,8 +22,10 @@ namespace Covalence {
             var d = new VariantDict (item);
             var list = d.lookup_value ("addresses", new VariantType ("as"));
             string[] addresses = list != null ? list.dup_strv () : new string[0];
-            return new Contact (dict_string (d, "name"), dict_string (d, "photo"), addresses,
-                                dict_string (d, "uid"));
+            var contact = new Contact (dict_string (d, "name"), dict_string (d, "photo"), addresses,
+                                       dict_string (d, "uid"));
+            contact.favorite = dict_bool (d, "favorite");
+            return contact;
         }
 
         public bool is_phone (string address) {
@@ -128,6 +131,14 @@ namespace Covalence {
             };
             box.append (avatar);
             box.append (text);
+            if (contact.favorite) {
+                var star = new Gtk.Image.from_icon_name ("starred-symbolic") {
+                    tooltip_text = _("Favori sur l'iPhone"),
+                    valign = Gtk.Align.CENTER
+                };
+                star.add_css_class ("favorite-star");
+                box.append (star);
+            }
             child = box;
         }
     }

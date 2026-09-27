@@ -96,7 +96,7 @@ class AncsClient(GattClient):
             return  # already on the iPhone before we connected: not replayed
         label = CATEGORIES.get(category, str(category))
         log(f"notification {uid} {'ajoutée' if event == EVENT_ADDED else 'modifiée'} ({label})")
-        self.pending[uid] = (category, flags)
+        self.pending[uid] = (category, flags if event == EVENT_ADDED else flags | FLAG_SILENT)
         request = struct.pack("<BI", CMD_GET_NOTIFICATION_ATTRIBUTES, uid)
         request += bytes([ATTR_APP_IDENTIFIER])
         request += struct.pack("<BH", ATTR_TITLE, 64)
@@ -176,22 +176,28 @@ class AncsClient(GattClient):
             summary = f"{app_name} · {title}"
         body = "\n".join(filter(None, [attrs.get(ATTR_SUBTITLE), attrs.get(ATTR_MESSAGE)]))
 
-        # Kept in memory for the Notifications tab; shown on the desktop only if wanted.
-        seen = getattr(self.hooks, "notification_seen", None)
-        if seen and not seen(uid, app_id, app_name, title, body, category):
-            log(f"notification {uid} non affichée (app masquée)")
-            return
-
         actions = []
         if flags & FLAG_POSITIVE_ACTION:
             actions.append(("positive", attrs.get(ATTR_POSITIVE_LABEL) or "OK"))
         if flags & FLAG_NEGATIVE_ACTION:
             actions.append(("negative", attrs.get(ATTR_NEGATIVE_LABEL) or _("Effacer")))
 
+        # Kept in memory for the Notifications tab; shown on the desktop only if wanted.
+        seen = getattr(self.hooks, "notification_seen", None)
+        if seen and not seen(uid, app_id, app_name, title, body, category, dict(actions)):
+            log(f"notification {uid} non affichée (app masquée)")
+            return
+
         hints = {}
         if category in (CATEGORY_INCOMING_CALL, CATEGORY_MISSED_CALL) or flags & FLAG_IMPORTANT:
             hints["urgency"] = GLib.Variant("y", 2)
-        if flags & FLAG_SILENT:
+        play = getattr(self.hooks, "play_sound", None)
+        if play:
+            # The sound chosen in Réglages, played by the daemon (none for a silent one).
+            if not flags & (FLAG_SILENT | FLAG_PREEXISTING) and category != CATEGORY_INCOMING_CALL:
+                play("notifications")
+            hints["suppress-sound"] = GLib.Variant("b", True)
+        elif flags & FLAG_SILENT:
             hints["suppress-sound"] = GLib.Variant("b", True)
         if category in CATEGORY_HINTS:
             hints["category"] = GLib.Variant("s", CATEGORY_HINTS[category])

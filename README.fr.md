@@ -7,7 +7,7 @@
 **Votre iPhone et votre compte Apple, chez eux sur elementary OS.**
 
 [![Licence : GPL-3.0-or-later](https://img.shields.io/badge/licence-GPL--3.0--or--later-blue)](LICENSE)
-![Version 0.2.0 alpha](https://img.shields.io/badge/version-0.2.0%20alpha-orange)
+![Version 0.3.2 alpha](https://img.shields.io/badge/version-0.3.2%20alpha-orange)
 ![elementary OS 8+](https://img.shields.io/badge/elementary%20OS-8%2B-64baff)
 
 [Site](https://melvincouwez-alt.github.io/covalence/fr/) ·
@@ -72,7 +72,7 @@ serveur à nous.
 
 ### Depuis le paquet (conseillé)
 
-1. Téléchargez `covalence_0.2.0-1_amd64.deb` depuis la
+1. Téléchargez `covalence_0.3.2-1_amd64.deb` depuis la
    [dernière version](https://github.com/melvincouwez-alt/covalence/releases/latest).
 2. Double-cliquez dessus. Eddy (elementary OS) ou l'App Center (Ubuntu) installe Covalence et
    tous les paquets nécessaires. En terminal : `sudo apt install ./covalence_*.deb`.

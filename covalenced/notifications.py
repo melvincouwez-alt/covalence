@@ -63,7 +63,7 @@ class Notifications:
 
     # --- list ------------------------------------------------------------------------
 
-    def seen(self, uid, app_id, app_name, title, body, category):
+    def seen(self, uid, app_id, app_name, title, body, category, actions=None):
         """Record one notification; True when it should pop up on the desktop."""
         if app_id and app_name and app_name != app_id and \
                 not self.config._string("notification-app-names", app_id):
@@ -71,7 +71,10 @@ class Notifications:
         self.items[uid] = {"uid": uid, "app": app_id or "",
                            "app_name": self.app_name(app_id, app_name),
                            "title": title or "", "body": body or "",
-                           "time": int(time.time()), "category": int(category)}
+                           "time": int(time.time()), "category": int(category),
+                           # iPhone action labels (e.g. « Marquer comme lu »), for the app
+                           "positive": (actions or {}).get("positive", ""),
+                           "negative": (actions or {}).get("negative", "")}
         self.items.move_to_end(uid)
         while len(self.items) > MAX_KEPT:
             self.items.popitem(last=False)

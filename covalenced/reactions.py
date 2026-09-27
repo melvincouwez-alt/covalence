@@ -52,6 +52,7 @@ REMOVE_WORDS = [
 # "Reacted 😂 to", "A réagi avec 😂 à", "😂 to", "😂 à": {emoji} is where the emoji sits.
 EMOJI_FORMS = [
     "a réagi avec {e} à", "a réagi par {e} à", "a réagi {e} à", "réaction {e} à",
+    "a ajouté {e} à", "a ajouté un {e} à", "a ajouté une réaction {e} à", "added {e} to",
     "reacted {e} to", "reacted with {e} to", "{e} to", "{e} à",
     "a réagi avec {e}", "a réagi par {e}", "reacted {e}", "reacted with {e}",
 ]
@@ -97,11 +98,24 @@ def _split_quote(text):
     return text, None
 
 
-def parse(text):
-    """{"emoji", "quote" (None when the text names no message), "removed"} or None."""
+def _strip_name(text, names):
+    """iOS and notifications may start with the sender's name: "Alice reacted 😂 to …"."""
+    folded = _apostrophes(text).casefold()
+    for name in sorted({_clean(n) for n in names or () if n and _clean(n)}, key=len, reverse=True):
+        name = _apostrophes(name).casefold()
+        if folded.startswith(name + " "):
+            return text[len(name) + 1:].lstrip()
+    return text
+
+
+def parse(text, names=()):
+    """{"emoji", "quote" (None when the text names no message), "removed"} or None.
+    names: the sender's names, which may lead the text."""
     text = _clean(text)
     if not text or len(text) > 400:
         return None
+    text = _strip_name(text, names)
+    text = re.sub(r"(?<=[»”\"’'])\s*[.!]$", "", text)  # « … ». : closing full stop
     before, quote = _split_quote(text)
     if quote is None:
         # "A réagi avec 😂" / "Reacted 😂": a reaction to the latest message.

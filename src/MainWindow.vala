@@ -198,6 +198,9 @@ public class Covalence.MainWindow : Gtk.ApplicationWindow {
                                     _("Relancer l'assistant pas à pas"), _("Ouvrir"), () => show_page ("setup")));
         actions.append (action_row ("help-contents", _("Guide"), _("Pas à pas, vie privée et dépannage (F1)"),
                                     _("Ouvrir"), open_help));
+        actions.append (action_row ("starred-symbolic", _("Nouveautés"),
+                                    _("Ce qui change dans la version %s").printf (Config.VERSION),
+                                    _("Afficher"), () => WhatsNew.show (this)));
         actions.append (action_row (Config.APP_ID, _("À propos de Covalence"),
                                     _("Version %s, licence, remerciements").printf (Config.VERSION),
                                     _("Afficher"), () => show_about (this)));
@@ -215,19 +218,155 @@ public class Covalence.MainWindow : Gtk.ApplicationWindow {
             halign = Gtk.Align.CENTER
         };
         content.append (title);
+        content.append (new UpdatesCard (daemon));
         content.append (new ComponentsCard ());
         content.append (new Granite.HeaderLabel (_("Langue")));
         content.append (language);
+        content.append (new Granite.HeaderLabel (_("Codes SMS")));
+        content.append (new CodesCard (daemon));
         content.append (new Granite.HeaderLabel (_("Apps séparées")));
         content.append (detached);
         content.append (detached_hint);
+        content.append (new Granite.HeaderLabel (_("Sons")));
+        content.append (new SoundsCard (daemon));
+        content.append (new Granite.HeaderLabel (_("Messages")));
+        content.append (build_read_full_card ());
         content.append (new Granite.HeaderLabel (_("Assistance")));
         content.append (actions);
+        content.append (new Granite.HeaderLabel (_("Fonctions alpha")));
+        content.append (build_alpha_card ());
+        var alpha_hint = new Gtk.Label (
+            _("Expérimental : ces fonctions reposent sur des comportements de l'iPhone pas encore vérifiés. "
+              + "Elles peuvent ne rien faire. Désactivées par défaut.")
+        ) { xalign = 0, wrap = true };
+        alpha_hint.add_css_class (Granite.CssClass.DIM);
+        alpha_hint.add_css_class (Granite.CssClass.SMALL);
+        content.append (alpha_hint);
         return new Gtk.ScrolledWindow () {
             child = content,
             hscrollbar_policy = Gtk.PolicyType.NEVER,
             vexpand = true
         };
+    }
+
+    /* Whole text of unread messages (FetchUnread): downloading marks them read on the iPhone. */
+    private Gtk.Widget build_read_full_card () {
+        var title_label = new Gtk.Label (_("Toujours lire les messages en entier")) { xalign = 0 };
+        var subtitle_label = new Gtk.Label (
+            _("Récupère tout de suite le texte complet des messages de plus de 120 caractères. "
+              + "Ils passent alors en lu sur l'iPhone.")
+        ) { xalign = 0, wrap = true };
+        subtitle_label.add_css_class (Granite.CssClass.DIM);
+        subtitle_label.add_css_class (Granite.CssClass.SMALL);
+        var text = new Gtk.Box (Gtk.Orientation.VERTICAL, 2) { hexpand = true, valign = Gtk.Align.CENTER };
+        text.append (title_label);
+        text.append (subtitle_label);
+        var sw = new Gtk.Switch () { valign = Gtk.Align.CENTER, active = daemon.get_bool ("FetchUnread") };
+        sw.update_property (Gtk.AccessibleProperty.LABEL, title_label.label, -1);
+        bool updating = false;
+        sw.state_set.connect ((wanted) => {
+            if (updating) {
+                return false;
+            }
+            if (!wanted) {
+                daemon.call.begin ("SetFetchUnread", new Variant ("(b)", false));
+                return false;
+            }
+            var dialog = new Granite.MessageDialog.with_image_from_icon_name (
+                _("Toujours lire les messages en entier ?"),
+                _("Pour avoir le texte complet d'un message non lu, Covalence doit le télécharger : "
+                  + "il passera en lu sur l'iPhone dès son arrivée, même si vous ne l'avez pas "
+                  + "ouvert."),
+                Config.APP_ID + ".Messages", Gtk.ButtonsType.CANCEL) {
+                transient_for = this,
+                modal = true
+            };
+            var go = dialog.add_button (_("Activer"), Gtk.ResponseType.ACCEPT);
+            go.add_css_class (Granite.CssClass.SUGGESTED);
+            dialog.response.connect ((response) => {
+                dialog.destroy ();
+                if (response == Gtk.ResponseType.ACCEPT) {
+                    daemon.call.begin ("SetFetchUnread", new Variant ("(b)", true));
+                } else {
+                    updating = true;
+                    sw.active = false;
+                    updating = false;
+                }
+            });
+            dialog.present ();
+            return false;
+        });
+        daemon.changed.connect (() => {
+            var wanted = daemon.get_bool ("FetchUnread");
+            if (sw.active != wanted) {
+                updating = true;
+                sw.active = wanted;
+                updating = false;
+            }
+        });
+        var box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 12) {
+            margin_top = 9,
+            margin_bottom = 9,
+            margin_start = 12,
+            margin_end = 12
+        };
+        box.append (text);
+        box.append (sw);
+        var list = new Gtk.ListBox () { selection_mode = Gtk.SelectionMode.NONE };
+        list.add_css_class (Granite.CssClass.CARD);
+        list.append (new Gtk.ListBoxRow () { child = box, activatable = false });
+        return list;
+    }
+
+    /* One switch per experimental feature (AlphaFeatures on the daemon). */
+    private Gtk.Widget build_alpha_card () {
+        var list = new Gtk.ListBox () { selection_mode = Gtk.SelectionMode.NONE, show_separators = true };
+        list.add_css_class (Granite.CssClass.CARD);
+        list.append (alpha_row ("map_history", _("Historique étendu des messages"),
+                                _("Demande à l'iPhone les messages au-delà de la liste habituelle "
+                                  + "(pages suivantes, un an en arrière)")));
+        list.append (alpha_row ("mark_read", _("Marquer comme lu sur l'iPhone"),
+                                _("Ouvrir une conversation dans Covalence la marque lue sur l'iPhone")));
+        list.append (alpha_row ("ancs_actions", _("Actions des notifications"),
+                                _("Boutons de l'iPhone (Marquer comme lu, Supprimer…) dans Notifications")));
+        list.append (alpha_row ("pbap_favorites", _("Favoris de l'iPhone"),
+                                _("Étoile sur les contacts favoris, lus à la prochaine synchronisation")));
+        return list;
+    }
+
+    private Gtk.Widget alpha_row (string feature, string title, string subtitle) {
+        var title_label = new Gtk.Label (title) { xalign = 0 };
+        var subtitle_label = new Gtk.Label (subtitle) { xalign = 0, wrap = true };
+        subtitle_label.add_css_class (Granite.CssClass.DIM);
+        subtitle_label.add_css_class (Granite.CssClass.SMALL);
+        var text = new Gtk.Box (Gtk.Orientation.VERTICAL, 2) { hexpand = true, valign = Gtk.Align.CENTER };
+        text.append (title_label);
+        text.append (subtitle_label);
+        var sw = new Gtk.Switch () { valign = Gtk.Align.CENTER, active = daemon.alpha_enabled (feature) };
+        sw.update_property (Gtk.AccessibleProperty.LABEL, title, -1);
+        bool updating = false;
+        sw.notify["active"].connect (() => {
+            if (!updating) {
+                daemon.call.begin ("SetAlphaFeature", new Variant ("(sb)", feature, sw.active));
+            }
+        });
+        daemon.changed.connect (() => {
+            var wanted = daemon.alpha_enabled (feature);
+            if (sw.active != wanted) {
+                updating = true;
+                sw.active = wanted;
+                updating = false;
+            }
+        });
+        var box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 12) {
+            margin_top = 9,
+            margin_bottom = 9,
+            margin_start = 12,
+            margin_end = 12
+        };
+        box.append (text);
+        box.append (sw);
+        return new Gtk.ListBoxRow () { child = box, activatable = false };
     }
 
     private delegate void RowAction ();
@@ -264,6 +403,7 @@ public class Covalence.MainWindow : Gtk.ApplicationWindow {
     private void update_badges () {
         sidebar.set_badge ("messages", daemon.get_uint ("UnreadMessages"));
         sidebar.set_badge ("phone", daemon.get_uint ("MissedCalls"));
+        sidebar.set_badge ("settings", UpdatesCard.pending (daemon));
     }
 
     /* Offline and first-run screens take the whole window, under a plain header. */
@@ -423,6 +563,7 @@ public class Covalence.MainWindow : Gtk.ApplicationWindow {
                     pages.visible_child_name = pending_page;
                 }
             }
+            WhatsNew.maybe_show (this, !Setup.is_done ());
             pending_page = null;
             update_header ();
         }

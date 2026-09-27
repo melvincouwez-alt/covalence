@@ -107,6 +107,25 @@ public class Covalence.Daemon : Object {
         return enabled == null || enabled.get_boolean ();
     }
 
+    /* Experimental features chosen in Réglages (AlphaFeatures), all off by default. */
+    public bool alpha_enabled (string feature) {
+        var v = prop ("AlphaFeatures");
+        if (v == null) {
+            return false;
+        }
+        var enabled = v.lookup_value (feature, VariantType.BOOLEAN);
+        return enabled != null && enabled.get_boolean ();
+    }
+
+    /* The Sync button: number of new messages, or the daemon's error. */
+    public async uint sync_all () throws Error {
+        if (proxy == null) {
+            throw new IOError.NOT_CONNECTED ("Covalence ne répond pas");
+        }
+        var reply = yield proxy.call ("Sync", null, DBusCallFlags.NONE, 180000, null);
+        return reply.get_child_value (0).get_uint32 ();
+    }
+
     public async bool call (string method, Variant? args = null) {
         if (proxy == null) {
             return false;

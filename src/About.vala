@@ -48,6 +48,12 @@ namespace Covalence {
         about.add_credit_section (_("iCloud Drive et Photos : merci à rclone"), {
             _("rclone, Nick Craig-Wood et contributeurs (MIT) https://github.com/rclone/rclone")
         });
+        about.add_credit_section (_("Sons"), {
+            _("Rosée, Envol, Vague, Aurore, Orbite et Horizon : The Android Open Source Project "
+              + "(Apache-2.0) https://android.googlesource.com/platform/frameworks/base/+/main/data/sounds"),
+            _("Carillon et Cristal : Kenney, pack Interface Sounds (CC0) "
+              + "https://kenney.nl/assets/interface-sounds")
+        });
         about.add_credit_section (_("Projets utilisés"), {
             _("LibrePods, Kavish Devar et contributeurs (GPL-3.0-or-later) https://github.com/librepods-org/librepods"),
             "rclone (MIT) https://github.com/rclone/rclone",

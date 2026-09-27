@@ -1,3 +1,25 @@
+covalence (0.3.2-1) unstable; urgency=medium
+
+  * Messages: a small check under a sent message once the iPhone lists it
+    among its sent messages.
+
+ -- Melvin Couwez <301110918+melvincouwez-alt@users.noreply.github.com>  Sun, 27 Sep 2026 23:15:00 +0200
+
+covalence (0.3.1-1) unstable; urgency=medium
+
+  * Messages: reactions shown on the quoted message, merged when reported
+    twice, adding up per emoji; hover bar to react, copy or delete.
+  * One-time SMS codes copied from the notification; browser fill-in for
+    Chrome, Chromium, Edge and Firefox (alpha).
+  * "Read in full" for long unread messages, on request or always.
+  * Sync button; sounds for messages, notifications and calls.
+  * Update checker (GitHub releases) and installer in Settings.
+  * Alpha features: extended history, mark read, notification actions,
+    favourites.
+  * "What's new" window after an update.
+
+ -- Melvin Couwez <301110918+melvincouwez-alt@users.noreply.github.com>  Sun, 27 Sep 2026 23:30:00 +0200
+
 covalence (0.2.0-1) unstable; urgency=medium
 
   * First public alpha release.

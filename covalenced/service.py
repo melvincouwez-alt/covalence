@@ -9,7 +9,7 @@ io.github.melvincouwez.Covalence.
 
 from gi.repository import Gio, GLib
 
-from .config import MODULES
+from .config import ALPHA, MODULES
 from .i18n import _
 
 BUS_NAME = "io.github.melvincouwez.Covalence.Daemon"
@@ -42,6 +42,38 @@ XML = f"""
       <arg name="thread" type="s" direction="in"/>
     </method>
     <method name="SyncMessages"/>
+    <method name="Sync">
+      <arg name="new_messages" type="u" direction="out"/>
+    </method>
+    <method name="ReadFullText">
+      <arg name="message" type="s" direction="in"/>
+    </method>
+    <method name="SetSound">
+      <arg name="kind" type="s" direction="in"/>
+      <arg name="value" type="s" direction="in"/>
+    </method>
+    <method name="ListSounds">
+      <arg name="sounds" type="a(ss)" direction="out"/>
+    </method>
+    <method name="PlaySound">
+      <arg name="kind" type="s" direction="in"/>
+      <arg name="value" type="s" direction="in"/>
+    </method>
+    <method name="StopSound"/>
+    <method name="SetFetchUnread">
+      <arg name="enabled" type="b" direction="in"/>
+    </method>
+    <method name="SetAlphaFeature">
+      <arg name="feature" type="s" direction="in"/>
+      <arg name="enabled" type="b" direction="in"/>
+    </method>
+    <method name="NotificationAction">
+      <arg name="uid" type="u" direction="in"/>
+      <arg name="action" type="s" direction="in"/>
+    </method>
+    <property name="AlphaFeatures" type="a{{sb}}" access="read"/>
+    <property name="FetchUnread" type="b" access="read"/>
+    <property name="Sounds" type="a{{ss}}" access="read"/>
     <method name="SetDraft">
       <arg name="thread" type="s" direction="in"/>
       <arg name="text" type="s" direction="in"/>
@@ -105,6 +137,27 @@ XML = f"""
       <arg name="message" type="s" direction="in"/>
       <arg name="emoji" type="s" direction="in"/>
     </method>
+    <method name="LatestCode">
+      <arg name="purpose" type="s" direction="in"/>
+      <arg name="code" type="s" direction="out"/>
+      <arg name="age" type="u" direction="out"/>
+    </method>
+    <method name="SetOneTimeCodes">
+      <arg name="mode" type="s" direction="in"/>
+    </method>
+    <method name="CheckUpdates">
+      <arg name="latest" type="s" direction="out"/>
+    </method>
+    <method name="InstallUpdate"/>
+    <method name="SetUpdateChecks">
+      <arg name="enabled" type="b" direction="in"/>
+    </method>
+    <method name="RestartDaemon"/>
+    <property name="Update" type="a{{sv}}" access="read"/>
+    <method name="InstallBrowserHost">
+      <arg name="browsers" type="as" direction="out"/>
+    </method>
+    <property name="OneTimeCodes" type="s" access="read"/>
     <method name="DeleteMessage">
       <arg name="message" type="s" direction="in"/>
     </method>
@@ -205,13 +258,19 @@ SIGNATURES = {
     "NotificationsLinked": "b", "MediaLinked": "b", "CallsLinked": "b", "CallsSupported": "b",
     "Battery": "i",
     "ICloudState": "s", "Modules": "a{sb}", "MessagesState": "s", "MessagesSend": "s", "ReactionsSend": "b",
+    "OneTimeCodes": "s",
     "ContactsState": "s", "AudioOnPC": "b", "MicMuted": "b",
     "PhoneAudio": "s", "PhoneAudioOutput": "s", "ContactsSource": "s", "ContactsBook": "s",
-    "UnreadMessages": "u", "MissedCalls": "u", "NowPlaying": "a{sv}",
+    "UnreadMessages": "u", "MissedCalls": "u", "NowPlaying": "a{sv}", "AlphaFeatures": "a{sb}", "FetchUnread": "b", "Sounds": "a{ss}",
+    "Update": "a{sv}",
 }
 
 
 def _variant(name, value):
+    if name == "Update":
+        from .updates import TYPES as UPDATE_TYPES
+        return GLib.Variant("a{sv}", {k: GLib.Variant(UPDATE_TYPES[k], v)
+                                      for k, v in value.items() if k in UPDATE_TYPES})
     if name == "NowPlaying":
         from .nowplaying import TYPES
         return GLib.Variant("a{sv}", {k: GLib.Variant(TYPES[k], v) for k, v in value.items()
@@ -223,16 +282,17 @@ THREAD_TYPES = {"id": "s", "name": "s", "snippet": "s", "time": "x", "unread": "
                 "avatar": "s", "draft": "s"}
 MESSAGE_TYPES = {"id": "s", "outgoing": "b", "sender": "s", "address": "s", "time": "x",
                  "body": "s", "complete": "b", "source": "s", "status": "s", "avatar": "s",
-                 "reactions": "a(ssbb)"}
+                 "reactions": "a(ssbb)", "note": "s"}
 
 
-CONTACT_TYPES = {"name": "s", "addresses": "as", "photo": "s", "uid": "s"}
+CONTACT_TYPES = {"name": "s", "addresses": "as", "photo": "s", "uid": "s", "favorite": "b"}
 CARD_TYPES = {"uid": "s", "given": "s", "family": "s", "org": "s", "note": "s",
               "phones": "a(ss)", "emails": "a(ss)"}
 ACTIVE_TYPES = {"path": "o", "state": "s", "number": "s", "name": "s", "duration": "i",
                 "avatar": "s"}
 NOTIFICATION_TYPES = {"uid": "u", "app": "s", "app_name": "s", "title": "s", "body": "s",
-                      "time": "x", "category": "u", "icon": "s", "image": "s"}
+                      "time": "x", "category": "u", "icon": "s", "image": "s",
+                      "positive": "s", "negative": "s"}
 APP_TYPES = {"id": "s", "name": "s", "enabled": "b", "count": "u", "icon": "s", "image": "s"}
 OUTPUT_TYPES = {"name": "s", "description": "s", "default": "b"}
 HEADPHONES_TYPES = {"address": "s", "name": "s", "model": "s", "firmware": "s", "connected": "b",
@@ -306,6 +366,57 @@ class Service:
             d.messages.mark_seen(params.unpack()[0])
         elif method == "SyncMessages":
             d.messages.retry()
+        elif method == "Sync":
+            def synced(count, error):
+                if error:
+                    invocation.return_dbus_error(f"{INTERFACE}.Error.SyncFailed", error)
+                else:
+                    invocation.return_value(GLib.Variant("(u)", (int(count),)))
+
+            d.messages.manual_sync(synced)
+            return
+        elif method == "ReadFullText":
+            if not d.messages.read_full(params.unpack()[0]):
+                invocation.return_dbus_error(f"{INTERFACE}.Error.NoSuchMessage",
+                                             "no truncated message with this id")
+                return
+        elif method == "SetSound":
+            kind, value = params.unpack()
+            try:
+                d.set_sound(kind, value)
+            except ValueError:
+                invocation.return_dbus_error(f"{INTERFACE}.Error.InvalidSound",
+                                             _("son introuvable"))
+                return
+        elif method == "ListSounds":
+            from .sounds import available
+            invocation.return_value(GLib.Variant("(a(ss))", (available(),)))
+            return
+        elif method == "PlaySound":
+            kind, value = params.unpack()
+            if not d.sounds.preview(kind, value):
+                invocation.return_dbus_error(f"{INTERFACE}.Error.CannotPlay",
+                                             _("lecture impossible"))
+                return
+        elif method == "StopSound":
+            d.sounds.stop()
+        elif method == "SetFetchUnread":
+            d.set_fetch_unread(params.unpack()[0])
+        elif method == "SetAlphaFeature":
+            feature, enabled = params.unpack()
+            if feature not in ALPHA:
+                invocation.return_dbus_error(f"{INTERFACE}.Error.UnknownFeature", feature)
+                return
+            d.set_alpha(feature, enabled)
+        elif method == "NotificationAction":
+            uid, action = params.unpack()
+            if not d.config.alpha("ancs_actions"):
+                invocation.return_dbus_error(f"{INTERFACE}.Error.Disabled", "ancs_actions is off")
+                return
+            if not d.notification_action(uid, action):
+                invocation.return_dbus_error(f"{INTERFACE}.Error.NotLinked",
+                                             _("notifications de l'iPhone non reliées"))
+                return
         elif method == "ListNotifications":
             invocation.return_value(GLib.Variant(
                 "(aa{sv})", (_dicts(d.notifications.listing(), NOTIFICATION_TYPES),)))
@@ -405,6 +516,46 @@ class Service:
             d.now_playing.set_volume(params.unpack()[0])
         elif method == "SetViewing":
             d.messages.set_viewing(params.unpack()[0])
+        elif method == "LatestCode":
+            code, age = d.messages.latest_code(params.unpack()[0])
+            invocation.return_value(GLib.Variant("(su)", (code, age)))
+            return
+        elif method == "SetOneTimeCodes":
+            d.messages.set_code_mode(params.unpack()[0])
+            d.link_changed()
+        elif method == "CheckUpdates":
+            def checked(latest, error):
+                if error:
+                    invocation.return_dbus_error(f"{INTERFACE}.Error.UpdateCheckFailed", error)
+                else:
+                    invocation.return_value(GLib.Variant("(s)", (latest,)))
+
+            d.updates.check(checked)
+            return
+        elif method == "InstallUpdate":
+            # Download and install take minutes (polkit asks for the password): the call
+            # returns at once, progress and outcome go through the Update property.
+            refused = []
+            d.updates.install(lambda error: refused.append(error) if error else None)
+            if refused and d.updates.state_name not in ("downloading", "installing"):
+                invocation.return_dbus_error(f"{INTERFACE}.Error.UpdateFailed", refused[0])
+                return
+        elif method == "SetUpdateChecks":
+            d.updates.set_auto(params.unpack()[0])
+        elif method == "RestartDaemon":
+            from .updates import restart_daemon
+            invocation.return_value(None)
+            GLib.timeout_add(300, lambda: restart_daemon() and False)
+            return
+        elif method == "InstallBrowserHost":
+            from . import browser_host
+            try:
+                installed = browser_host.install()
+            except OSError as error:
+                invocation.return_dbus_error(f"{INTERFACE}.Error.Failed", str(error))
+                return
+            invocation.return_value(GLib.Variant("(as)", (installed,)))
+            return
         elif method == "DeleteMessage":
             d.messages.delete_message(params.unpack()[0])
         elif method == "DeleteConversation":

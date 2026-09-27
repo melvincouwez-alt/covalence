@@ -1,0 +1,10 @@
+#!@PYTHON@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: 2026 Melvin Couwez
+"""Native messaging host of the Covalence browser extension (one-time codes, alpha)."""
+import sys
+
+sys.path.insert(0, "@PKGDATADIR@")
+from covalenced.browser_host import main  # noqa: E402
+
+sys.exit(main())

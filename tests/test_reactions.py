@@ -117,12 +117,13 @@ class BadgesTest(unittest.TestCase):
         self.receive("3", "Laughed at “On se voit…”", "20260927T100200")
         self.assertEqual(self.bubbles()[0]["reactions"], [("😂", "Alice", False, False)])
 
-    def test_new_reaction_replaces_and_removal_cancels(self):
+    def test_reactions_add_up_and_removal_takes_one_away(self):
         self.receive("3", "A aimé « Oui, à demain ! »", "20260927T100200")
         self.receive("4", "A adoré « Oui, à demain ! »", "20260927T100300")
-        self.assertEqual(self.bubbles()[1]["reactions"], [("❤️", "Alice", False, False)])
+        self.assertEqual(self.bubbles()[1]["reactions"],
+                         [("👍", "Alice", False, False), ("❤️", "Alice", False, False)])
         self.receive("5", "A retiré un cœur de « Oui, à demain ! »", "20260927T100400")
-        self.assertEqual(self.bubbles()[1]["reactions"], [])
+        self.assertEqual(self.bubbles()[1]["reactions"], [("👍", "Alice", False, False)])
         self.assertEqual(len(self.bubbles()), 2)  # no bubble for any of the three
 
     def test_no_match_stays_a_bubble(self):

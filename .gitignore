@@ -9,3 +9,4 @@ debian/covalence/
 debian/files
 debian/*.substvars
 debian/debhelper-build-stamp
+extension/out/

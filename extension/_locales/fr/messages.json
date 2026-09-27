@@ -1,0 +1,9 @@
+{
+  "name": { "message": "Covalence : codes SMS" },
+  "description": { "message": "Propose sous le champ de code d'un site le code reçu par SMS sur votre iPhone (Covalence, alpha)." },
+  "pill": {
+    "message": "Code de Covalence : $CODE$",
+    "placeholders": { "code": { "content": "$1" } }
+  },
+  "pillTitle": { "message": "Cliquer pour remplir le champ. Échap pour fermer." }
+}

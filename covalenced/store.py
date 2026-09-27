@@ -273,8 +273,8 @@ class Store:
                 (key, handle, thread, int(outgoing), sender, sender_name, int(when), body,
                  int(complete), kind, int(phone_read), int(seen or outgoing), source, status))
             return True
-        if old["kind"] == "reaction":
-            kind = "reaction"  # shown as a badge; a new listing must not make it a bubble again
+        if old["kind"] in ("reaction", "reaction-note"):
+            kind = old["kind"]  # shown as a badge; a new listing must not make it a bubble again
         # Never replace a complete body by the (truncated) listing subject.
         if old["complete"] and not complete:
             body, complete = old["body"], 1
@@ -323,19 +323,20 @@ class Store:
         return dict(row) if row else None
 
     def reactions_for(self, tid):
-        """{target key: [(emoji, author, pending), ...]}: for each author, the latest reaction
-        counts; a removal cancels it. pending: sent by the user, not yet listed by the phone."""
+        """{target key: [(emoji, author, pending), ...]}: reactions add up, one per emoji and
+        author; removing one takes only that emoji away. pending: sent by the user, not yet
+        listed by the phone."""
         latest = {}
         for row in self.db.execute(
                 "SELECT r.*, m.source AS source FROM reactions r LEFT JOIN messages m "
                 "ON m.key = r.key WHERE r.thread=? ORDER BY r.time", (tid,)):
-            latest[(row["target"], row["author"] or "")] = row
+            latest[(row["target"], row["author"] or "", row["emoji"])] = row
         result = {}
-        for (target, author), row in latest.items():
+        for (target, author, emoji), row in latest.items():
             if row["removed"]:
                 continue
             pending = row["source"] == "covalence"
-            result.setdefault(target, []).append((row["emoji"], author, pending))
+            result.setdefault(target, []).append((emoji, author, pending))
         return result
 
     def reaction_target(self, tid, quote, before, exclude=None):
@@ -344,7 +345,8 @@ class Store:
         from .reactions import matches
         rows = self.db.execute(
             "SELECT key, body, outgoing FROM messages WHERE thread=? AND time<=? "
-            "AND COALESCE(kind, '')<>'reaction' ORDER BY time DESC LIMIT 400",
+            "AND COALESCE(kind, '') NOT IN ('reaction', 'reaction-note') "
+            "ORDER BY time DESC LIMIT 400",
             (tid, int(before) + 60))
         for row in rows:
             if row["key"] == exclude:
