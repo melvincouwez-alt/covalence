@@ -261,8 +261,8 @@ msgid "Appel sortant…"
 msgstr "Calling…"
 
 #: src/CallsView.vala:11
-msgid "Les appels demandent PipeWire 1.4 ou plus récent, présent dans elementary OS 9."
-msgstr "Calls need PipeWire 1.4 or later, included in elementary OS 9."
+msgid "Les appels demandent PipeWire 1.4 ou plus récent."
+msgstr "Calls need PipeWire 1.4 or later."
 
 #: src/CallsView.vala:52
 msgid "Le journal d'appels vient de l'iPhone. Activez « Synchroniser les contacts » pour ce PC dans les réglages Bluetooth de l'iPhone."

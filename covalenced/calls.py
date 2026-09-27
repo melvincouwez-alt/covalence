@@ -53,8 +53,8 @@ class Calls:
         self.on_show = None  # callable() to bring the call window up
         self.started = {}  # call path -> monotonic time it became active
         self.transport = {}  # gateway path -> {"State", "RejectSCO"}
-        # org.pipewire.Telephony first shipped in PipeWire 1.4 (elementary OS 9);
-        # elementary OS 8 has 1.0: calls are then shown as unavailable.
+        # org.pipewire.Telephony first shipped in PipeWire 1.4;
+        # with an older PipeWire, calls are shown as unavailable.
         from .components import PIPEWIRE_MIN, _pipewire_version
         version = _pipewire_version()
         self.supported = version is None or version >= PIPEWIRE_MIN

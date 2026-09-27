@@ -2,7 +2,7 @@ title: Téléphone et appels
 icon: @APP_ID@.Phone
 summary: Passer et recevoir les appels de l'iPhone sur l'ordinateur.
 ---
-!warn Les appels demandent PipeWire 1.4 ou plus récent, présent sur elementary OS 9. Sur elementary OS 8, ils restent indisponibles : le reste de Covalence fonctionne normalement.
+!warn Les appels demandent PipeWire 1.4 ou plus récent. Avec un PipeWire plus ancien, ils restent indisponibles : le reste de Covalence fonctionne normalement.
 
 ## Recevoir un appel
 Quand l'iPhone sonne, une notification et une fenêtre d'appel s'ouvrent sur l'ordinateur :

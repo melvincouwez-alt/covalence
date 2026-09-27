@@ -27,7 +27,7 @@ That is intended until it is read on the iPhone. See [Messages](guide:messages).
 During the call, turn on **PC audio**. Check the output and microphone in System Settings › Sound.
 
 ### No calls at all
-On elementary OS 8, calls are not available (PipeWire too old). See [Phone](guide:phone).
+If your PipeWire is older than 1.4, calls are not available. See [Phone](guide:phone).
 
 ### iCloud Drive or Photos is empty
 Apple probably wants the sign-in confirmed again: **Reconnect…** in [Apple Services](app:services). Log: `journalctl --user -u covalence-icloud-drive`.

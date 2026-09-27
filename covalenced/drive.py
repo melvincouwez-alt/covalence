@@ -46,7 +46,7 @@ from .i18n import _, ngettext  # noqa: E402
 from .util import icloud_uid_prefix  # noqa: E402
 
 PRIVATE_RCLONE = os.path.join(os.path.expanduser("~"), ".local", "libexec", "covalence", "rclone")
-# iCloud Drive and iCloud Photos need rclone 1.69 or later (Ubuntu 26.04 ships 1.60).
+# iCloud Drive and iCloud Photos need rclone 1.69 or later (Ubuntu 24.04 ships 1.60).
 RCLONE_MIN = (1, 69)
 
 

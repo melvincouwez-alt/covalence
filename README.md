@@ -8,7 +8,7 @@
 
 [![License: GPL-3.0-or-later](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)](LICENSE)
 ![Version 0.2.0 alpha](https://img.shields.io/badge/version-0.2.0%20alpha-orange)
-![elementary OS 8 and 9](https://img.shields.io/badge/elementary%20OS-8%20%7C%209-64baff)
+![elementary OS 8+](https://img.shields.io/badge/elementary%20OS-8%2B-64baff)
 
 [Website](https://melvincouwez-alt.github.io/covalence/) ·
 [Download](https://github.com/melvincouwez-alt/covalence/releases/latest) ·
@@ -89,8 +89,7 @@ Uninstall with `sudo apt remove covalence`. Your data stays in `~/.local/share/c
 
 | System | Status |
 |---|---|
-| elementary OS 9 | Everything works. |
-| elementary OS 8 | Everything except calls: PipeWire 1.0 has no telephony API. Covalence greys the calls out and says why. |
+| elementary OS 8 or later | Everything works. Calls need PipeWire 1.4 or later: with an older PipeWire, Covalence greys the calls out and says why. |
 | Ubuntu 24.04 or later | Needs Granite 7.7 or later. Calls need PipeWire 1.4 or later. Ubuntu 24.04 ships rclone 1.60, too old for iCloud: use the "Download rclone" button. |
 
 Hardware: a Bluetooth adapter that supports Bluetooth Low Energy (almost all recent ones).

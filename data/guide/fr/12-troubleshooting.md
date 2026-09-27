@@ -27,7 +27,7 @@ C'est voulu tant qu'il n'est pas lu sur l'iPhone. Voir [Messages](guide:messages
 Pendant l'appel, activez **Audio PC**. Vérifiez la sortie et le micro dans Paramètres système › Son.
 
 ### Pas d'appels du tout
-Sur elementary OS 8, les appels ne sont pas disponibles (PipeWire trop ancien). Voir [Téléphone](guide:phone).
+Si votre PipeWire est antérieur à la version 1.4, les appels ne sont pas disponibles. Voir [Téléphone](guide:phone).
 
 ### iCloud Drive ou Photos vide
 Apple demande sans doute de reconfirmer la connexion : **Reconnecter…** dans [Services Apple](app:services). Journal : `journalctl --user -u covalence-icloud-drive`.

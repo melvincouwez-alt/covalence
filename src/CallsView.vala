@@ -8,9 +8,9 @@
 
 namespace Covalence {
     public const string CALLS_UNAVAILABLE =
-        N_("Les appels demandent PipeWire 1.4 ou plus récent, présent dans elementary OS 9.");
+        N_("Les appels demandent PipeWire 1.4 ou plus récent.");
 
-    /* elementary OS 8 ships PipeWire 1.0, without the hands-free telephony API. */
+    /* PipeWire before 1.4 has no hands-free telephony API. */
     public bool calls_unavailable (Daemon daemon) {
         return daemon.running && !daemon.get_bool ("CallsSupported");
     }

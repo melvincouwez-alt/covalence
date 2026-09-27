@@ -2,7 +2,7 @@ title: Phone and calls
 icon: @APP_ID@.Phone
 summary: Make and take your iPhone's calls on the computer.
 ---
-!warn Calls need PipeWire 1.4 or newer, which elementary OS 9 has. On elementary OS 8 they are not available: the rest of Covalence works as usual.
+!warn Calls need PipeWire 1.4 or newer. With an older PipeWire they are not available: the rest of Covalence works as usual.
 
 ## Taking a call
 When the iPhone rings, a notification and a call window open on the computer:
