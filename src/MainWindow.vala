@@ -312,10 +312,36 @@ public class Covalence.MainWindow : Gtk.ApplicationWindow {
         };
         box.append (text);
         box.append (sw);
-        var list = new Gtk.ListBox () { selection_mode = Gtk.SelectionMode.NONE };
+        var list = new Gtk.ListBox () { selection_mode = Gtk.SelectionMode.NONE, show_separators = true };
         list.add_css_class (Granite.CssClass.CARD);
         list.append (new Gtk.ListBoxRow () { child = box, activatable = false });
+        list.append (auto_emoji_row ());
         return list;
+    }
+
+    /* ":)" becomes 🙂 while typing (kept by the app in apps.conf, see ComposeField). */
+    private Gtk.Widget auto_emoji_row () {
+        var title_label = new Gtk.Label (_("Émojis automatiques")) { xalign = 0 };
+        var subtitle_label = new Gtk.Label (
+            _("« :) » devient 🙂, « :D » devient 😃, « <3 » devient ❤️… Retour arrière annule.")
+        ) { xalign = 0, wrap = true };
+        subtitle_label.add_css_class (Granite.CssClass.DIM);
+        subtitle_label.add_css_class (Granite.CssClass.SMALL);
+        var text = new Gtk.Box (Gtk.Orientation.VERTICAL, 2) { hexpand = true, valign = Gtk.Align.CENTER };
+        text.append (title_label);
+        text.append (subtitle_label);
+        var sw = new Gtk.Switch () { valign = Gtk.Align.CENTER, active = ComposeField.auto_emoji_enabled () };
+        sw.update_property (Gtk.AccessibleProperty.LABEL, title_label.label, -1);
+        sw.notify["active"].connect (() => ComposeField.set_auto_emoji (sw.active));
+        var box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 12) {
+            margin_top = 9,
+            margin_bottom = 9,
+            margin_start = 12,
+            margin_end = 12
+        };
+        box.append (text);
+        box.append (sw);
+        return new Gtk.ListBoxRow () { child = box, activatable = false };
     }
 
     /* One switch per experimental feature (AlphaFeatures on the daemon). */

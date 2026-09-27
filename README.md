@@ -7,7 +7,7 @@
 **Your iPhone and your Apple account, at home on elementary OS.**
 
 [![License: GPL-3.0-or-later](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)](LICENSE)
-![Version 0.3.2 alpha](https://img.shields.io/badge/version-0.3.2%20alpha-orange)
+![Version 0.3.3 alpha](https://img.shields.io/badge/version-0.3.3%20alpha-orange)
 ![elementary OS 8+](https://img.shields.io/badge/elementary%20OS-8%2B-64baff)
 
 [Website](https://melvincouwez-alt.github.io/covalence/) ·
@@ -70,7 +70,7 @@ through a server of ours.
 
 ### From the package (recommended)
 
-1. Download `covalence_0.3.2-1_amd64.deb` from the
+1. Download `covalence_0.3.3-1_amd64.deb` from the
    [latest release](https://github.com/melvincouwez-alt/covalence/releases/latest).
 2. Double-click it. Eddy (elementary OS) or the App Center (Ubuntu) installs Covalence and every
    package it needs. In a terminal: `sudo apt install ./covalence_*.deb`.
@@ -118,6 +118,22 @@ Honest limits, mostly set by what an iPhone accepts from a non-Apple computer:
   [guide](data/guide/en/12-troubleshooting.md) explains what to do.
 - Unlocking the computer with the iPhone is left out on purpose: Bluetooth signal strength
   can be faked.
+
+## Coming next (0.4.0)
+
+Work in progress, subject to change:
+
+- **Internet through the iPhone** in one click (Bluetooth tethering).
+- **Top bar indicator**: iPhone battery and network, now playing, current call, unread messages.
+- **Proximity lock**: the PC locks when the iPhone moves away (it never unlocks).
+- **Search** in messages and contacts, pinned conversations, "mark as unread".
+- **Files with LocalSend**, the free app already on the App Store, both ways.
+- **iCloud Drive sync status** in Files.
+- **Editable iCloud contacts**.
+- **Shortcuts** to Find My, Notes and Hide My Email on iCloud.com.
+- **iPhone screen mirroring** on the PC with UxPlay (experimental).
+- **Photo import over USB**.
+- **Settings in tabs**, with Covalence's free sounds easier to try.
 
 ## Help
 

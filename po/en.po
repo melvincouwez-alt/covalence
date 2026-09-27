@@ -2748,3 +2748,12 @@ msgstr "Sent messages"
 
 msgid "Une petite coche apparaît sous un message dès que l'iPhone confirme son envoi."
 msgstr "A small check appears under a message as soon as the iPhone confirms it was sent."
+
+msgid "Émojis automatiques"
+msgstr "Automatic emojis"
+
+msgid "« :) » devient 🙂, « :D » devient 😃, « <3 » devient ❤️… Retour arrière annule."
+msgstr "“:)” becomes 🙂, “:D” becomes 😃, “<3” becomes ❤️… Backspace undoes it."
+
+msgid "« :) » devient 🙂 pendant la saisie. Retour arrière annule ; réglable dans Réglages."
+msgstr "“:)” becomes 🙂 as you type. Backspace undoes it; can be turned off in Settings."

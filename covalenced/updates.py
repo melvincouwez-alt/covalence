@@ -327,7 +327,8 @@ class Updates:
 
         def finished(proc, result):
             try:
-                _out, err = proc.communicate_utf8_finish(result)
+                # PyGObject returns (ok, stdout, stderr).
+                err = proc.communicate_utf8_finish(result)[-1]
             except GLib.Error as failure:
                 self._failed(failure.message, on_done)
                 return

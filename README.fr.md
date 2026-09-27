@@ -7,7 +7,7 @@
 **Votre iPhone et votre compte Apple, chez eux sur elementary OS.**
 
 [![Licence : GPL-3.0-or-later](https://img.shields.io/badge/licence-GPL--3.0--or--later-blue)](LICENSE)
-![Version 0.3.2 alpha](https://img.shields.io/badge/version-0.3.2%20alpha-orange)
+![Version 0.3.3 alpha](https://img.shields.io/badge/version-0.3.3%20alpha-orange)
 ![elementary OS 8+](https://img.shields.io/badge/elementary%20OS-8%2B-64baff)
 
 [Site](https://melvincouwez-alt.github.io/covalence/fr/) ·
@@ -72,7 +72,7 @@ serveur à nous.
 
 ### Depuis le paquet (conseillé)
 
-1. Téléchargez `covalence_0.3.2-1_amd64.deb` depuis la
+1. Téléchargez `covalence_0.3.3-1_amd64.deb` depuis la
    [dernière version](https://github.com/melvincouwez-alt/covalence/releases/latest).
 2. Double-cliquez dessus. Eddy (elementary OS) ou l'App Center (Ubuntu) installe Covalence et
    tous les paquets nécessaires. En terminal : `sudo apt install ./covalence_*.deb`.
@@ -124,6 +124,22 @@ Des limites honnêtes, fixées surtout par ce qu'un iPhone accepte d'un ordinate
   [guide](data/guide/fr/12-troubleshooting.md) explique quoi faire.
 - Déverrouiller l'ordinateur avec l'iPhone est volontairement exclu : la force du signal
   Bluetooth peut être falsifiée.
+
+## Prochainement (0.4.0)
+
+En cours de développement, susceptible d'évoluer :
+
+- **Internet via l'iPhone** en un clic (partage de connexion Bluetooth).
+- **Indicateur dans la barre du haut** : batterie et réseau de l'iPhone, lecture en cours, appel en cours, messages non lus.
+- **Verrouillage de proximité** : le PC se verrouille quand l'iPhone s'éloigne (jamais de déverrouillage).
+- **Recherche** dans les messages et les contacts, conversations épinglées, « marquer comme non lu ».
+- **Fichiers avec LocalSend**, l'app libre déjà sur l'App Store, dans les deux sens.
+- **État de synchro d'iCloud Drive** dans Fichiers.
+- **Contacts iCloud modifiables**.
+- **Raccourcis** vers Localiser, Notes et Masquer mon e-mail sur iCloud.com.
+- **Recopie de l'écran de l'iPhone** sur le PC avec UxPlay (expérimental).
+- **Import des photos par USB**.
+- **Réglages en onglets**, avec les sons libres de Covalence plus faciles à essayer.
 
 ## Aide
 

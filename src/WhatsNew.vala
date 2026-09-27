@@ -16,6 +16,8 @@ namespace Covalence.WhatsNew {
 
     private static Item[] items () {
         return {
+            { "face-smile-symbolic", _("Émojis automatiques"),
+              _("« :) » devient 🙂 pendant la saisie. Retour arrière annule ; réglable dans Réglages.") },
             { "object-select-symbolic", _("Messages envoyés"),
               _("Une petite coche apparaît sous un message dès que l'iPhone confirme son envoi.") },
             { "emoji-body-symbolic", _("Réactions"),

@@ -1,3 +1,11 @@
+covalence (0.3.3-1) unstable; urgency=medium
+
+  * Messages: automatic emojis while typing (":)" becomes 🙂, Backspace
+    undoes it), switch in Settings.
+  * Updates: the install no longer stays shown as in progress once done.
+
+ -- Melvin Couwez <301110918+melvincouwez-alt@users.noreply.github.com>  Sun, 27 Sep 2026 23:50:00 +0200
+
 covalence (0.3.2-1) unstable; urgency=medium
 
   * Messages: a small check under a sent message once the iPhone lists it
