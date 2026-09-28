@@ -1,3 +1,15 @@
+covalence (0.5.1-1) unstable; urgency=medium
+
+  * Headphones: AirPods Pro 3 (A3063, A3064, A3065) recognised, with noise
+    control, adaptive audio, conversation awareness and one-bud noise
+    cancellation. A model number Covalence does not know yet keeps every
+    control instead of leaving only ear detection.
+  * Setup: the app-specific password step no longer runs past its card
+    (no monospace font switch in the middle of the line).
+  * Demo daemon: headphone features taken from the daemon's own table.
+
+ -- Melvin Couwez <301110918+melvincouwez-alt@users.noreply.github.com>  Mon, 28 Sep 2026 17:45:00 +0200
+
 covalence (0.5.0-1) unstable; urgency=medium
 
   * Security: the pairing code must be confirmed on the PC; only an

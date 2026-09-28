@@ -2545,12 +2545,12 @@ msgstr "Create an app-specific password"
 msgid ""
 "Sur la page de votre compte Apple, ouvrez <b>Connexion et sécurité</b> › "
 "<b>Mots de passe pour les apps</b>, touchez <b>+</b>, nommez-le "
-"« Covalence » et copiez le code <tt>xxxx-xxxx-xxxx-xxxx</tt>. La double "
+"« Covalence » et copiez le code xxxx-xxxx-xxxx-xxxx. La double "
 "authentification doit être active."
 msgstr ""
 "On your Apple Account page, open <b>Sign-In and Security</b> › <b>App-"
 "Specific Passwords</b>, click <b>+</b>, name it “Covalence” and copy the "
-"code <tt>xxxx-xxxx-xxxx-xxxx</tt>. Two-factor authentication must be on."
+"code xxxx-xxxx-xxxx-xxxx. Two-factor authentication must be on."
 
 #: src/PhoneGuide.vala:195
 msgid "Ouvrir la page Apple…"
@@ -4744,6 +4744,15 @@ msgstr "Disconnect…"
 
 #~ msgid "Toujours accepter de cet appareil"
 #~ msgstr "Always accept from this device"
+
+#: src/WhatsNew.vala
+msgid ""
+"Contrôle du bruit, audio adaptatif et détection de conversation sont "
+"reconnus. Des écouteurs plus récents que Covalence gardent toutes leurs "
+"commandes."
+msgstr ""
+"Noise control, adaptive audio and conversation awareness are recognised. "
+"Headphones newer than Covalence keep every control."
 
 #: src/WhatsNew.vala
 msgid "Sécurité renforcée"

@@ -16,6 +16,9 @@ namespace Covalence.WhatsNew {
 
     private static Item[] items () {
         return {
+            { "audio-headphones-symbolic", _("AirPods Pro 3"),
+              _("Contrôle du bruit, audio adaptatif et détection de conversation sont reconnus. "
+                + "Des écouteurs plus récents que Covalence gardent toutes leurs commandes.") },
             { "security-high-symbolic", _("Sécurité renforcée"),
               _("Le code d'appairage se confirme aussi sur le PC. Un autre programme doit vous "
                 + "demander avant d'appeler, d'envoyer ou d'appairer. Mises à jour, fichiers "

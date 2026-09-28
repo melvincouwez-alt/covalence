@@ -22,6 +22,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."
 from gi.repository import Gio, GLib  # noqa: E402
 
 from covalenced import service  # noqa: E402
+from covalenced.headphones import features_for  # noqa: E402
 from covalenced.util import APP_ID  # noqa: E402
 
 # COVALENCE_DEMO_BUS picks another name, so that two demo runs never collide.
@@ -31,7 +32,7 @@ NOW = int(time.time())
 MIN, HOUR, DAY = 60, 3600, 86400
 
 PROPS = {
-    "Version": "0.5.0", "BluetoothAvailable": True, "Advertising": True, "Pairing": False, "LinkProblem": "", "AdapterName": "Covalence-PC",
+    "Version": "0.5.1", "BluetoothAvailable": True, "Advertising": True, "Pairing": False, "LinkProblem": "", "AdapterName": "Covalence-PC",
     "DeviceName": "iPhone de Camille", "DeviceAddress": "00:11:22:33:44:55", "Paired": True,
     "Connected": True, "NotificationsLinked": True, "MediaLinked": True, "CallsLinked": True,
     "CallsSupported": True, "Battery": 78, "ICloudState": "connected", "MessagesState": "ready",
@@ -224,8 +225,7 @@ def headphones():
              "left": 85, "right": 80, "case": 60, "left_charging": False,
              "right_charging": False, "case_charging": True, "ear_left": "in", "ear_right": "in",
              "mode": 4, "cycle": 6, "conversation": 1, "adaptive": 50, "one_bud": 1,
-             "features": ["battery", "modes", "conversation", "adaptive", "rename", "one_bud",
-                          "cycle", "ear"], "auto_pause": True}]
+             "features": sorted(features_for("AirPods Pro 2")), "auto_pause": True}]
 
 
 REPLIES = {

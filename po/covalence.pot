@@ -2377,7 +2377,7 @@ msgstr ""
 msgid ""
 "Sur la page de votre compte Apple, ouvrez <b>Connexion et sécurité</b> › "
 "<b>Mots de passe pour les apps</b>, touchez <b>+</b>, nommez-le "
-"« Covalence » et copiez le code <tt>xxxx-xxxx-xxxx-xxxx</tt>. La double "
+"« Covalence » et copiez le code xxxx-xxxx-xxxx-xxxx. La double "
 "authentification doit être active."
 msgstr ""
 

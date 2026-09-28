@@ -24,6 +24,12 @@
   <releases>
     <release version="@VERSION@" date="2026-09-28" type="development">
       <description>
+        <p>AirPods Pro 3 recognised: noise control, adaptive audio and conversation awareness are back; headphones newer than Covalence keep every control. The app-specific password step no longer runs past its card.</p>
+        <p xml:lang="fr">AirPods Pro 3 reconnus : contrôle du bruit, audio adaptatif et détection de conversation reviennent ; des écouteurs plus récents que Covalence gardent toutes leurs commandes. L'étape du mot de passe pour app ne déborde plus de sa carte.</p>
+      </description>
+    </release>
+    <release version="0.5.0" date="2026-09-28" type="development">
+      <description>
         <p>Security and stability pass: pairing code confirmed on the PC, other programs must ask before calling, sending or pairing, safer updates and file transfers, SMS codes tied to their website; no more duplicate or misplaced messages.</p>
         <p xml:lang="fr">Repasse sécurité et stabilité : code d'appairage confirmé sur le PC, les autres programmes doivent demander avant d'appeler, d'envoyer ou d'appairer, mises à jour et transferts de fichiers plus sûrs, codes SMS liés à leur site ; plus de messages en double ni mal rangés.</p>
       </description>

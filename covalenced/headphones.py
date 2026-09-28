@@ -63,6 +63,7 @@ MODELS = {
     "A2032": N_("AirPods (2e génération)"), "A2031": N_("AirPods (2e génération)"),
     "A2565": N_("AirPods (3e génération)"), "A2564": N_("AirPods (3e génération)"),
     "A2084": "AirPods Pro", "A2083": "AirPods Pro",
+    "A3063": "AirPods Pro 3", "A3064": "AirPods Pro 3", "A3065": "AirPods Pro 3",
     "A2931": "AirPods Pro 2", "A2699": "AirPods Pro 2", "A2698": "AirPods Pro 2",
     "A3047": "AirPods Pro 2 (USB-C)", "A3048": "AirPods Pro 2 (USB-C)",
     "A3049": "AirPods Pro 2 (USB-C)",
@@ -73,6 +74,7 @@ MODELS = {
 # What each family can do: noise control, adaptive audio, conversation awareness,
 # ear detection, one-bud noise cancellation.
 FEATURES = {
+    "AirPods Pro 3": {"anc", "adaptive", "conversation", "ear", "one_bud"},
     "AirPods Pro 2": {"anc", "adaptive", "conversation", "ear", "one_bud"},
     "AirPods 4 (ANC)": {"anc", "adaptive", "conversation", "ear"},
     "AirPods Pro": {"anc", "ear", "one_bud"},
@@ -82,7 +84,7 @@ FEATURES = {
 
 
 def features_for(model):
-    for prefix in ("AirPods Pro 2", "AirPods 4 (ANC)", "AirPods Pro", "AirPods Max"):
+    for prefix in ("AirPods Pro 3", "AirPods Pro 2", "AirPods 4 (ANC)", "AirPods Pro", "AirPods Max"):
         if model.startswith(prefix):
             return FEATURES[prefix]
     return FEATURES["AirPods"] if model else {"anc", "adaptive", "conversation", "ear", "one_bud"}
@@ -301,10 +303,12 @@ class Pods:
         fields = [f.decode("utf-8", "replace") for f in body[start:].split(b"\x00")]
         model_number = next((f for f in fields if f.startswith("A") and f[1:].isdigit()
                              and len(f) == 5), "")
-        self.model = MODELS.get(model_number, "AirPods" if model_number else "")
+        # A number missing from MODELS is a model newer than this list: leave the model
+        # empty so that every control stays offered instead of hiding them all.
+        self.model = MODELS.get(model_number, "")
         if len(fields) > 4:
             self.firmware = fields[4]
-        log(f"écouteurs : {self.model or 'modèle inconnu'} reconnus")
+        log(f"écouteurs : {self.model or f'modèle inconnu ({model_number or '?'})'} reconnus")
 
     # --- commands ------------------------------------------------------------------------
 

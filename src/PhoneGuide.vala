@@ -191,7 +191,7 @@ namespace Covalence {
             password = new SetupStep (1, _("Créer un mot de passe pour app"),
                 _("Sur la page de votre compte Apple, ouvrez <b>Connexion et sécurité</b> › "
                 + "<b>Mots de passe pour les apps</b>, touchez <b>+</b>, nommez-le « Covalence » et "
-                + "copiez le code <tt>xxxx-xxxx-xxxx-xxxx</tt>. La double authentification doit être active."));
+                + "copiez le code xxxx-xxxx-xxxx-xxxx. La double authentification doit être active."));
             password.add_button (_("Ouvrir la page Apple…")).clicked.connect (() => {
                 new Gtk.UriLauncher (APPLE_ACCOUNT_URL).launch.begin (get_root () as Gtk.Window, null);
             });
