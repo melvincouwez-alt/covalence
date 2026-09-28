@@ -126,6 +126,8 @@ public class Covalence.ServicesView : Gtk.Box {
         content.append (defaults);
         content.append (new Granite.HeaderLabel (_("Apps")));
         content.append (apps);
+        content.append (new Granite.HeaderLabel (_("Sur iCloud.com")));
+        content.append (WebShortcuts.card ());
         content.append (expander);
         append (new Gtk.ScrolledWindow () {
             child = content,

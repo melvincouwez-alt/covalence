@@ -8,6 +8,7 @@ Build-Depends: debhelper-compat (= 13),
                libglib2.0-dev,
                libgtk-4-dev,
                libgranite-7-dev (>= 7.7),
+               libwingpanel-9-dev,
                python3,
                gettext,
                desktop-file-utils,
@@ -37,8 +38,9 @@ Depends: ${shlibs:Depends},
          pipewire,
          wireplumber,
          libspa-0.2-bluetooth
-Recommends: heif-gdk-pixbuf
-Suggests: rclone (>= 1.69)
+Recommends: heif-gdk-pixbuf, openssl, pkexec, gnupg
+Suggests: rclone (>= 1.69), uxplay, gstreamer1.0-plugins-bad, avahi-daemon, libimobiledevice-utils, ifuse,
+ libheif-examples
 Description: iPhone and iCloud companion for elementary OS
  Covalence links an iPhone to the desktop over Bluetooth: notifications,
  media controls, messages (MAP), contacts and call history (PBAP), calls

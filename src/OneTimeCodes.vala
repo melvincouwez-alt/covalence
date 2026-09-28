@@ -72,7 +72,7 @@ public class Covalence.CodesCard : Gtk.Box {
         this.daemon = daemon;
 
         mode = new Gtk.DropDown.from_strings ({
-            _("Désactivé"), _("Notification avec copie"), _("Notification et navigateur (alpha)")
+            _("Désactivé"), _("Notification avec copie"), _("Notification et navigateur (expérimental)")
         }) { valign = Gtk.Align.CENTER, selected = 1 };
         mode.notify["selected"].connect (() => {
             if (!updating && mode.selected < MODES.length) {
@@ -103,7 +103,7 @@ public class Covalence.CodesCard : Gtk.Box {
             _("Chrome, Chromium, Edge et Firefox. Installez l'intégration, puis chargez l'extension "
               + "(mode d'emploi dans le dossier). Le code n'est mis dans la page que si vous cliquez dessus.")
         ) { xalign = 0, wrap = true };
-        browser_row = (Gtk.ListBoxRow) row ("web-browser", _("Remplissage dans le navigateur (alpha)"), "",
+        browser_row = (Gtk.ListBoxRow) row ("applications-internet", _("Remplissage dans le navigateur (expérimental)"), "",
                                             buttons, browser_status);
         browser_row.visible = false;
         list.append (browser_row);

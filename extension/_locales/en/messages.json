@@ -1,9 +1,30 @@
 {
-  "name": { "message": "Covalence: SMS codes" },
-  "description": { "message": "Offers the code received by SMS on your iPhone below a website's code field (Covalence, alpha)." },
+  "name": {
+    "message": "Covalence: SMS codes"
+  },
+  "description": {
+    "message": "Offers the code received by SMS on your iPhone below a website's code field (Covalence, alpha)."
+  },
   "pill": {
     "message": "Code from Covalence: $CODE$",
-    "placeholders": { "code": { "content": "$1" } }
+    "placeholders": {
+      "code": {
+        "content": "$1"
+      }
+    }
   },
-  "pillTitle": { "message": "Click to fill in the field. Esc to close." }
+  "pillTitle": {
+    "message": "Click to fill in the field. Esc to close."
+  },
+  "pillFrom": {
+    "message": "Code from $SENDER$: $CODE$",
+    "placeholders": {
+      "code": {
+        "content": "$1"
+      },
+      "sender": {
+        "content": "$2"
+      }
+    }
+  }
 }

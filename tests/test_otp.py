@@ -111,7 +111,11 @@ class FlowTest(unittest.TestCase):
         self.assertEqual(len(self.notifier.shown), 1)  # ANCS and MAP: one notification
         keys = [k for k, _ in self.notifier.shown[0]["actions"]]
         self.assertEqual(keys, ["default", "copy-code", "copy-code-delete"])
+        # Nobody clicked « Copier le code »: no program gets the code.
+        self.assertEqual(self.m.latest_code("copy"), ("", 0))
+        self.m.copy_granted = time.monotonic()  # what _copy_code sets before starting the helper
         self.assertEqual(self.m.latest_code("copy")[0], "482913")
+        self.assertEqual(self.m.latest_code("copy"), ("", 0))  # once only
         self.assertEqual(self.m.latest_code("browser"), ("", 0))  # default mode: copy only
 
     def test_copy_action(self):

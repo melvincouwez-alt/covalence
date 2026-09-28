@@ -32,14 +32,33 @@ class Hooks:
 
 
 class AncsTest(unittest.TestCase):
+    def test_back_to_back_responses_are_all_delivered(self):
+        # Regression: the parser read one attribute less than requested, the leftover bytes
+        # swallowed the next response and one notification in two was lost.
+        notifier = FakeNotifier()
+        client = ancs.AncsClient(None, {}, "iPhone", notifier, Hooks())
+        client.write = lambda *a, **k: None
+        client.response_complete = lambda: None
+        payload = b""
+        for uid, text in ((1, b"Un"), (2, b"Deux"), (3, b"Trois")):
+            client.pending[uid] = (0, 0, False)
+            attrs = [(0, b"com.example.app"), (1, b"Titre"), (2, b""), (3, text),
+                     (5, b"20260928T110936"), (6, b""), (7, b"")]
+            payload += struct.pack("<BI", 0, uid) + b"".join(
+                struct.pack("<BH", i, len(v)) + v for i, v in attrs)
+        client.buffer = payload
+        for _ in range(3):
+            client._parse_data_source()
+        self.assertEqual([n["body"] for n in notifier.shown], ["Un", "Deux", "Trois"])
+
     def test_split_response_with_actions(self):
         notifier = FakeNotifier()
         client = ancs.AncsClient(None, {}, "iPhone", notifier, Hooks())
         client.write = lambda *a, **k: None
         client.response_complete = lambda: None
-        client.pending[7] = (4, ancs.FLAG_POSITIVE_ACTION | ancs.FLAG_NEGATIVE_ACTION)
+        client.pending[7] = (4, ancs.FLAG_POSITIVE_ACTION | ancs.FLAG_NEGATIVE_ACTION, False)
         attrs = [(0, b"com.apple.MobileSMS"), (1, b"Alice"), (2, b""), (3, b"Salut"),
-                 (6, b"Repondre"), (7, b"Effacer")]
+                 (5, b"20260928T110936"), (6, b"Repondre"), (7, b"Effacer")]
         payload = struct.pack("<BI", 0, 7) + b"".join(
             struct.pack("<BH", i, len(v)) + v for i, v in attrs)
         client.buffer = payload[:10]
@@ -699,7 +718,8 @@ class RcloneFetchTest(unittest.TestCase):
 
     def test_download_verified_and_installed(self):
         steps = []
-        self.assertEqual(self.fetch.fetch(self.dest, steps.append, self.opener()), "v1.71.0")
+        self.assertEqual(self.fetch.fetch(self.dest, steps.append, self.opener(),
+                                          verify=lambda sums: None), "v1.71.0")
         self.assertTrue(os.access(self.dest, os.X_OK))
         self.assertEqual(os.stat(self.dest).st_mode & 0o777, 0o700)
         self.assertEqual(steps[-1], 100)
@@ -707,8 +727,26 @@ class RcloneFetchTest(unittest.TestCase):
 
     def test_tampered_archive_is_refused(self):
         with self.assertRaises(self.fetch.FetchError):
-            self.fetch.fetch(self.dest, lambda p: None, self.opener(self.archive + b"x"))
+            self.fetch.fetch(self.dest, lambda p: None, self.opener(self.archive + b"x"),
+                             verify=lambda sums: None)
         self.assertFalse(os.path.exists(self.dest))
+
+    def test_bad_signature_is_refused(self):
+        with self.assertRaises(self.fetch.FetchError):
+            self.fetch.fetch(self.dest, lambda p: None, self.opener(), verify=lambda sums: False)
+        self.assertFalse(os.path.exists(self.dest))
+
+    def test_real_release_signature(self):
+        import shutil
+        if not shutil.which("gpg"):
+            self.skipTest("GnuPG absent")
+        path = os.path.join(os.path.dirname(__file__), "data", "rclone-v1.75.1-SHA256SUMS")
+        with open(path, encoding="utf-8") as f:
+            sums = f.read()
+        self.assertTrue(self.fetch.verify_signature(sums))
+        self.assertFalse(self.fetch.verify_signature(sums.replace("linux-amd64.zip", "linux-amd64.zi_")))
+        self.assertFalse(self.fetch.verify_signature(self.sums))  # "xx" is no signature
+        self.assertIsNone(self.fetch.verify_signature(sums, gpg=""))
 
     def test_only_https(self):
         with self.assertRaises(self.fetch.FetchError):

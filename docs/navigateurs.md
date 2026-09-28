@@ -1,6 +1,8 @@
 # Codes SMS dans le navigateur (alpha)
 
-Quand l'iPhone reçoit un SMS avec un code de vérification, Covalence le propose sous le champ de code du site ouvert dans le navigateur. Un clic sur la pastille « Code de Covalence : 482913 » remplit le champ. Le code n'entre dans la page qu'à ce clic.
+Quand l'iPhone reçoit un SMS avec un code de vérification, Covalence le propose sous le champ de code du site ouvert dans le navigateur. Un clic sur la pastille « Code de Ma Banque : 482913 » remplit le champ. Le code n'entre dans la page qu'à ce clic.
+
+Exception : un SMS qui lie le code à un site, sur sa dernière ligne (`@exemple.fr #482913`, le format que reconnaissent iOS et Android). Sur ce site, le code est rempli tout seul. Sur tout autre site, il n'est jamais proposé : une page d'hameçonnage qui déclenche l'envoi du code de votre banque ne le reçoit pas.
 
 Cette fonction est en alpha. La notification avec « Copier le code » reste la voie stable.
 
@@ -42,11 +44,15 @@ L'identifiant affiché doit être `bbnmajflfndmkepfcnmpabhmneoplfkk`. C'est lui 
 ## Fonctionnement et vie privée
 
 - Le démon garde le dernier code en mémoire, jamais sur disque, et l'oublie après 3 minutes.
-- La page ne voit pas la pastille (racine fantôme fermée). Le code entre dans la page seulement si vous cliquez.
+- La page ne voit pas la pastille (racine fantôme fermée). Le code entre dans la page seulement si vous cliquez, sauf pour un code lié à ce site par son SMS.
+- Pages HTTPS de premier niveau seulement : ni `http://`, ni cadres intégrés d'un autre site.
+- La pastille indique l'expéditeur du SMS : vérifiez qu'il correspond au site.
 - L'extension ne demande le code que lorsqu'un champ de code a le focus : attribut `autocomplete="one-time-code"`, ou un nom qui y ressemble (otp, code, vérification…).
 - Le code n'apparaît jamais dans le journal de Covalence.
 
 ## Limites connues
+
+- **Identifiant de l'extension** : l'intégration n'accepte que l'identifiant de l'extension Covalence. Sous Chrome, cet identifiant découle de la clé publique du manifeste, qu'une autre extension installée à la main pourrait recopier ; sous Firefox, `otp@covalence.melvincouwez.github.io` n'est pas encore réservé sur addons.mozilla.org. N'installez pas d'extension d'origine inconnue.
 
 - **Navigateurs Flatpak ou Snap** : ils lancent l'intégration dans leur bac à sable, sans accès au démon Covalence. Non pris en charge pour l'instant. Utilisez la notification « Copier le code ».
 - Les champs découpés en une case par chiffre sont remplis case par case, mais certains sites les gèrent à leur façon.

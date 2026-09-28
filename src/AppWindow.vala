@@ -9,7 +9,7 @@
 
 namespace Covalence {
     public enum Mode {
-        HUB, MESSAGES, CONTACTS, PHONE, HEADPHONES;
+        HUB, MESSAGES, CONTACTS, PHONE, HEADPHONES, MIRROR;
 
         public string suffix () {
             switch (this) {
@@ -17,7 +17,18 @@ namespace Covalence {
                 case CONTACTS: return ".Contacts";
                 case PHONE: return ".Phone";
                 case HEADPHONES: return ".Headphones";
+                case MIRROR: return ".Mirror";
                 default: return "";
+            }
+        }
+
+        /* Messages and Écouteurs use elementary's own icons (d9ecca9): their
+           Covalence SVGs are gone, so the app id is no icon name for them. */
+        public string icon_name () {
+            switch (this) {
+                case MESSAGES: return "internet-chat";
+                case HEADPHONES: return "audio-headphones";
+                default: return Config.APP_ID + suffix ();
             }
         }
 
@@ -27,6 +38,7 @@ namespace Covalence {
                 case CONTACTS: return _("Contacts");
                 case PHONE: return _("Téléphone");
                 case HEADPHONES: return _("Écouteurs");
+                case MIRROR: return _("Recopie");
                 default: return "Covalence";
             }
         }
@@ -37,6 +49,7 @@ namespace Covalence {
                 case CONTACTS: return "contacts";
                 case PHONE: return "phone";
                 case HEADPHONES: return "headphones";
+                case MIRROR: return "mirror";
                 default: return "welcome";
             }
         }
@@ -54,6 +67,9 @@ namespace Covalence {
             }
             if (name.has_suffix (".Headphones")) {
                 return HEADPHONES;
+            }
+            if (name.has_suffix (".Mirror")) {
+                return MIRROR;
             }
             return HUB;
         }
@@ -81,7 +97,8 @@ namespace Covalence {
         public AppWindow (Gtk.Application app, Mode mode) {
             Object (application: app, mode: mode,
                     title: mode.title (),
-                    default_width: mode == Mode.CONTACTS ? 760 : mode == Mode.HEADPHONES ? 620 : 900,
+                    default_width: mode == Mode.CONTACTS ? 760 : mode == Mode.HEADPHONES ? 620
+                                   : mode == Mode.MIRROR ? 640 : 900,
                     default_height: 640);
         }
 
@@ -117,6 +134,8 @@ namespace Covalence {
                 });
             } else if (mode == Mode.HEADPHONES) {
                 content = new HeadphonesView (daemon);
+            } else if (mode == Mode.MIRROR) {
+                content = new MirrorView (daemon);
             } else {
                 var contacts = new ContactsView (daemon);
                 contacts.message_requested.connect ((address) => launch (Mode.MESSAGES, { "--to", address }));

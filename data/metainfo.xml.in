@@ -22,7 +22,31 @@
   <url type="vcs-browser">https://github.com/melvincouwez-alt/covalence</url>
   <content_rating type="oars-1.1"/>
   <releases>
-    <release version="@VERSION@" date="2026-09-27" type="development">
+    <release version="@VERSION@" date="2026-09-28" type="development">
+      <description>
+        <p>Security and stability pass: pairing code confirmed on the PC, other programs must ask before calling, sending or pairing, safer updates and file transfers, SMS codes tied to their website; no more duplicate or misplaced messages.</p>
+        <p xml:lang="fr">Repasse sécurité et stabilité : code d'appairage confirmé sur le PC, les autres programmes doivent demander avant d'appeler, d'envoyer ou d'appairer, mises à jour et transferts de fichiers plus sûrs, codes SMS liés à leur site ; plus de messages en double ni mal rangés.</p>
+      </description>
+    </release>
+    <release version="0.4.2" date="2026-09-28" type="development">
+      <description>
+        <p>Pairing from the iPhone's Bluetooth settings (no extra app), steadier reconnection, "Forget" button.</p>
+        <p xml:lang="fr">Appairage depuis les réglages Bluetooth de l'iPhone (sans app en plus), reconnexion plus stable, bouton « Oublier ».</p>
+      </description>
+    </release>
+    <release version="0.4.1" date="2026-09-28" type="development">
+      <description>
+        <p>Screen mirroring as its own app, iPhone control (experimental), more free sounds, settings by kind of feature.</p>
+        <p xml:lang="fr">La recopie devient une app, contrôle de l'iPhone (expérimental), plus de sons libres, réglages par type de fonctionnalité.</p>
+      </description>
+    </release>
+    <release version="0.4.0" date="2026-09-28" type="development">
+      <description>
+        <p>Internet through the iPhone, top bar indicator, search, LocalSend, iCloud Drive status, and more.</p>
+        <p xml:lang="fr">Internet via l'iPhone, indicateur dans la barre du haut, recherche, LocalSend, état d'iCloud Drive, et plus.</p>
+      </description>
+    </release>
+    <release version="0.3.3" date="2026-09-27" type="development">
       <description>
         <p>Automatic emojis while typing; updates no longer stay shown as in progress.</p>
         <p xml:lang="fr">Émojis automatiques à la saisie ; une mise à jour ne reste plus affichée « en cours ».</p>

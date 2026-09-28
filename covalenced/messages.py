@@ -30,9 +30,11 @@ database, stays on the main thread.
 """
 
 import hashlib
+import itertools
 import json
 import os
 import queue
+import re
 import shutil
 import sys
 import threading
@@ -46,7 +48,7 @@ from . import i18n
 from . import otp
 from . import reactions
 from . import store as store_module
-from .store import Store
+from .store import Store, excerpt, sender_from_title
 from .i18n import _, ngettext
 from .util import log
 
@@ -73,9 +75,17 @@ PERIODIC_SYNC = 300  # seconds: catches events MNS may have missed
 FORBIDDEN_RETRY = 600
 ERROR_RETRY = 120
 CONTACTS_MAX_AGE = 24 * 3600
+CONTACTS_RETRY_EVERY = 30  # seconds between automatic asks after a refusal
+CONTACTS_RETRIES = 20  # that is 10 minutes
 CALLS_MAX = 100
 BODY_FETCH_LIMIT = 40
+COPY_GRANT_SECONDS = 20  # the clipboard helper has this long to fetch the code
 ANCS_GRACE_MS = 6000  # wait this long for MAP to report the same message
+ANCS_SAME_WINDOW = 3 * 24 * 3600  # undated copy: same text, same sender within 3 days
+SHORT_TEXT = 20  # characters: below this, two texts are the same message only if equal
+MAX_ANCS_KEYS = 200
+_TIMESTAMP = re.compile(r"^\d{8}T\d{6}(Z|[+-]\d{4})?$")  # MAP listing Timestamp
+ANCS_SAME_DATED = 600  # dated copy: same text within 10 min (a second « Ok » stays)
 NOTIFY_BURST = 3
 SEND_CONFIRM = 45  # seconds before looking for a sent message in outbox/sent
 SEND_TIMEOUT = 45
@@ -84,6 +94,7 @@ SYNC_TIMEOUT = 150  # seconds: a manual sync not over by then is reported as fai
 HISTORY_PAGE = 500  # alpha « map_history »: listing pages beyond the usual one
 HISTORY_PAGES = 6
 HISTORY_DAYS = 365
+
 
 
 def format_number(address):
@@ -161,15 +172,19 @@ class Worker(threading.Thread):
 
     def __init__(self):
         super().__init__(daemon=True, name="covalence-obex")
-        self.jobs = queue.Queue()
+        # Urgent jobs (a message the user is sending) go before waiting ones (a phone book
+        # with photos can take minutes); jobs of the same rank keep their order, which
+        # RemoveSession then CreateSession rely on.
+        self.jobs = queue.PriorityQueue()
+        self.count = itertools.count()
         self.start()
 
-    def submit(self, job, done=None):
-        self.jobs.put((job, done))
+    def submit(self, job, done=None, urgent=False):
+        self.jobs.put((0 if urgent else 1, next(self.count), job, done))
 
     def run(self):
         while True:
-            job, done = self.jobs.get()
+            _rank, _n, job, done = self.jobs.get()
             try:
                 result, error = job(), None
             except GLib.Error as e:
@@ -197,6 +212,8 @@ class Messages:
         self.opening = False
         self.map_state = "idle"  # idle | connecting | ready | forbidden | error
         self.contacts_state = "unknown"  # unknown | ready | forbidden | error
+        self.contacts_retry_timer = 0
+        self.contacts_retries = 0
         self.syncing = False
         self.sync_again = None
         self.listed = set()  # handles seen in listings of this session
@@ -206,6 +223,7 @@ class Messages:
         self.periodic_timer = 0
         self.retry_timer = 0
         self.ancs_pending = []
+        self.ancs_keys = {}  # ANCS uid -> message key, to update an edited iMessage
         self.notifications = {}  # thread id -> desktop notification id
         self.first_sync_done = False
         self.viewing = ""
@@ -229,6 +247,12 @@ class Messages:
                 "UPDATE messages SET status='failed' WHERE source='covalence' AND status='sending'")
             self.store.commit()
             self._classify_all()
+            if not self.store.meta("cleanup:duplicates-1"):
+                removed = self.store.remove_duplicates()
+                self.store.set_meta("cleanup:duplicates-1", int(time.time()))
+                self.store.commit()
+                if removed:
+                    log(f"messages : {removed} doublon(s) d'anciennes versions retiré(s)")
             count, threads = self.store.counts()
             log(f"messages : cache ouvert ({count} messages, {threads} fils)")
         if self.worker is None:
@@ -381,6 +405,15 @@ class Messages:
         if not address:
             return
         self.address = address
+        if self.store:
+            archive = self.store.claim_device(address)
+            if archive:
+                # MAP handles are per phone: another iPhone starts from an empty cache.
+                log(f"messages : autre iPhone, ancien cache archivé ({os.path.basename(archive)})")
+                self.listed.clear()
+                self.announced.clear()
+                self.contacts_state = "unknown"
+                self.hooks.messages_changed(threads=True)
         if self.enabled and self.obex_owner:
             # Let HFP and A2DP settle first: iOS dislikes a burst of connections.
             self._schedule_retry(5)
@@ -461,6 +494,8 @@ class Messages:
                 setattr(self, attr, 0)
         path, self.session = self.session, None
         self.map_state = "idle"
+        self.listed.clear()  # both are about this session's listings and events
+        self.announced.clear()
         if path and self.obex_owner:
             self.worker.submit(lambda: self._call(OBEX_ROOT, CLIENT, "RemoveSession",
                                                   GLib.Variant("(o)", (path,))))
@@ -475,13 +510,20 @@ class Messages:
 
     def retry(self):
         """App request: try again now (e.g. after the user allowed MAP on the iPhone)."""
+        # Contacts first: a refusal is sticky until retried, and the MAP session being open
+        # (messages fine) used to skip them, so "Réessayer" never asked the iPhone again.
+        self.retry_contacts()
         if self.session:
             self.sync(count=100)
         else:
             self.map_state = "idle"
             self._open_session()
-            if self.contacts_state == "forbidden":
-                self.contacts_state = "unknown"
+
+    def retry_contacts(self):
+        """Ask the iPhone for the phone book again, even if it refused before or the cache is fresh."""
+        if self.contacts_state == "forbidden":
+            self.contacts_state = "unknown"
+        self._maybe_pull_contacts(force=True)
 
     def manual_sync(self, on_done):
         """The Sync button: list the folders again (after UpdateInbox), fetch full texts, read
@@ -612,7 +654,11 @@ class Messages:
         for folder, messages in listing.items():
             for path, props in messages.items():
                 handle = path.rsplit("/message", 1)[-1]
-                entries.append(bmsg.listing_entry(handle, props, folder))
+                entry = bmsg.listing_entry(handle, props, folder)
+                # No usable timestamp: the parser gave "now", which must not move a stored
+                # message to the bottom of its conversation at every sync.
+                entry["time_known"] = bool(_TIMESTAMP.match((props.get("Timestamp") or "").strip()))
+                entries.append(entry)
         return entries
 
     def _participants(self, entry, selves):
@@ -643,25 +689,33 @@ class Messages:
             self.announced.discard(e["handle"])
             people = self._participants(e, selves)
             body = e["subject"]
-            if e["outgoing"] and not people:
+            key = "map:" + e["handle"]
+            known = store.message(key) is not None
+            if e["outgoing"] and not people and not known:
                 # iOS leaves recipients empty: recognise our own sends by their text.
                 pending = store.find_pending_outgoing(None, body, e["time"])
                 if pending:
                     people = store.thread(store.message(pending)["thread"])["participants"]
             if not people:
+                if known:
+                    store.upsert(key, store.message(key)["thread"], e["outgoing"], e["sender"],
+                                 e["sender_name"], e["time"], body, False, kind=e["type"],
+                                 phone_read=e["read"], seen=e["read"], source="map",
+                                 handle=e["handle"], time_known=e["time_known"])
                 continue
             tid = store.ensure_thread(people)
             complete = e["size"] > 0 and len(body.encode("utf-8")) >= e["size"]
-            key = "map:" + e["handle"]
-            if e["outgoing"]:
+            if e["outgoing"] and not known:
+                # Only a message the phone lists for the first time can be one of our sends.
                 pending = store.find_pending_outgoing(tid, body, e["time"])
                 if pending:
                     store.delete(pending)
-            already = None if e["outgoing"] else self._drop_ancs_duplicate(body, e["time"])
+            already = None if e["outgoing"] or known else \
+                self._drop_ancs_duplicate(body, e["time"], tid, e["sender"], e["sender_name"])
             is_new = store.upsert(key, tid, e["outgoing"], e["sender"], e["sender_name"],
                                   e["time"], body, complete, kind=e["type"],
                                   phone_read=e["read"], seen=e["read"] or bool(already),
-                                  source="map", handle=e["handle"])
+                                  source="map", handle=e["handle"], time_known=e["time_known"])
             # already: shown earlier from its ANCS notification, not notified twice
             if is_new and already is None and not e["outgoing"] and not e["read"] and \
                     (not initial or (last_sync and e["time"] > last_sync)):
@@ -693,7 +747,7 @@ class Messages:
             self._notify(tid, key)
             self.hooks.message_received(tid, key)
         if len(fresh) > NOTIFY_BURST:
-            self.notifier.notify(f"Covalence ({self.hooks.device_name})", "io.github.melvincouwez.Covalence.Messages",
+            self.notifier.notify(f"Covalence ({self.hooks.device_name})", "internet-chat",
                                  ngettext("{n} nouveau message", "{n} nouveaux messages",
                                           len(fresh)).format(n=len(fresh)), "", own=True)
 
@@ -825,6 +879,8 @@ class Messages:
 
     def _maybe_pull_contacts(self, calls_only=False, force=False):
         """PBAP: the phone book at most once a day, the call history every time."""
+        if not self.enabled or not self.store or not self.worker:
+            return  # module off, or never switched on: nothing to pull into
         if not self.address or self.contacts_state == "forbidden" or self.pbap_busy:
             return
         age = time.time() - int(self.store.meta("contacts_time", "0") or 0)
@@ -937,13 +993,37 @@ class Messages:
         """A call just ended: read the history again shortly after."""
         GLib.timeout_add_seconds(5, lambda: self._maybe_pull_contacts(calls_only=True) and False)
 
+    def _schedule_contacts_retry(self):
+        """iOS only shows « Synchroniser les contacts » once a PBAP request was refused, and
+        never tells when the user turns it on: ask again every 30 s for 10 minutes."""
+        if self.contacts_retry_timer:
+            return
+        self.contacts_retries = 0
+
+        def tick():
+            self.contacts_retries += 1
+            if self.contacts_state != "forbidden" or not self.address \
+                    or self.contacts_retries > CONTACTS_RETRIES:
+                self.contacts_retry_timer = 0
+                return False
+            self.contacts_state = "unknown"
+            self._maybe_pull_contacts(force=True)
+            return True
+
+        self.contacts_retry_timer = GLib.timeout_add_seconds(CONTACTS_RETRY_EVERY, tick)
+
     def _on_contacts(self, cards, error):
         if error:
             self.contacts_state = "forbidden" if _is_forbidden(error) else "error"
             log("messages : contacts refusés par l'iPhone (réglage « Synchroniser les contacts »)"
                 if self.contacts_state == "forbidden" else f"messages : contacts illisibles ({error})")
+            if self.contacts_state == "forbidden":
+                self._schedule_contacts_retry()
         else:
             self.store.replace_contacts(cards)
+            merged = self.store.merge_name_threads()
+            if merged:
+                log(f"messages : {merged} conversation(s) rattachée(s) au numéro du contact")
             self.contacts_state = "ready"
             photos = sum(1 for c in cards if c.get("photo"))
             log(f"messages : {len(cards)} contacts lus sur l'iPhone ({photos} avec photo)")
@@ -951,20 +1031,47 @@ class Messages:
 
     # --- ANCS fallback -------------------------------------------------------------------------------
 
-    def ancs_message(self, title, subtitle, message):
-        """ANCS notification from the Messages app. True: this module shows it."""
+    def ancs_message(self, title, subtitle, message, date=None, replay=False, uid=None,
+                     modified=False):
+        """ANCS notification from the Messages app. True: this module shows it.
+
+        modified: the iPhone changed a notification it already sent (an edited iMessage):
+        the bubble it made is updated rather than doubled."""
         if not self.enabled or not title:
             return False
-        entry = {"title": title, "subtitle": subtitle, "message": message,
-                 "time": int(time.time())}
+        now = int(time.time())
+        when = date if date and date <= now + 60 else now
+        entry = {"title": sender_from_title(title), "subtitle": subtitle, "message": message,
+                 "time": when, "dated": bool(date),
+                 # Replayed by the iPhone after a reconnection or a re-pairing: stored with
+                 # its own time, never announced as new.
+                 "old": replay, "uid": uid, "modified": modified}
         self.ancs_pending.append(entry)
         GLib.timeout_add(ANCS_GRACE_MS, lambda: self._flush_ancs(entry) and False)
         return True
 
     @staticmethod
     def _same_text(a, b):
-        a, b = " ".join((a or "").split())[:40], " ".join((b or "").split())[:40]
-        return bool(a) and bool(b) and (a.startswith(b) or b.startswith(a))
+        """Same message seen twice (a listing subject may be cut): a short text must match
+        exactly, or « Oui » would match « Oui mais non »."""
+        a, b = " ".join((a or "").split()), " ".join((b or "").split())
+        if not a or not b:
+            return False
+        if min(len(a), len(b)) < SHORT_TEXT:
+            return a == b
+        a, b = a[:40], b[:40]
+        return a.startswith(b) or b.startswith(a)
+
+    def _from_same_person(self, title, sender, sender_name):
+        """An ANCS title (the name iOS shows) and a MAP sender are the same person."""
+        if not title:
+            return False
+        if sender_name and sender_name == title:
+            return True
+        if sender and (self.store.address_for_name(title) == sender
+                       or self.store.display_name(sender) == title):
+            return True
+        return False
 
     def _settle_ancs(self, key):
         """A MAP message was notified: forget the ANCS copy of it."""
@@ -972,40 +1079,76 @@ class Messages:
         if not m:
             return
         for entry in list(self.ancs_pending):
-            if self._same_text(entry["message"], m["body"]):
+            if self._same_text(entry["message"], m["body"]) and \
+                    self._from_same_person(entry["title"], m["sender"], m["sender_name"]):
                 self.ancs_pending.remove(entry)
                 return
 
-    def _drop_ancs_duplicate(self, body, when):
-        """Remove the ANCS copy of a message MAP now lists; None, or its seen flag."""
+    def _drop_ancs_duplicate(self, body, when, tid, sender, sender_name):
+        """Remove the ANCS copy of a message MAP now lists; None, or its seen flag.
+        Only a copy from the same person: « Oui » from Bob is not « Oui » from Alice."""
         for row in self.store.db.execute(
-                "SELECT key, body, seen FROM messages WHERE source='ancs' AND ABS(time-?)<600",
-                (int(when),)).fetchall():
-            if self._same_text(row["body"], body):
+                "SELECT key, body, seen, thread, sender, sender_name FROM messages "
+                "WHERE source='ancs' AND ABS(time-?)<600", (int(when),)).fetchall():
+            same_person = row["thread"] == tid or (sender and row["sender"] == sender) or \
+                self._from_same_person(row["sender_name"], sender, sender_name)
+            if same_person and self._same_text(row["body"], body):
                 self.store.delete(row["key"])
                 return int(row["seen"])
         return None
+
+    def _already_have(self, tid, body, when, window):
+        """The same text from this sender is already in the thread (MAP or an older ANCS copy
+        from before the iPhone gave dates): do not store it twice."""
+        for row in self.store.db.execute(
+                "SELECT body FROM messages WHERE thread=? AND outgoing=0 AND ABS(time-?)<?",
+                (tid, int(when), window)).fetchall():
+            if " ".join((row["body"] or "").split()) == " ".join((body or "").split()):
+                return True
+        return False
 
     def _flush_ancs(self, entry):
         if entry not in self.ancs_pending:
             return  # MAP reported it in the meantime
         self.ancs_pending.remove(entry)
         store = self.store
+        address = store.address_for_name(entry["title"])
+        # An edited iMessage: the iPhone sends the same notification again with the new text.
+        earlier = self.ancs_keys.get(entry["uid"]) if entry["modified"] else None
+        if earlier and store.message(earlier):
+            body = entry["message"]
+            store.db.execute("UPDATE messages SET body=?, complete=? WHERE key=?",
+                             (body, int(len(body) < 500), earlier))
+            store.commit()
+            log("messages : message modifié sur l'iPhone, bulle mise à jour")
+            self.hooks.messages_changed(threads=True)
+            return
         # MAP may have listed it before the notification came: already shown.
         for row in store.db.execute(
-                "SELECT body FROM messages WHERE source='map' AND outgoing=0 AND ABS(time-?)<600",
-                (entry["time"],)).fetchall():
-            if self._same_text(row["body"], entry["message"]):
+                "SELECT body, thread, sender, sender_name FROM messages WHERE source='map' "
+                "AND outgoing=0 AND ABS(time-?)<600", (entry["time"],)).fetchall():
+            if self._same_text(row["body"], entry["message"]) and (
+                    (address and row["sender"] == address)
+                    or self._from_same_person(entry["title"], row["sender"], row["sender_name"])):
                 return
-        address = store.address_for_name(entry["title"])
         people = [address] if address else ["name:" + entry["title"]]
         tid = store.ensure_thread(people, title=entry["title"], is_group=False)
-        digest = hashlib.sha1(f"{entry['title']}|{entry['message']}|{entry['time'] // 60}"
+        # Key from the iPhone's own date when it gave one: the same notification replayed
+        # at the next connection gets the same key instead of a new copy each time.
+        stamp = entry["time"] if entry["dated"] else entry["time"] // 60
+        digest = hashlib.sha1(f"{entry['title']}|{entry['message']}|{stamp}"
                               .encode("utf-8")).hexdigest()[:16]
         key = "ancs:" + digest
         body = entry["message"]
+        window = ANCS_SAME_DATED if entry["dated"] else ANCS_SAME_WINDOW
+        if not store.message(key) and self._already_have(tid, body, entry["time"], window):
+            return
         new = store.upsert(key, tid, False, address, entry["title"], entry["time"], body,
                            len(body) < 500, kind="notification", source="ancs")
+        if entry["uid"] is not None:
+            self.ancs_keys[entry["uid"]] = key
+            while len(self.ancs_keys) > MAX_ANCS_KEYS:
+                del self.ancs_keys[next(iter(self.ancs_keys))]
         found = self._classify(key) if new else None
         store.commit()
         if new:
@@ -1015,6 +1158,8 @@ class Messages:
                 if not found["removed"] and not found["duplicate"]:
                     self._notify_reaction(tid, key, found)
                 return
+            if entry["old"]:
+                return  # history replayed by the iPhone, not a new message
             self._notify(tid, key, subtitle=entry["subtitle"])
             self.hooks.message_received(tid, key)
 
@@ -1054,7 +1199,7 @@ class Messages:
             hints["image-path"] = GLib.Variant("s", photo)
         self._sound(hints)
         self.notifications[tid] = self.notifier.notify(
-            f"Covalence ({self.hooks.device_name})", "io.github.melvincouwez.Covalence.Messages", summary, body, actions, hints,
+            f"Covalence ({self.hooks.device_name})", "internet-chat", summary, body, actions, hints,
             replaces=self.notifications.get(tid, 0),
             on_action=lambda action, t=tid, k=key: self._on_notification_action(t, action, k),
             on_closed=lambda t=tid: self.notifications.pop(t, None))
@@ -1088,6 +1233,12 @@ class Messages:
         mode = self.code_mode()
         if mode == "off" or (purpose == "browser" and mode != "browser"):
             return "", 0
+        if purpose != "browser":
+            # "copy" only answers the helper the daemon itself just started after a click on
+            # « Copier le code » (see _copy_code), once: not any program that asks.
+            granted, self.copy_granted = getattr(self, "copy_granted", 0.0), 0.0
+            if not granted or time.monotonic() - granted > COPY_GRANT_SECONDS:
+                return "", 0
         code, age, _key = self.codes.latest()
         return code, age
 
@@ -1098,6 +1249,7 @@ class Messages:
             log("messages : application Covalence introuvable")
             return
         launcher = Gio.SubprocessLauncher.new(Gio.SubprocessFlags.NONE)
+        self.copy_granted = time.monotonic()
         if os.environ.get("DISPLAY"):
             # Wayland gives the clipboard to the focused window only; XWayland shares it anyway.
             launcher.setenv("GDK_BACKEND", "x11", True)
@@ -1198,7 +1350,7 @@ class Messages:
             hints["image-path"] = GLib.Variant("s", photo)
         self._sound(hints)
         self.notifications[tid] = self.notifier.notify(
-            f"Covalence ({self.hooks.device_name})", "io.github.melvincouwez.Covalence.Messages",
+            f"Covalence ({self.hooks.device_name})", "internet-chat",
             summary, body, [("default", _("Ouvrir"))], hints,
             replaces=self.notifications.get(tid, 0),
             on_action=lambda action, t=tid: self._on_notification_action(t, action),
@@ -1271,8 +1423,20 @@ class Messages:
                 "avatar": "" if t["is_group"] or not t["participants"]
                 else self.store.photo(t["participants"][0]),
                 "draft": drafts.get(t["id"], ""),
+                "pinned": t["pinned"], "marked_unread": t["marked_unread"],
             })
         return result
+
+    def set_pinned(self, tid, pinned):
+        if self.store and self.store.thread(tid):
+            self.store.set_pinned(tid, pinned)
+            self.hooks.messages_changed(threads=True)
+
+    def set_marked_unread(self, tid, marked):
+        """Local only: the iPhone keeps its own read state."""
+        if self.store and self.store.thread(tid):
+            self.store.set_marked_unread(tid, marked)
+            self.hooks.messages_changed(threads=True)
 
     def set_draft(self, tid, text):
         if self.store and self.store.thread(tid):
@@ -1282,6 +1446,45 @@ class Messages:
     def search(self, query):
         query = (query or "").strip()
         return self.store.search(query) if self.store and query else []
+
+    def search_messages(self, query, limit=200):
+        """Conversations whose name matches, then messages containing query, grouped by
+        conversation (the conversation with the newest hit first). Case and accents are
+        ignored. Each result: thread, name, avatar, message key ("" for a name match),
+        time, and the excerpt as before / match / after."""
+        query = " ".join((query or "").split())
+        if not self.store or not query:
+            return []
+        store = self.store
+        threads = {t["id"]: t for t in store.threads()}
+        results = []
+        for t in threads.values():
+            cut = excerpt(t["name"], query)
+            if cut:
+                results.append(self._hit(t, "", t["time"], cut))
+        by_thread = {}
+        order = []
+        for m in store.search_messages(query, limit):
+            t = threads.get(m["thread"])
+            cut = excerpt(m["body"], query)
+            if t is None or cut is None:
+                continue
+            if m["thread"] not in by_thread:
+                by_thread[m["thread"]] = []
+                order.append(m["thread"])
+            by_thread[m["thread"]].append(self._hit(t, m["key"], m["time"], cut,
+                                                    outgoing=bool(m["outgoing"])))
+        for tid in order:
+            results.extend(by_thread[tid])
+        return results
+
+    def _hit(self, thread, key, when, cut, outgoing=False):
+        before, match, after = cut
+        return {"thread": thread["id"], "name": thread["name"], "message": key, "time": when,
+                "before": before, "match": match, "after": after, "outgoing": outgoing,
+                "group": thread["is_group"],
+                "avatar": "" if thread["is_group"] or not thread["participants"]
+                else self.store.photo(thread["participants"][0])}
 
     def unread_total(self):
         return self.store.unread_total() if self.store else 0
@@ -1478,7 +1681,7 @@ class Messages:
             GLib.timeout_add_seconds(5, lambda: self.sync(count=10) and False)
             GLib.timeout_add_seconds(SEND_CONFIRM, lambda: self.sync(count=10) and False)
 
-        self.worker.submit(job, done)
+        self.worker.submit(job, done, urgent=True)
 
     def _send_failed(self, key, _error):
         m = self.store.message(key)

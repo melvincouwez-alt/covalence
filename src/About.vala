@@ -30,29 +30,33 @@ namespace Covalence {
             version = Config.VERSION,
             comments = _("Pour utiliser un iPhone et iCloud depuis elementary OS.\n"
                        + "Projet libre, non affilié à Apple Inc."),
-            license_type = Gtk.License.GPL_3_0,
             copyright = _("© 2026 Melvin Couwez et les contributeurs de Covalence"),
             authors = { "Melvin Couwez" },
             website = "https://github.com/melvincouwez-alt/covalence",
             website_label = _("Code source")
         };
-        about.add_credit_section (_("Mentions légales"), { _(LEGAL_NOTICE) });
-        about.add_credit_section (_("Écouteurs : merci à LibrePods"), {
-            _("Le protocole des AirPods utilisé par Covalence a été décrit par le projet LibrePods "
-            + "(https://github.com/librepods-org/librepods, GPL-3.0-or-later), créé par Kavish Devar. "
-            + "Merci à lui et à tous les contributeurs de LibrePods pour leur remarquable travail "
-            + "de rétro-ingénierie, sans lequel cette fonction n'existerait pas. "
-            + "Covalence n'est pas affiliée à LibrePods.")
+        // The legal notice is long prose: in the wrapped licence page, not in a credit line.
+        about.license = _(LEGAL_NOTICE) + "\n\n"
+            + _("Covalence est distribuée sous licence GNU GPL, version 3 ou ultérieure : "
+                + "https://www.gnu.org/licenses/gpl-3.0.html");
+        about.wrap_license = true;
+        // Short entries: "Name https://…" shows Name as a link, and keeps the window narrow.
+        about.add_credit_section (_("Écouteurs AirPods"), {
+            _("LibrePods, Kavish Devar et contributeurs https://github.com/librepods-org/librepods"),
+            _("Merci pour la rétro-ingénierie du protocole"),
+            _("Covalence n'est pas affiliée à LibrePods")
         });
-        // "Name https://…" entries are shown as links by Gtk.AboutDialog.
-        about.add_credit_section (_("iCloud Drive et Photos : merci à rclone"), {
-            _("rclone, Nick Craig-Wood et contributeurs (MIT) https://github.com/rclone/rclone")
+        about.add_credit_section (_("iCloud Drive et Photos"), {
+            _("rclone, Nick Craig-Wood et contributeurs https://github.com/rclone/rclone")
         });
         about.add_credit_section (_("Sons"), {
-            _("Rosée, Envol, Vague, Aurore, Orbite et Horizon : The Android Open Source Project "
-              + "(Apache-2.0) https://android.googlesource.com/platform/frameworks/base/+/main/data/sounds"),
-            _("Carillon et Cristal : Kenney, pack Interface Sounds (CC0) "
-              + "https://kenney.nl/assets/interface-sounds")
+            _("Rosée, Envol, Vague, Écho · AOSP · Apache-2.0 https://android.googlesource.com/platform/frameworks/base/+/main/data/sounds"),
+            _("Duo, Clochette · AOSP · Apache-2.0 https://android.googlesource.com/platform/frameworks/base/+/main/data/sounds"),
+            _("Aurore, Orbite, Horizon, Écume · AOSP · Apache-2.0 https://android.googlesource.com/platform/frameworks/base/+/main/data/sounds"),
+            _("Brise, Cascade, Carrousel · AOSP · Apache-2.0 https://android.googlesource.com/platform/frameworks/base/+/main/data/sounds"),
+            _("Carillon, Cristal, Pop, Bulle · Kenney · CC0 https://kenney.nl/assets/interface-sounds"),
+            _("Givre · Kenney · CC0 https://kenney.nl/assets/interface-sounds"),
+            _("Téléphone · Covalence · CC0")
         });
         about.add_credit_section (_("Projets utilisés"), {
             _("LibrePods, Kavish Devar et contributeurs (GPL-3.0-or-later) https://github.com/librepods-org/librepods"),

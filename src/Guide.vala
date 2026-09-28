@@ -157,7 +157,7 @@ public class Covalence.GuideWindow : Gtk.Window {
 
         header_title = new Gtk.Label ("") { ellipsize = Pango.EllipsizeMode.END };
         header_title.add_css_class ("title");
-        var main_header = new Gtk.HeaderBar () { title_widget = header_title, decoration_layout = ":maximize" };
+        var main_header = new Gtk.HeaderBar () { title_widget = header_title, decoration_layout = MainWindow.split_layout (false) };
         main_header.add_css_class ("flat");
         main_header.pack_end (switcher);
 

@@ -118,6 +118,11 @@ class Notifier:
         own=True ties the notification to the Covalence launcher (its name, icon and
         notification settings); iPhone notifications keep the phone name instead.
         """
+        # Bodies carry text from outside (SMS, iPhone notifications, file names): with a
+        # server that reads markup in them, a "<a href>" or "<img>" must stay plain text.
+        # Summaries are plain text in the specification.
+        if body and "body-markup" in self.capabilities():
+            body = GLib.markup_escape_text(body)
         flat = []
         for key, label in actions:
             flat += [key, label]

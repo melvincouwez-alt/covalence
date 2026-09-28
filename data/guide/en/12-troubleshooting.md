@@ -9,10 +9,11 @@ The background service is stopped. Open a Terminal and type `systemctl --user re
 1. Check that Bluetooth is on, on both sides.
 2. Click **Reconnect** in the [Overview](app:device).
 3. Otherwise, on the iPhone: Settings › Bluetooth, tap the computer's name.
-4. As a last resort, forget the device on both sides and [pair](guide:link) again.
+4. If the Overview says the iPhone no longer knows this PC, click **Pair again…**
+5. As a last resort, click **Forget** in the Overview, forget the computer on the iPhone too, then [pair](guide:link) again.
 
 ### No notifications
-The low energy link is not open. Open nRF Connect on the iPhone and tap **Connect** next to "Covalence". Also check **Share System Notifications**.
+The low energy link is not open. Check **Share System Notifications** (Settings › Bluetooth › ⓘ), then turn the iPhone's Bluetooth off and on. As a last resort, the free nRF Connect app can open the link by hand: tap **Connect** next to "Covalence".
 
 ### The iPhone refuses messages
 Turn on **Show Notifications** (Settings › Bluetooth › ⓘ), then click **Check** in the setup.

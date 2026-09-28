@@ -9,6 +9,12 @@ When several groups qualify, the one closest to the keyword wins.
 
 The code itself never goes to the logs. OneTimeCodes keeps the latest one in memory
 for a few minutes: the Covalence app copies it, the browser extension offers it.
+
+Domain-bound codes (the format iOS and Android autofill use): a last line
+"@example.com #482913", optionally followed by "%other.example" for a code used
+inside another site's frame. bound_domains() reads those names: the browser
+extension fills such a code by itself on that site only, and never offers it on
+another one (a phishing page asking for the bank's code gets nothing).
 """
 
 import re
@@ -43,6 +49,18 @@ _LEAD_BEFORE = re.compile(
     r"dossier|colis|suivi|tracking|facture|invoice|contrat|client|postal)\s*:?\s*$)")
 
 _SPACES = re.compile(r"[\s   ]+")
+
+_BOUND = re.compile(r"(?:^|\s)@([a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}"
+                    r"[a-z0-9])?)+)\s+#([0-9]{4,10})(?:\s+%([a-z0-9.-]+))?\s*$", re.IGNORECASE)
+
+
+def bound_domains(text, code):
+    """Domains the SMS binds this code to ("@example.com #482913"), lower case; [] if none."""
+    last = (text or "").strip().splitlines()[-1:] or [""]
+    found = _BOUND.search(last[0])
+    if not found or found.group(2) != code:
+        return []
+    return [d.lower().rstrip(".") for d in (found.group(1), found.group(3)) if d]
 
 
 def _clean(text):

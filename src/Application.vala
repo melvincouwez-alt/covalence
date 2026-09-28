@@ -45,9 +45,29 @@ public class Covalence.Application : Gtk.Application {
             padding: 0;
             border-radius: 9999px;
         }
+        .control-pad {
+            min-height: 220px;
+            background-color: alpha(@fg_color, 0.04);
+        }
+        .control-pad:focus {
+            background-color: alpha(@accent_color, 0.12);
+        }
+        .alpha-pill {
+            font-size: 0.8em;
+            font-weight: bold;
+            padding: 1px 8px;
+            border-radius: 9999px;
+            background-color: alpha(@accent_color, 0.18);
+            color: @accent_color;
+        }
         .sent-check {
             color: alpha(@fg_color, 0.45);
             margin-top: -1px;
+        }
+        .search-flash .bubble {
+            outline: 2px solid @selected_bg_color;
+            outline-offset: 2px;
+            transition: outline-color 300ms ease-out;
         }
         .hover-tools {
             transition: opacity 120ms ease-out;
@@ -459,6 +479,7 @@ public class Covalence.Application : Gtk.Application {
         Launchers.apply (Mode.CONTACTS);
         Launchers.apply (Mode.PHONE);
         Launchers.apply (Mode.HEADPHONES);
+        Launchers.apply (Mode.MIRROR);
 
         var css = new Gtk.CssProvider ();
         css.load_from_string (STYLE);

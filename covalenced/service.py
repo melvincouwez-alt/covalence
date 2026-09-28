@@ -7,10 +7,14 @@ io.github.melvincouwez.Covalence.Daemon: the app itself (GtkApplication) owns
 io.github.melvincouwez.Covalence.
 """
 
+import os
+
 from gi.repository import Gio, GLib
 
+from .callers import Callers
 from .config import ALPHA, MODULES
 from .i18n import _
+from .util import log
 
 BUS_NAME = "io.github.melvincouwez.Covalence.Daemon"
 PATH = "/io/github/melvincouwez/Covalence/Daemon"
@@ -24,8 +28,12 @@ XML = f"""
       <arg name="enabled" type="b" direction="in"/>
     </method>
     <method name="StartPairing"/>
+    <method name="ConfirmPairing">
+      <arg name="matches" type="b" direction="in"/>
+    </method>
     <method name="StopPairing"/>
     <method name="Reconnect"/>
+    <method name="Forget"/>
     <method name="ICloudUpdated"/>
     <method name="ListThreads">
       <arg name="threads" type="aa{{sv}}" direction="out"/>
@@ -60,6 +68,14 @@ XML = f"""
       <arg name="value" type="s" direction="in"/>
     </method>
     <method name="StopSound"/>
+    <method name="SetTethering">
+      <arg name="enabled" type="b" direction="in"/>
+    </method>
+    <method name="SetProximity">
+      <arg name="enabled" type="b" direction="in"/>
+      <arg name="distance" type="s" direction="in"/>
+      <arg name="delay" type="u" direction="in"/>
+    </method>
     <method name="SetFetchUnread">
       <arg name="enabled" type="b" direction="in"/>
     </method>
@@ -81,6 +97,18 @@ XML = f"""
     <method name="SearchThreads">
       <arg name="query" type="s" direction="in"/>
       <arg name="threads" type="as" direction="out"/>
+    </method>
+    <method name="SearchMessages">
+      <arg name="query" type="s" direction="in"/>
+      <arg name="results" type="aa{{sv}}" direction="out"/>
+    </method>
+    <method name="PinThread">
+      <arg name="thread" type="s" direction="in"/>
+      <arg name="pinned" type="b" direction="in"/>
+    </method>
+    <method name="MarkThreadUnread">
+      <arg name="thread" type="s" direction="in"/>
+      <arg name="unread" type="b" direction="in"/>
     </method>
     <method name="SetViewing">
       <arg name="thread" type="s" direction="in"/>
@@ -142,6 +170,13 @@ XML = f"""
       <arg name="code" type="s" direction="out"/>
       <arg name="age" type="u" direction="out"/>
     </method>
+    <method name="LatestCodeFor">
+      <arg name="purpose" type="s" direction="in"/>
+      <arg name="code" type="s" direction="out"/>
+      <arg name="age" type="u" direction="out"/>
+      <arg name="domains" type="as" direction="out"/>
+      <arg name="sender" type="s" direction="out"/>
+    </method>
     <method name="SetOneTimeCodes">
       <arg name="mode" type="s" direction="in"/>
     </method>
@@ -154,6 +189,74 @@ XML = f"""
     </method>
     <method name="RestartDaemon"/>
     <property name="Update" type="a{{sv}}" access="read"/>
+    <property name="Tethering" type="b" access="read"/>
+    <property name="TetheringState" type="s" access="read"/>
+    <property name="TetheringError" type="s" access="read"/>
+    <property name="Proximity" type="a{{sv}}" access="read"/>
+    <method name="SetLocalSend">
+      <arg name="enabled" type="b" direction="in"/>
+    </method>
+    <method name="ListFilePeers">
+      <arg name="peers" type="aa{{sv}}" direction="out"/>
+    </method>
+    <method name="RefreshFilePeers"/>
+    <method name="SendFiles">
+      <arg name="peer" type="s" direction="in"/>
+      <arg name="paths" type="as" direction="in"/>
+    </method>
+    <method name="CancelFiles"/>
+    <property name="Files" type="a{{sv}}" access="read"/>
+    <method name="StartMirror"/>
+    <method name="StopMirror"/>
+    <property name="Mirror" type="a{{sv}}" access="read"/>
+    <method name="SetMirrorOption">
+      <arg name="key" type="s" direction="in"/>
+      <arg name="value" type="s" direction="in"/>
+    </method>
+    <property name="Control" type="a{{sv}}" access="read"/>
+    <method name="ControlKey">
+      <arg name="evdev_code" type="u" direction="in"/>
+      <arg name="pressed" type="b" direction="in"/>
+    </method>
+    <method name="ControlShortcut">
+      <arg name="usage" type="u" direction="in"/>
+      <arg name="modifiers" type="u" direction="in"/>
+    </method>
+    <method name="ControlText">
+      <arg name="text" type="s" direction="in"/>
+      <arg name="skipped" type="i" direction="out"/>
+    </method>
+    <method name="ControlMove">
+      <arg name="dx" type="i" direction="in"/>
+      <arg name="dy" type="i" direction="in"/>
+    </method>
+    <method name="ControlButton">
+      <arg name="button" type="u" direction="in"/>
+      <arg name="pressed" type="b" direction="in"/>
+    </method>
+    <method name="ControlClick">
+      <arg name="button" type="u" direction="in"/>
+    </method>
+    <method name="ControlScroll">
+      <arg name="steps" type="i" direction="in"/>
+    </method>
+    <method name="ControlGoto">
+      <arg name="x" type="d" direction="in"/>
+      <arg name="y" type="d" direction="in"/>
+    </method>
+    <method name="ControlRelease"/>
+    <method name="SetControlSize">
+      <arg name="width" type="u" direction="in"/>
+      <arg name="height" type="u" direction="in"/>
+    </method>
+    <method name="RefreshPhotosUsb"/>
+    <method name="PairPhotosUsb"/>
+    <method name="ImportPhotosUsb"/>
+    <method name="CancelPhotosUsb"/>
+    <method name="SetConvertHeic">
+      <arg name="enabled" type="b" direction="in"/>
+    </method>
+    <property name="PhotosUsb" type="a{{sv}}" access="read"/>
     <method name="InstallBrowserHost">
       <arg name="browsers" type="as" direction="out"/>
     </method>
@@ -216,6 +319,7 @@ XML = f"""
     <property name="PhoneAudio" type="s" access="read"/>
     <property name="PhoneAudioOutput" type="s" access="read"/>
     <signal name="PairingCode"><arg name="passkey" type="u"/></signal>
+    <signal name="PairingCodeAnswered"><arg name="matches" type="b"/></signal>
     <signal name="ThreadsChanged"/>
     <signal name="MessageReceived">
       <arg name="thread" type="s"/>
@@ -225,6 +329,8 @@ XML = f"""
     <property name="BluetoothAvailable" type="b" access="read"/>
     <property name="Advertising" type="b" access="read"/>
     <property name="Pairing" type="b" access="read"/>
+    <property name="LinkProblem" type="s" access="read"/>
+    <property name="AdapterName" type="s" access="read"/>
     <property name="DeviceName" type="s" access="read"/>
     <property name="DeviceAddress" type="s" access="read"/>
     <property name="Paired" type="b" access="read"/>
@@ -254,6 +360,7 @@ XML = f"""
 
 SIGNATURES = {
     "Version": "s", "BluetoothAvailable": "b", "Advertising": "b", "Pairing": "b",
+    "LinkProblem": "s", "AdapterName": "s",
     "DeviceName": "s", "DeviceAddress": "s", "Paired": "b", "Connected": "b",
     "NotificationsLinked": "b", "MediaLinked": "b", "CallsLinked": "b", "CallsSupported": "b",
     "Battery": "i",
@@ -262,15 +369,28 @@ SIGNATURES = {
     "ContactsState": "s", "AudioOnPC": "b", "MicMuted": "b",
     "PhoneAudio": "s", "PhoneAudioOutput": "s", "ContactsSource": "s", "ContactsBook": "s",
     "UnreadMessages": "u", "MissedCalls": "u", "NowPlaying": "a{sv}", "AlphaFeatures": "a{sb}", "FetchUnread": "b", "Sounds": "a{ss}",
-    "Update": "a{sv}",
+    "Update": "a{sv}", "Proximity": "a{sv}",
+    "Tethering": "b", "TetheringState": "s", "TetheringError": "s",
+    "Files": "a{sv}", "Mirror": "a{sv}", "PhotosUsb": "a{sv}", "Control": "a{sv}",
 }
+
+PROXIMITY_TYPES = {"enabled": "b", "distance": "s", "delay": "u", "rssi": "i", "near": "b"}
 
 
 def _variant(name, value):
+    if name in ("Files", "Mirror", "PhotosUsb", "Control"):
+        from . import files, hid, mirror, photos_usb
+        types = {"Files": files.TYPES, "Mirror": mirror.TYPES, "PhotosUsb": photos_usb.TYPES,
+                 "Control": hid.TYPES}[name]
+        return GLib.Variant("a{sv}", {k: GLib.Variant(types[k], v)
+                                      for k, v in value.items() if k in types})
     if name == "Update":
         from .updates import TYPES as UPDATE_TYPES
         return GLib.Variant("a{sv}", {k: GLib.Variant(UPDATE_TYPES[k], v)
                                       for k, v in value.items() if k in UPDATE_TYPES})
+    if name == "Proximity":
+        return GLib.Variant("a{sv}", {k: GLib.Variant(PROXIMITY_TYPES[k], v)
+                                      for k, v in value.items() if k in PROXIMITY_TYPES})
     if name == "NowPlaying":
         from .nowplaying import TYPES
         return GLib.Variant("a{sv}", {k: GLib.Variant(TYPES[k], v) for k, v in value.items()
@@ -279,7 +399,9 @@ def _variant(name, value):
 
 THREAD_TYPES = {"id": "s", "name": "s", "snippet": "s", "time": "x", "unread": "u",
                 "group": "b", "outgoing": "b", "can_send": "b", "participants": "as",
-                "avatar": "s", "draft": "s"}
+                "avatar": "s", "draft": "s", "pinned": "b", "marked_unread": "b"}
+SEARCH_TYPES = {"thread": "s", "name": "s", "message": "s", "time": "x", "before": "s",
+                "match": "s", "after": "s", "outgoing": "b", "group": "b", "avatar": "s"}
 MESSAGE_TYPES = {"id": "s", "outgoing": "b", "sender": "s", "address": "s", "time": "x",
                  "body": "s", "complete": "b", "source": "s", "status": "s", "avatar": "s",
                  "reactions": "a(ssbb)", "note": "s"}
@@ -300,7 +422,51 @@ HEADPHONES_TYPES = {"address": "s", "name": "s", "model": "s", "firmware": "s", 
                     "right_charging": "b", "case_charging": "b", "ear_left": "s", "ear_right": "s",
                     "mode": "i", "cycle": "i", "conversation": "i", "adaptive": "i", "one_bud": "i",
                     "features": "as", "auto_pause": "b"}
+PEER_TYPES = {"id": "s", "alias": "s", "model": "s", "type": "s"}
 CALL_TYPES = {"address": "s", "name": "s", "time": "x", "kind": "s", "avatar": "s"}
+
+
+# Actions on the user's behalf: run at once for the Covalence app, after a confirmation
+# notification for any other program (see callers.py). Each entry gives the text of
+# that confirmation from the call's arguments.
+def _excerpt(text, size=60):
+    text = " ".join((text or "").split())
+    return text if len(text) <= size else text[:size - 1] + "…"
+
+
+GUARDED = {
+    "Dial": lambda a: _("appeler le {number}").format(number=_excerpt(a[0], 30)),
+    "SendMessage": lambda a: _("envoyer le message « {text} »").format(text=_excerpt(a[1])),
+    "SendReaction": lambda a: _("envoyer une réaction {emoji}").format(emoji=_excerpt(a[1], 8)),
+    "RetryMessage": lambda a: _("renvoyer un message"),
+    "SendFiles": lambda a: _("envoyer {count} fichier(s) à un appareil du réseau").format(
+        count=len(a[1])),
+    "StartPairing": lambda a: _("rendre ce PC visible pour appairer un appareil Bluetooth"),
+    "Forget": lambda a: _("oublier l'iPhone appairé"),
+    "InstallUpdate": lambda a: _("installer une mise à jour de Covalence"),
+    "InstallBrowserHost": lambda a: _("installer l'intégration navigateur des codes SMS"),
+    "DeleteMessage": lambda a: _("supprimer un message"),
+    "DeleteConversation": lambda a: _("supprimer une conversation"),
+    "SaveContact": lambda a: _("modifier un contact iCloud"),
+    "DeleteContact": lambda a: _("supprimer un contact iCloud"),
+}
+# Only ever from the app: confirming a pairing code is the check itself, and typing on
+# the iPhone key by key cannot be confirmed one notification at a time.
+APP_ONLY = {"ConfirmPairing", "ControlKey", "ControlShortcut", "ControlText", "ControlMove",
+            "ControlButton", "ControlClick", "ControlScroll", "ControlGoto", "ControlRelease"}
+CONFIRM_SECONDS = 60
+
+
+def outside_home(paths, home=None):
+    """Paths SendFiles refuses for another program: outside the home folder or in a
+    hidden one (~/.ssh, ~/.config, …). Symbolic links are resolved first."""
+    home = os.path.realpath(home or os.path.expanduser("~"))
+    refused = []
+    for path in paths:
+        rel = os.path.relpath(os.path.realpath(path), home)
+        if rel == "." or rel.startswith("..") or any(p.startswith(".") for p in rel.split(os.sep)):
+            refused.append(path)
+    return refused
 
 
 def _dicts(items, types):
@@ -313,6 +479,7 @@ class Service:
         self.bus = bus
         self.daemon = daemon
         self.cache = {}
+        self.callers = Callers(bus)
         info = Gio.DBusNodeInfo.new_for_xml(XML).interfaces[0]
         self.registration = bus.register_object(PATH, info, self._method, self._get, None)
 
@@ -321,7 +488,89 @@ class Service:
         return Gio.bus_own_name_on_connection(
             self.bus, BUS_NAME, Gio.BusNameOwnerFlags.DO_NOT_QUEUE, None, on_lost)
 
-    def _method(self, _conn, _sender, _path, _iface, method, params, invocation):
+    def _method(self, _conn, sender, _path, _iface, method, params, invocation):
+        # An exception must still answer the caller (otherwise the app waits for the D-Bus
+        # timeout) and must not take the daemon's main loop with it.
+        self._safely(method, invocation, self._guard, sender, method, params, invocation)
+
+    def _guard(self, sender, method, params, invocation):
+        args = params.unpack() if params is not None else ()
+        # LatestCode "copy" hands the code to the app's clipboard helper only.
+        copy_code = method in ("LatestCode", "LatestCodeFor") and args[0] != "browser"
+        if method not in GUARDED and method not in APP_ONLY and not copy_code:
+            self._call(method, params, invocation)
+            return
+        trusted, program = self.callers.describe(sender)
+        if trusted:
+            self._call(method, params, invocation)
+            return
+        if method in APP_ONLY or copy_code:
+            log(f"appel {method} refusé : {program} n'est pas l'application Covalence")
+            invocation.return_dbus_error(f"{INTERFACE}.Error.NotAllowed",
+                                         _("réservé à l'application Covalence"))
+            return
+        if method == "SendFiles" and outside_home(args[1]):
+            log(f"appel SendFiles refusé : fichiers hors du dossier personnel ({program})")
+            invocation.return_dbus_error(f"{INTERFACE}.Error.NotAllowed",
+                                         _("fichiers hors du dossier personnel ou cachés"))
+            return
+
+        def decided(ok):
+            if ok:
+                self._call(method, params, invocation)
+            else:
+                invocation.return_dbus_error(f"{INTERFACE}.Error.Refused",
+                                             _("refusé par l'utilisateur"))
+
+        self.confirm(self.daemon.notifier, program, GUARDED[method](args), decided)
+
+    @staticmethod
+    def confirm(notifier, program, action, on_result):
+        """Ask the user, by notification, whether another program may do this. No answer
+        within a minute, a dismissed notification or no notification server: refused."""
+        state = {"done": False, "note": 0, "timer": 0}
+
+        def answer(ok):
+            if state["done"]:
+                return
+            state["done"] = True
+            if state["timer"]:
+                GLib.source_remove(state["timer"])
+            notifier.close(state["note"])
+            log(f"demande d'un autre programme ({program}) : {'acceptée' if ok else 'refusée'}")
+            on_result(ok)
+
+        state["note"] = notifier.notify(
+            "Covalence", "dialog-warning", _("Autoriser {program} ?").format(program=program),
+            _("« {program} » demande à Covalence de {action}. Refusez si ce n'est pas vous.")
+            .format(program=program, action=action),
+            actions=[("allow", _("Autoriser")), ("deny", _("Refuser"))],
+            hints={"urgency": GLib.Variant("y", 2)}, own=True,
+            on_action=lambda key: answer(key == "allow"),
+            on_closed=lambda: answer(False))
+        if not state["note"]:
+            answer(False)
+            return
+        if not state["done"]:
+            state["timer"] = GLib.timeout_add_seconds(CONFIRM_SECONDS,
+                                                      lambda: answer(False) or False)
+
+    @staticmethod
+    def _safely(method, invocation, fn, *args):
+        try:
+            fn(*args)
+        except GLib.Error as e:
+            log(f"D-Bus : {method} a échoué ({e.message})")
+            invocation.return_dbus_error(f"{INTERFACE}.Error.Failed", e.message)
+        except Exception as e:  # noqa: BLE001 - reported to the caller and to the journal
+            log(f"D-Bus : {method} a échoué ({e.__class__.__name__}: {e})")
+            invocation.return_dbus_error(f"{INTERFACE}.Error.Failed", f"{e.__class__.__name__}: {e}")
+
+    def _call(self, method, params, invocation):
+        # Also reached from a confirmation callback, outside _method's own guard.
+        self._safely(method, invocation, self._dispatch, method, params, invocation)
+
+    def _dispatch(self, method, params, invocation):
         d = self.daemon
         if method == "SetModuleEnabled":
             module, enabled = params.unpack()
@@ -334,10 +583,17 @@ class Service:
                 invocation.return_dbus_error(f"{INTERFACE}.Error.NoAdapter",
                                              "no Bluetooth adapter")
                 return
+        elif method == "ConfirmPairing":
+            if not d.link.confirm_pairing(params.unpack()[0]):
+                invocation.return_dbus_error(f"{INTERFACE}.Error.NoPairing",
+                                             _("aucun code en attente"))
+                return
         elif method == "StopPairing":
             d.link.stop_pairing()
         elif method == "Reconnect":
             d.link.reconnect_now()
+        elif method == "Forget":
+            d.link.forget()
         elif method == "ICloudUpdated":
             d.icloud.reset()
         elif method == "ListThreads":
@@ -400,6 +656,23 @@ class Service:
                 return
         elif method == "StopSound":
             d.sounds.stop()
+        elif method == "SetTethering":
+            try:
+                if params.unpack()[0]:
+                    d.hotspot.connect()
+                else:
+                    d.hotspot.disconnect()
+            except (RuntimeError, GLib.Error) as error:
+                invocation.return_dbus_error(f"{INTERFACE}.Error.Tethering",
+                                             getattr(error, "message", None) or str(error))
+                return
+        elif method == "SetProximity":
+            enabled, distance, delay = params.unpack()
+            try:
+                d.proximity.configure(enabled, distance, int(delay))
+            except ValueError as error:
+                invocation.return_dbus_error(f"{INTERFACE}.Error.InvalidArgs", str(error))
+                return
         elif method == "SetFetchUnread":
             d.set_fetch_unread(params.unpack()[0])
         elif method == "SetAlphaFeature":
@@ -508,6 +781,14 @@ class Service:
         elif method == "SearchThreads":
             invocation.return_value(GLib.Variant("(as)", (d.messages.search(params.unpack()[0]),)))
             return
+        elif method == "SearchMessages":
+            invocation.return_value(GLib.Variant(
+                "(aa{sv})", (_dicts(d.messages.search_messages(params.unpack()[0]), SEARCH_TYPES),)))
+            return
+        elif method == "PinThread":
+            d.messages.set_pinned(*params.unpack())
+        elif method == "MarkThreadUnread":
+            d.messages.set_marked_unread(*params.unpack())
         elif method == "MediaCommand":
             sent = d.now_playing.command(params.unpack()[0])
             invocation.return_value(GLib.Variant("(b)", (bool(sent),)))
@@ -520,9 +801,90 @@ class Service:
             code, age = d.messages.latest_code(params.unpack()[0])
             invocation.return_value(GLib.Variant("(su)", (code, age)))
             return
+        elif method == "LatestCodeFor":
+            # For the browser extension: the code, the sites it is bound to (if the SMS says
+            # so) and who sent it, so a page never gets a code without the user seeing that.
+            purpose = params.unpack()[0]
+            code, age = d.messages.latest_code(purpose)
+            domains, sender = [], ""
+            if code:
+                from .otp import bound_domains
+                key = d.messages.codes.latest()[2]
+                m = d.messages.store.message(key) if key and d.messages.store else None
+                if m:
+                    domains = bound_domains(m["body"] or "", code)
+                    sender = d.messages.store.display_name(m["sender"], m["sender_name"] or "")
+            invocation.return_value(GLib.Variant("(suass)", (code, age, domains, sender)))
+            return
         elif method == "SetOneTimeCodes":
             d.messages.set_code_mode(params.unpack()[0])
             d.link_changed()
+        elif method == "SetLocalSend":
+            d.files.set_enabled(params.unpack()[0])
+        elif method == "ListFilePeers":
+            invocation.return_value(GLib.Variant("(aa{sv})", (_dicts(d.files.list_peers(), PEER_TYPES),)))
+            return
+        elif method == "RefreshFilePeers":
+            d.files.refresh()
+        elif method == "SendFiles":
+            # Returns once the transfer starts: the iPhone asks its user, which can take
+            # minutes. The outcome comes as a notification and through the Files property.
+            peer, paths = params.unpack()
+            error = d.files.send(peer, paths)
+            if error:
+                invocation.return_dbus_error(f"{INTERFACE}.Error.SendFailed", error)
+                return
+        elif method == "CancelFiles":
+            d.files.cancel()
+        elif method == "StartMirror":
+            if not d.mirror.start():
+                invocation.return_dbus_error(f"{INTERFACE}.Error.MirrorFailed",
+                                             d.mirror.error or "failed")
+                return
+        elif method == "StopMirror":
+            d.mirror.stop()
+        elif method == "SetMirrorOption":
+            key, value = params.unpack()
+            if not d.mirror.set_option(key, value):
+                invocation.return_dbus_error(f"{INTERFACE}.Error.InvalidOption", key)
+                return
+        elif method.startswith("Control") or method == "SetControlSize":
+            control = d.control
+            if method == "SetControlSize":
+                control.set_size(*params.unpack())
+            elif not control.registered:
+                invocation.return_dbus_error(f"{INTERFACE}.Error.ControlOff",
+                                             "iPhone control is not published")
+                return
+            elif method == "ControlKey":
+                control.key(*params.unpack())
+            elif method == "ControlShortcut":
+                control.shortcut(*params.unpack())
+            elif method == "ControlText":
+                invocation.return_value(GLib.Variant("(i)", (control.text(params.unpack()[0]),)))
+                return
+            elif method == "ControlMove":
+                control.move(*params.unpack())
+            elif method == "ControlButton":
+                control.button(*params.unpack())
+            elif method == "ControlClick":
+                control.click(params.unpack()[0])
+            elif method == "ControlScroll":
+                control.scroll(params.unpack()[0])
+            elif method == "ControlGoto":
+                control.goto(*params.unpack())
+            elif method == "ControlRelease":
+                control.release_all()
+        elif method == "RefreshPhotosUsb":
+            d.photos_usb.refresh()
+        elif method == "PairPhotosUsb":
+            d.photos_usb.pair()
+        elif method == "ImportPhotosUsb":
+            d.photos_usb.import_photos()
+        elif method == "CancelPhotosUsb":
+            d.photos_usb.cancel()
+        elif method == "SetConvertHeic":
+            d.photos_usb.set_convert_heic(params.unpack()[0])
         elif method == "CheckUpdates":
             def checked(latest, error):
                 if error:
@@ -660,3 +1022,7 @@ class Service:
 
     def pairing_code(self, passkey):
         self.bus.emit_signal(None, PATH, INTERFACE, "PairingCode", GLib.Variant("(u)", (passkey,)))
+
+    def pairing_code_answered(self, matches):
+        self.bus.emit_signal(None, PATH, INTERFACE, "PairingCodeAnswered",
+                             GLib.Variant("(b)", (bool(matches),)))

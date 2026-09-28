@@ -9,6 +9,7 @@ through org.freedesktop.Notifications. Positive and negative ANCS actions
 """
 
 import struct
+import time
 
 from gi.repository import GLib
 
@@ -35,8 +36,30 @@ CMD_PERFORM_NOTIFICATION_ACTION = 2
 ACTION_POSITIVE, ACTION_NEGATIVE = 0, 1
 
 ATTR_APP_IDENTIFIER, ATTR_TITLE, ATTR_SUBTITLE, ATTR_MESSAGE = 0, 1, 2, 3
+ATTR_DATE = 5  # "yyyyMMdd'T'HHmmSS", local time of the iPhone
 ATTR_POSITIVE_LABEL, ATTR_NEGATIVE_LABEL = 6, 7
+# Attributes asked for each notification (app, title, subtitle, message, date, two action
+# labels): the response carries exactly this many, and the parser must read them all or
+# the leftover bytes swallow the next response.
+REQUESTED_ATTRS = 7
+REPLAY_WINDOW = 20  # seconds after subscribing
+MAX_PENDING = 64  # attribute requests waiting for an answer
+MAX_DESKTOP_IDS = 200  # iPhone notification -> desktop notification, oldest forgotten first
+
+
+def _trim(mapping, size):
+    """Drop the oldest entries of an insertion-ordered dict beyond size."""
+    while len(mapping) > size:
+        del mapping[next(iter(mapping))]
 APP_ATTR_DISPLAY_NAME = 0
+
+
+def parse_date(text):
+    """ANCS date ("20260928T110936", iPhone local time) as a Unix time; None if absent."""
+    try:
+        return int(time.mktime(time.strptime(text.strip()[:15], "%Y%m%dT%H%M%S")))
+    except (ValueError, OverflowError):
+        return None
 MOBILE_SMS = "com.apple.MobileSMS"
 
 CATEGORY_INCOMING_CALL, CATEGORY_MISSED_CALL = 1, 2
@@ -57,16 +80,20 @@ class AncsClient(GattClient):
         # hooks.suppress_incoming_call(title) -> bool : the calls module shows it
         self.hooks = hooks
         self.buffer = b""
-        self.pending = {}  # uid -> (category, flags)
+        self.pending = {}  # uid -> (category, flags, modified)
         self.app_names = {}
         self.pending_apps = set()
         self.desktop_ids = {}  # ANCS uid -> desktop notification id
+        self.started = 0.0
 
     def start(self):
+        self.started = time.monotonic()
         self.subscribe((DATA_SOURCE, NOTIFICATION_SOURCE))
 
     def stop(self):
         super().stop()
+        self.buffer = b""
+        self.pending.clear()  # requests of this link: their answers will never come
 
     def on_value(self, path, value):
         uuid = self.uuid_of(path)
@@ -96,13 +123,15 @@ class AncsClient(GattClient):
             return  # already on the iPhone before we connected: not replayed
         label = CATEGORIES.get(category, str(category))
         log(f"notification {uid} {'ajoutée' if event == EVENT_ADDED else 'modifiée'} ({label})")
-        self.pending[uid] = (category, flags if event == EVENT_ADDED else flags | FLAG_SILENT)
-        request = struct.pack("<BI", CMD_GET_NOTIFICATION_ATTRIBUTES, uid)
+        modified = event == EVENT_MODIFIED
+        self.pending[uid] = (category, flags | FLAG_SILENT if modified else flags, modified)
+        _trim(self.pending, MAX_PENDING)  # an answer lost with its request stays here otherwise
+        request = struct.pack("<BI", CMD_GET_NOTIFICATION_ATTRIBUTES, uid)  # REQUESTED_ATTRS, in order
         request += bytes([ATTR_APP_IDENTIFIER])
         request += struct.pack("<BH", ATTR_TITLE, 64)
         request += struct.pack("<BH", ATTR_SUBTITLE, 64)
         request += struct.pack("<BH", ATTR_MESSAGE, 512)
-        request += bytes([ATTR_POSITIVE_LABEL, ATTR_NEGATIVE_LABEL])
+        request += bytes([ATTR_DATE, ATTR_POSITIVE_LABEL, ATTR_NEGATIVE_LABEL])
         self.write(CONTROL_POINT, request, waits_for_response=True)
 
     # --- Data Source --------------------------------------------------------
@@ -115,7 +144,7 @@ class AncsClient(GattClient):
         if data[0] == CMD_GET_NOTIFICATION_ATTRIBUTES:
             if len(data) < 5:
                 return
-            parsed = self._parse_attributes(data[5:], 6)
+            parsed = self._parse_attributes(data[5:], REQUESTED_ATTRS)
             if parsed is None:
                 return  # rest of the response comes in the next packet
             attrs, used = parsed
@@ -154,7 +183,7 @@ class AncsClient(GattClient):
         return attrs, offset
 
     def _deliver(self, uid, attrs):
-        category, flags = self.pending.pop(uid, (0, 0))
+        category, flags, modified = self.pending.pop(uid, (0, 0, False))
         title = attrs.get(ATTR_TITLE, "")
         if category == CATEGORY_INCOMING_CALL and self.hooks.suppress_incoming_call(title):
             log(f"notification {uid} confiée au module Appels")
@@ -162,7 +191,13 @@ class AncsClient(GattClient):
         app_id = attrs.get(ATTR_APP_IDENTIFIER, "")
         take_message = getattr(self.hooks, "message_notification", None)
         if app_id == MOBILE_SMS and take_message and take_message(
-                title, attrs.get(ATTR_SUBTITLE, ""), attrs.get(ATTR_MESSAGE, "")):
+                title, attrs.get(ATTR_SUBTITLE, ""), attrs.get(ATTR_MESSAGE, ""),
+                parse_date(attrs.get(ATTR_DATE, "")),
+                # Right after (re)connecting, iOS replays what is already in its notification
+                # centre: history to store, not news to announce. Judged by arrival, not by
+                # the date, so a clock or time zone gap between the phone and the PC is harmless.
+                time.monotonic() - self.started < REPLAY_WINDOW,
+                uid, modified):
             log(f"notification {uid} confiée au module Messages")
             return
         if app_id and app_id not in self.app_names and app_id not in self.pending_apps:
@@ -210,6 +245,7 @@ class AncsClient(GattClient):
             if pixels is not None:
                 hints["image-data"] = pixels
             icon = themed or icon
+        _trim(self.desktop_ids, MAX_DESKTOP_IDS)
         self.desktop_ids[uid] = self.notifier.notify(
             # The iPhone app's own name: the notification centre groups and titles by it.
             app_name or f"Covalence ({self.device_name})", icon, summary, body, actions, hints,

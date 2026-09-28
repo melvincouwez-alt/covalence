@@ -7,7 +7,7 @@
 **Your iPhone and your Apple account, at home on elementary OS.**
 
 [![License: GPL-3.0-or-later](https://img.shields.io/badge/license-GPL--3.0--or--later-blue)](LICENSE)
-![Version 0.3.3 alpha](https://img.shields.io/badge/version-0.3.3%20alpha-orange)
+![Version 0.5.0 alpha](https://img.shields.io/badge/version-0.5.0%20alpha-orange)
 ![elementary OS 8+](https://img.shields.io/badge/elementary%20OS-8%2B-64baff)
 
 [Website](https://melvincouwez-alt.github.io/covalence/) ·
@@ -23,7 +23,7 @@ contacts, AirPods, iCloud mail, calendars, reminders, Drive and Photos. Everythi
 computer. The iPhone is reached over Bluetooth, iCloud over the Internet, and nothing goes
 through a server of ours.
 
-> **Alpha.** Version 0.2 is a first public preview. It works every day on its author's computer,
+> **Alpha.** Version 0.5 is a public preview. It works every day on its author's computer,
 > but expect rough edges. The interface is in French, with English in beta.
 
 ## Two connections
@@ -70,7 +70,7 @@ through a server of ours.
 
 ### From the package (recommended)
 
-1. Download `covalence_0.3.3-1_amd64.deb` from the
+1. Download `covalence_0.5.0-1_amd64.deb` from the
    [latest release](https://github.com/melvincouwez-alt/covalence/releases/latest).
 2. Double-click it. Eddy (elementary OS) or the App Center (Ubuntu) installs Covalence and every
    package it needs. In a terminal: `sudo apt install ./covalence_*.deb`.
@@ -119,25 +119,28 @@ Honest limits, mostly set by what an iPhone accepts from a non-Apple computer:
 - Unlocking the computer with the iPhone is left out on purpose: Bluetooth signal strength
   can be faked.
 
-## Coming next (0.4.0)
+## New in 0.5
 
-Work in progress, subject to change:
+Since 0.3.3:
 
-- **Internet through the iPhone** in one click (Bluetooth tethering).
-- **Top bar indicator**: iPhone battery and network, now playing, current call, unread messages.
-- **Proximity lock**: the PC locks when the iPhone moves away (it never unlocks).
-- **Search** in messages and contacts, pinned conversations, "mark as unread".
-- **Files with LocalSend**, the free app already on the App Store, both ways.
-- **iCloud Drive sync status** in Files.
-- **Editable iCloud contacts**.
-- **Shortcuts** to Find My, Notes and Hide My Email on iCloud.com.
-- **iPhone screen mirroring** on the PC with UxPlay (experimental).
-- **Photo import over USB**.
-- **Settings in tabs**, with Covalence's free sounds easier to try.
+- **Steadier Bluetooth link**: pairing straight from the iPhone's Settings › Bluetooth (no
+  more nRF Connect), no more connect/disconnect loops, reconnection that backs off and resumes
+  after sleep, a clear "Pair again" when the iPhone forgot the PC.
+- **Messages fixed**: no duplicates after a reconnection, group messages stay in their group,
+  replies land in the right conversation, edited iMessages update in place.
+- **Security pass**: pairing code confirmed on the PC, other programs must be allowed before
+  calling or sending, updates checked again by a root helper, AirPlay protected by a PIN.
+- **Internet through the iPhone** (Bluetooth tethering), **top bar indicator**, **proximity
+  lock** (never unlocks), **message search**, pinned conversations, "mark as unread".
+- **Files with LocalSend**, iCloud Drive status in Files, editable iCloud contacts, iCloud.com
+  shortcuts, photo import over USB.
+- **Screen mirroring** in its own app with UxPlay, and iPhone control from the PC through
+  AssistiveTouch. Both are **experimental**, off by default.
+- Settings in tabs, 19 free sounds, Guide in the sidebar, missing icons fixed.
 
 ## Help
 
-Covalence has a built-in guide, in French and English (F1, or Settings › Guide). It walks
+Covalence has a built-in guide, in French and English (F1, or Guide in the sidebar). It walks
 through pairing, the iPhone settings to turn on, iCloud, AirPods and troubleshooting.
 Questions and bug reports: [Issues](https://github.com/melvincouwez-alt/covalence/issues).
 
@@ -178,7 +181,7 @@ Covalence stands on the work of many free software projects:
 
 Special thanks to the LibrePods team for their remarkable reverse-engineering work, and to
 [nRF Connect](https://www.nordicsemi.com/Products/Development-tools/nRF-Connect-for-mobile)
-(Nordic Semiconductor), a free iPhone app that helps start the first pairing.
+(Nordic Semiconductor), a free iPhone app that helped with the first pairings (no longer needed).
 
 ## Legal
 

@@ -18,11 +18,16 @@ Environment=RCLONE_READ_ONLY=false
 Environment=RCLONE_BWLIMIT=off
 EnvironmentFile=-%h/.config/covalence/drive.env
 ExecStartPre=/usr/bin/mkdir -p "${COVALENCE_DRIVE_DIR}"
+# Private rc socket (runtime dir, this user only): Covalence reads the upload counters
+# there to show the sync state in Files. Nothing is changed through it.
+ExecStartPre=/usr/bin/mkdir -p -m 0700 %t/covalence
+ExecStartPre=/usr/bin/rm -f %t/covalence/drive-rc.sock
 # The config is encrypted; its key comes from the keyring through secret-tool.
 ExecStart=@BINDIR@/covalence-rclone mount icloud: "${COVALENCE_DRIVE_DIR}" \
     --config %h/.config/covalence/rclone.conf \
     --password-command "secret-tool lookup application io.github.melvincouwez.Covalence kind rclone-config" \
-    --ask-password=false --volname "iCloud Drive"
+    --ask-password=false --volname "iCloud Drive" \
+    --rc --rc-addr unix://%t/covalence/drive-rc.sock --rc-no-auth
 ExecStop=/usr/bin/fusermount3 -uz "${COVALENCE_DRIVE_DIR}"
 Restart=on-failure
 RestartSec=30

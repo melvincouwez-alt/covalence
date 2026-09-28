@@ -60,9 +60,9 @@ namespace Covalence {
                 description = _("Pour appairer vos AirPods : ouvrez le boîtier près du PC, écouteurs "
                               + "dedans, puis maintenez le bouton du boîtier jusqu'à ce que le voyant "
                               + "clignote en blanc. Choisissez-les ensuite dans les paramètres Bluetooth."),
-                icon = new ThemedIcon (Config.APP_ID + ".Headphones")
+                icon = new ThemedIcon ("audio-headphones")
             };
-            var open_bluetooth = none.append_button (new ThemedIcon ("bluetooth-active"),
+            var open_bluetooth = none.append_button (new ThemedIcon ("bluetooth"),
                                                      _("Ouvrir les paramètres Bluetooth"),
                                                      _("Pour appairer de nouveaux écouteurs"));
             open_bluetooth.clicked.connect (() => {
@@ -70,7 +70,7 @@ namespace Covalence {
             });
 
             waiting = new Granite.Placeholder ("") {
-                icon = new ThemedIcon (Config.APP_ID + ".Headphones")
+                icon = new ThemedIcon ("audio-headphones")
             };
 
             stack = new Gtk.Stack () { vexpand = true };
@@ -110,7 +110,7 @@ namespace Covalence {
                 }
             });
 
-            var icon = new Gtk.Image.from_icon_name (Config.APP_ID + ".Headphones") { pixel_size = 96 };
+            var icon = new Gtk.Image.from_icon_name ("audio-headphones") { pixel_size = 96 };
             name_label = new Gtk.Label ("") { ellipsize = Pango.EllipsizeMode.END };
             name_label.add_css_class (Granite.HeaderLabel.Size.H2.to_string ());
             var rename = new Gtk.Button.from_icon_name ("document-edit-symbolic") {
@@ -478,7 +478,7 @@ namespace Covalence {
             var dialog = new Granite.MessageDialog.with_image_from_icon_name (
                 _("Renommer les écouteurs"),
                 _("Le nouveau nom est enregistré dans les écouteurs et s'affiche sur vos autres appareils."),
-                Config.APP_ID + ".Headphones", Gtk.ButtonsType.CANCEL) {
+                "audio-headphones", Gtk.ButtonsType.CANCEL) {
                 transient_for = get_root () as Gtk.Window,
                 modal = true
             };

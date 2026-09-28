@@ -1,0 +1,17 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: 2026 Melvin Couwez
+[Desktop Entry]
+Type=Application
+Name=Mirroring
+Name[fr]=Recopie
+GenericName=iPhone Screen Mirroring
+GenericName[fr]=Recopie de l'écran de l'iPhone
+Comment=Show the iPhone's screen on this PC and control it with the mouse and keyboard
+Comment[fr]=L'écran de l'iPhone sur ce PC, et son contrôle à la souris et au clavier
+Exec=@BINDIR@/@APP_ID@.Mirror
+Icon=@APP_ID@.Mirror
+Terminal=false
+Categories=Utility;GTK;
+Keywords=AirPlay;iPhone;mirroring;screen;UxPlay;remote;mouse;keyboard;
+Keywords[fr]=AirPlay;iPhone;recopie;écran;UxPlay;contrôle;souris;clavier;
+StartupNotify=true

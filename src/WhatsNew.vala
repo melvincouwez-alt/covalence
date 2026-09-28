@@ -16,6 +16,41 @@ namespace Covalence.WhatsNew {
 
     private static Item[] items () {
         return {
+            { "security-high-symbolic", _("Sécurité renforcée"),
+              _("Le code d'appairage se confirme aussi sur le PC. Un autre programme doit vous "
+                + "demander avant d'appeler, d'envoyer ou d'appairer. Mises à jour, fichiers "
+                + "LocalSend et recopie mieux protégés ; codes SMS liés à leur site.") },
+            { "emblem-ok-symbolic", _("Messages fiables"),
+              _("Plus de doublons après une reconnexion, les groupes restent groupés, chaque "
+                + "iPhone a son propre historique et les contacts se rechargent avec « Réessayer ».") },
+            { "bluetooth-active-symbolic", _("Appairage simplifié"),
+              _("L'iPhone trouve ce PC dans Réglages › Bluetooth, sans app en plus. La reconnexion "
+                + "est plus stable et un bouton « Oublier » permet de repartir de zéro.") },
+            { "video-display-symbolic", _("Recopie et contrôle"),
+              _("La recopie d'écran devient une app, plus fluide. Expérimental : pilotez l'iPhone "
+                + "avec la souris et le clavier du PC (guide dans l'app).") },
+            { "audio-volume-high-symbolic", _("19 sons libres"),
+              _("Onze sons de plus pour les notifications et les appels (Réglages › Sons).") },
+            { "network-cellular-symbolic", _("Internet via l'iPhone"),
+              _("Un bouton dans l'Aperçu utilise le partage de connexion de l'iPhone, en Bluetooth.") },
+            { "phone-apple-iphone-symbolic", _("Barre du haut"),
+              _("Batterie, lecture en cours, appel et messages non lus à côté de l'horloge. "
+                + "Se déconnecter une fois pour l'afficher.") },
+            { "system-search-symbolic", _("Recherche et épingles"),
+              _("Ctrl+F cherche dans les messages. Épinglez une conversation ou marquez-la non lue "
+                + "d'un clic droit.") },
+            { "folder-download-symbolic", _("Fichiers, recopie et photos"),
+              _("Échangez des fichiers avec l'app LocalSend, affichez l'écran de l'iPhone "
+                + "(expérimental) et importez les photos par câble USB.") },
+            { "folder-remote-symbolic", _("iCloud"),
+              _("État de synchro d'iCloud Drive dans Fichiers, raccourcis vers Localiser, Notes "
+                + "et Masquer mon adresse e-mail.") },
+            { "system-lock-screen-symbolic", _("Verrouillage de proximité"),
+              _("Le PC se verrouille quand l'iPhone s'éloigne (désactivé par défaut, "
+                + "jamais de déverrouillage).") },
+            { "preferences-system-symbolic", _("Réglages en onglets"),
+              _("Connexion, Messages, Sons, Affichage, Mises à jour, Expérimental, À propos ; les sons libres "
+                + "de Covalence s'essaient d'un clic.") },
             { "face-smile-symbolic", _("Émojis automatiques"),
               _("« :) » devient 🙂 pendant la saisie. Retour arrière annule ; réglable dans Réglages.") },
             { "object-select-symbolic", _("Messages envoyés"),
@@ -24,7 +59,7 @@ namespace Covalence.WhatsNew {
               _("Les réactions reçues s'affichent sur le bon message, sans doublon, et se cumulent. "
                 + "Au survol d'un message : réagir, copier ou supprimer.") },
             { "dialog-password-symbolic", _("Codes SMS"),
-              _("Un code reçu par SMS se copie depuis la notification. En alpha : remplissage "
+              _("Un code reçu par SMS se copie depuis la notification. Expérimental : remplissage "
                 + "dans Chrome, Chromium, Edge et Firefox (Réglages › Codes SMS).") },
             { "format-justify-fill-symbolic", _("Messages en entier"),
               _("« Tout lire » récupère la suite d'un message long non lu, ou toujours, "
@@ -36,7 +71,7 @@ namespace Covalence.WhatsNew {
                 + "des appels, dont 8 sons libres fournis avec Covalence (Réglages › Sons).") },
             { "system-software-update-symbolic", _("Mises à jour"),
               _("Covalence recherche les nouvelles versions et s'installe depuis Réglages.") },
-            { "applications-science-symbolic", _("Fonctions alpha"),
+            { "applications-science-symbolic", _("Fonctionnalités expérimentales"),
               _("À essayer dans Réglages : historique étendu, marquer comme lu sur l'iPhone, "
                 + "actions des notifications, favoris des contacts.") }
         };

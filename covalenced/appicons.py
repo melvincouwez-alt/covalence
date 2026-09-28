@@ -18,15 +18,18 @@ import urllib.request
 
 from gi.repository import GLib
 
+from . import cachedir
 from .util import APP_ID, log
 
 LOOKUP = "https://itunes.apple.com/lookup?bundleId={}&country={}"
 RETRY_MISSING = 7 * 24 * 3600
+ICONS_MAX_FILES = 400  # two files per app (rounded and square)
+ICONS_MAX_DAYS = 180
 RETRY_FAILED = 3600
 
 # Built-in apps (not on the App Store): themed icon names.
 BUILTIN = {
-    "com.apple.MobileSMS": APP_ID + ".Messages",
+    "com.apple.MobileSMS": "internet-chat",
     "com.apple.mobilephone": APP_ID + ".Phone",
     "com.apple.facetime": APP_ID + ".Phone",
     "com.apple.MobileAddressBook": APP_ID + ".Contacts",
@@ -60,6 +63,7 @@ class AppIcons:
         self.dir = directory or os.path.join(GLib.get_user_cache_dir(), "covalence", "app-icons")
         self.busy = set()
         self.lock = threading.Lock()
+        cachedir.prune(self.dir, ICONS_MAX_FILES, ICONS_MAX_DAYS)
 
     def enabled(self):
         return self.config.boolean("notifications", "app-icons", True)
@@ -78,6 +82,8 @@ class AppIcons:
             return BUILTIN[app_id], ""
         path = self._path(app_id)
         if os.path.exists(path) and os.path.exists(square_path(path)):
+            cachedir.touch(path)  # recently used: kept by the next prune
+            cachedir.touch(square_path(path))
             return "", path
         if app_id.startswith("com.apple.") or not self.enabled():
             return "", ""

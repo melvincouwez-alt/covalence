@@ -10,7 +10,7 @@ from .util import log
 
 MODULES = ("notifications", "media", "calls", "battery", "messages", "icloud")
 # Experimental features, off by default: each one relies on iPhone behaviour not yet measured.
-ALPHA = ("map_history", "mark_read", "ancs_actions", "pbap_favorites")
+ALPHA = ("map_history", "mark_read", "ancs_actions", "pbap_favorites", "iphone_control")
 
 
 class Config:

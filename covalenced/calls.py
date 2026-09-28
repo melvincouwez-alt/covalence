@@ -189,14 +189,20 @@ class Calls:
     def ready_for(self, address):
         return any(a.upper() == address.upper() for a in self.gateways.values())
 
-    def ensure_hfp(self, device_path, address):
+    def ensure_hfp(self, device_path, address, on_error=None):
         """Connect the iPhone's hands-free gateway if PipeWire has not done it."""
         if not self.enabled or not address or self.ready_for(address):
             return
         log("appels : connexion du profil mains libres")
+
+        def done(_value, error):
+            if error:
+                log(f"appels : profil mains libres non connecté : {error.message}")
+                if on_error:
+                    on_error(error)
+
         call_async(self.system, BLUEZ, device_path, "org.bluez.Device1", "ConnectProfile",
-                   GLib.Variant("(s)", (HFP_AG_UUID,)), timeout=30000,
-                   what="appels : profil mains libres non connecté")
+                   GLib.Variant("(s)", (HFP_AG_UUID,)), timeout=30000, on_done=done)
 
     def dial(self, number, on_done):
         """Call a number from the iPhone. Only ever on an explicit click in the app."""

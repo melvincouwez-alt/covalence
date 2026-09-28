@@ -9,10 +9,11 @@ Le service d'arrière-plan est arrêté. Ouvrez un Terminal et tapez `systemctl 
 1. Vérifiez que le Bluetooth est actif des deux côtés.
 2. Cliquez sur **Reconnecter** dans l'[Aperçu](app:device).
 3. Sinon, sur l'iPhone : Réglages › Bluetooth, touchez le nom de l'ordinateur.
-4. En dernier recours, oubliez l'appareil des deux côtés et recommencez l'[appairage](guide:link).
+4. Si l'Aperçu indique que l'iPhone ne reconnaît plus ce PC, cliquez sur **Appairer à nouveau…**
+5. En dernier recours, cliquez sur **Oublier** dans l'Aperçu, oubliez aussi l'ordinateur sur l'iPhone, puis recommencez l'[appairage](guide:link).
 
 ### Pas de notifications
-La liaison basse consommation n'est pas ouverte. Ouvrez nRF Connect sur l'iPhone et touchez **Connect** à côté de « Covalence ». Vérifiez aussi **Partager les notifications système**.
+La liaison basse consommation n'est pas ouverte. Vérifiez **Partager les notifications système** (Réglages › Bluetooth › ⓘ), puis coupez et réactivez le Bluetooth de l'iPhone. En dernier recours, l'app gratuite nRF Connect permet d'ouvrir la liaison à la main : touchez **Connect** à côté de « Covalence ».
 
 ### Messages refusés par l'iPhone
 Activez **Afficher les notifications** (Réglages › Bluetooth › ⓘ), puis cliquez sur **Vérifier** dans l'assistant.

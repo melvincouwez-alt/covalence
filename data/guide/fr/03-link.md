@@ -7,12 +7,12 @@ summary: Appairer par Bluetooth et autoriser le partage sur l'iPhone.
 - Gardez l'iPhone déverrouillé, à moins d'un mètre de l'ordinateur.
 
 ## Appairer
-1. Dans l'[Aperçu](app:device), cliquez sur **Appairer un iPhone…**
-2. Un code à six chiffres s'affiche sur l'ordinateur et sur l'iPhone. Vérifiez qu'il est identique.
-3. Touchez **Jumeler** sur l'iPhone, puis confirmez sur l'ordinateur.
+1. Dans l'[Aperçu](app:device), cliquez sur **Appairer un iPhone…** L'ordinateur devient visible pendant trois minutes.
+2. Sur l'iPhone, ouvrez **Réglages › Bluetooth** et touchez le nom de l'ordinateur sous **Autres appareils**.
+3. Un code à six chiffres s'affiche sur l'ordinateur et sur l'iPhone. S'il est identique, touchez **Jumeler** sur l'iPhone et **Le code correspond** sur l'ordinateur (ou dans la notification). Sans ce clic, rien n'est appairé : un appareil voisin ne peut pas profiter de la fenêtre d'appairage.
 4. L'Aperçu indique alors le nom de votre iPhone et sa batterie.
 
-!tip Si l'iPhone ne voit pas l'ordinateur dans Réglages › Bluetooth, c'est normal pour ce type d'accessoire. Installez l'app gratuite **nRF Connect** (Nordic Semiconductor) sur l'iPhone, lancez un scan, puis touchez **Connect** à côté de « Covalence ». L'appairage démarre.
+!tip Si l'ordinateur n'apparaît pas, coupez puis réactivez le Bluetooth de l'iPhone et relancez **Appairer un iPhone…** S'il était déjà appairé, oubliez-le des deux côtés d'abord (bouton **Oublier** dans l'Aperçu).
 
 ## Autoriser le partage
 Sur l'iPhone, ouvrez **Réglages › Bluetooth**, puis touchez **ⓘ** à côté du nom de votre ordinateur. Activez :
@@ -23,7 +23,9 @@ Sur l'iPhone, ouvrez **Réglages › Bluetooth**, puis touchez **ⓘ** à côté
 Selon la version d'iOS, certains interrupteurs n'apparaissent qu'après une première connexion : revenez-y si vous ne les voyez pas.
 
 ## Notifications et musique
-Ces deux fonctions passent par une seconde liaison, dite « basse consommation », que seul l'iPhone peut ouvrir. Elle s'établit en général seule après l'appairage. Si les notifications n'arrivent pas, ouvrez nRF Connect sur l'iPhone et touchez **Connect** à côté de « Covalence ».
+Ces deux fonctions passent par une seconde liaison, dite « basse consommation », que seul l'iPhone peut ouvrir. Elle s'établit seule après l'appairage, dès que **Partager les notifications système** est activé. Si les notifications n'arrivent pas, coupez puis réactivez le Bluetooth de l'iPhone.
 
 ## Reconnexion
-Covalence reconnecte l'iPhone quand il revient à portée. Sinon, cliquez sur **Reconnecter** dans l'[Aperçu](app:device).
+Covalence reconnecte l'iPhone quand il revient à portée, et juste après la sortie de veille. Sinon, cliquez sur **Reconnecter** dans l'[Aperçu](app:device).
+
+Si vous avez oublié l'ordinateur sur l'iPhone, Covalence le détecte, cesse d'insister et affiche **Appairer à nouveau…**

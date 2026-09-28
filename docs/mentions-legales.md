@@ -100,8 +100,8 @@ Merci à leurs auteurs.
 | PyGObject | Service en Python | LGPL-2.1-or-later | <https://gitlab.gnome.org/GNOME/pygobject> |
 
 Outil conseillé, sans lien avec Covalence : l'application gratuite **nRF Connect for Mobile** de
-Nordic Semiconductor aide parfois à établir la première liaison Bluetooth depuis l'iPhone. Ce n'est
-pas une dépendance de Covalence.
+Nordic Semiconductor peut servir en dernier recours à ouvrir la liaison Bluetooth depuis l'iPhone.
+Ce n'est pas une dépendance de Covalence.
 
 Les licences de ce tableau sont indiquées d'après les projets eux-mêmes ; en cas de doute, le
 fichier de licence du projet concerné fait foi.

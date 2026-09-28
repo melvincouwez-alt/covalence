@@ -1,0 +1,80 @@
+#!@PYTHON@ -I
+# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: 2026 Melvin Couwez
+"""Install a downloaded Covalence update, as root (started by pkexec from covalenced).
+
+Usage: covalence-install-update <path to the .deb> <expected SHA-256>
+
+The .deb sits in the user's cache, which any program of the session may write to:
+checking it there and then handing that path to apt would leave a window to swap
+the file between the two. So this helper copies it into a directory only root can
+reach, computes the SHA-256 of that copy, checks it is a « covalence » package,
+and installs the copy. Self-contained (python3 -I, standard library only): as root
+it never imports code from a user-writable place.
+"""
+
+import hashlib
+import os
+import re
+import shutil
+import stat
+import subprocess
+import sys
+import tempfile
+
+MAX_DEB = 200 * 1024 * 1024
+PACKAGE = "covalence"
+ENV = {"PATH": "/usr/sbin:/usr/bin:/sbin:/bin", "LANG": "C.UTF-8",
+       "DEBIAN_FRONTEND": "noninteractive"}
+
+
+def fail(message, code=1):
+    print(f"covalence-install-update: {message}", file=sys.stderr)
+    return code
+
+
+def main(argv):
+    if len(argv) != 3:
+        return fail("usage: covalence-install-update <file.deb> <sha256>", 2)
+    source, expected = argv[1], argv[2].lower()
+    if not re.fullmatch(r"[0-9a-f]{64}", expected):
+        return fail("invalid SHA-256", 2)
+    if not source.endswith(".deb"):
+        return fail("not a .deb file", 2)
+    if os.geteuid() != 0:
+        return fail("must run as root (through pkexec)", 2)
+    try:
+        fd = os.open(source, os.O_RDONLY | os.O_NOFOLLOW)
+    except OSError as error:
+        return fail(f"cannot open the package ({error.strerror})")
+    workdir = tempfile.mkdtemp(prefix="covalence-update-")  # 0700, owned by root
+    copy = os.path.join(workdir, "covalence.deb")
+    try:
+        with os.fdopen(fd, "rb") as src:
+            if not stat.S_ISREG(os.fstat(src.fileno()).st_mode):
+                return fail("not a regular file")
+            digest, size = hashlib.sha256(), 0
+            with open(copy, "xb") as out:
+                while True:
+                    chunk = src.read(1 << 20)
+                    if not chunk:
+                        break
+                    size += len(chunk)
+                    if size > MAX_DEB:
+                        return fail("package too large")
+                    digest.update(chunk)
+                    out.write(chunk)
+        if digest.hexdigest() != expected:
+            return fail("SHA-256 mismatch: the package was changed after its check")
+        name = subprocess.run(["dpkg-deb", "--field", copy, "Package"], env=ENV,
+                              capture_output=True, text=True, timeout=60).stdout.strip()
+        if name != PACKAGE:
+            return fail(f"not the {PACKAGE} package")
+        # _apt cannot read the root-only copy: apt warns and installs it as root, as wanted.
+        return subprocess.run(["apt-get", "install", "-y", copy], env=ENV).returncode
+    finally:
+        shutil.rmtree(workdir, ignore_errors=True)
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))

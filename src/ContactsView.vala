@@ -45,13 +45,13 @@ namespace Covalence {
             if (query == "") {
                 return true;
             }
-            var q = query.casefold ();
-            if (name.casefold ().contains (q)) {
+            var q = search_fold (query);
+            if (search_fold (name).contains (q)) {
                 return true;
             }
             var digits = only_digits (query);
             foreach (var a in addresses) {
-                if (a.casefold ().contains (q)
+                if (search_fold (a).contains (q)
                     || (digits.length >= 3 && only_digits (a).contains (digits))
                     || (digits.length >= 3 && digits.has_prefix ("0")
                         && only_digits (a).contains (digits.substring (1)))) {
@@ -60,6 +60,22 @@ namespace Covalence {
             }
             return false;
         }
+    }
+
+    /* Comparable form for search: accents dropped, case folded ("Élodie" -> "elodie"). */
+    public string search_fold (string text) {
+        var builder = new StringBuilder ();
+        var decomposed = text.normalize (-1, NormalizeMode.ALL);
+        unichar c;
+        int i = 0;
+        while (decomposed.get_next_char (ref i, out c)) {
+            var type = c.type ();
+            if (type != UnicodeType.NON_SPACING_MARK && type != UnicodeType.SPACING_MARK
+                && type != UnicodeType.ENCLOSING_MARK) {
+                builder.append_unichar (c);
+            }
+        }
+        return builder.str.casefold ();
     }
 
     public string only_digits (string text) {
@@ -264,7 +280,11 @@ namespace Covalence {
                 return;
             }
             loaded = true;
-            var items = yield daemon.call_list ("ListContacts");
+            bool ok;
+            var items = yield daemon.try_list ("ListContacts", null, out ok);
+            if (!ok) {
+                return;  // failed call: keep the contacts shown
+            }
             Gtk.ListBoxRow? row;
             while ((row = list.get_row_at_index (1)) != null) {
                 list.remove (row);

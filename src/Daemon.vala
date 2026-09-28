@@ -10,6 +10,7 @@ public class Covalence.Daemon : Object {
 
     public signal void changed ();
     public signal void pairing_code (uint passkey);
+    public signal void pairing_code_answered (bool matches);
     public signal void threads_changed ();
     public signal void calls_changed ();
     public signal void active_calls_changed ();
@@ -40,6 +41,10 @@ public class Covalence.Daemon : Object {
                     uint32 passkey;
                     parameters.get ("(u)", out passkey);
                     pairing_code (passkey);
+                } else if (signal_name == "PairingCodeAnswered") {
+                    bool matches;
+                    parameters.get ("(b)", out matches);
+                    pairing_code_answered (matches);
                 } else if (signal_name == "ThreadsChanged") {
                     threads_changed ();
                 } else if (signal_name == "CallsChanged") {
@@ -141,7 +146,15 @@ public class Covalence.Daemon : Object {
 
     /* Methods returning an array of a{sv} (ListThreads, GetMessages). */
     public async Variant[] call_list (string method, Variant? args = null) {
+        bool ok;
+        return yield try_list (method, args, out ok);
+    }
+
+    /* Same, telling a failed call (daemon restarting, timeout: ok = false) from an empty
+       list, so a view keeps what it shows instead of wiping it. */
+    public async Variant[] try_list (string method, Variant? args, out bool ok) {
         Variant[] items = {};
+        ok = false;
         if (proxy == null) {
             return items;
         }
@@ -151,6 +164,7 @@ public class Covalence.Daemon : Object {
             for (size_t i = 0; i < array.n_children (); i++) {
                 items += array.get_child_value (i);
             }
+            ok = true;
         } catch (Error e) {
             warning ("%s failed: %s", method, e.message);
         }

@@ -50,8 +50,12 @@ LABELS = {
 BUNDLED = [
     ("rosee", N_("Rosée")), ("envol", N_("Envol")), ("vague", N_("Vague")),
     ("carillon", N_("Carillon")), ("cristal", N_("Cristal")),
+    ("echo", N_("Écho")), ("duo", N_("Duo")), ("clochette", N_("Clochette")),
+    ("pop", N_("Pop")), ("bulle", N_("Bulle")), ("givre", N_("Givre")),
     ("aurore", N_("Aurore (sonnerie)")), ("orbite", N_("Orbite (sonnerie)")),
-    ("horizon", N_("Horizon (sonnerie)")),
+    ("horizon", N_("Horizon (sonnerie)")), ("telephone", N_("Téléphone (sonnerie)")),
+    ("ecume", N_("Écume (sonnerie)")), ("brise", N_("Brise (sonnerie)")),
+    ("cascade", N_("Cascade (sonnerie)")), ("carrousel", N_("Carrousel (sonnerie)")),
 ]
 BUNDLED_PREFIX = "covalence:"
 

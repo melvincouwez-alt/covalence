@@ -8,8 +8,15 @@ as User-Agent. It runs at start (after a minute), then once a day, and when the 
 
 Installing downloads the release's .deb to ~/.cache/covalence/updates, checks it against
 the SHA-256 digest GitHub publishes for the asset (no digest, no automatic install: only
-the release page is offered), then runs `pkexec apt-get install -y` (polkit asks for the
-password). Nothing is installed without the user's click.
+the release page is offered), then runs `pkexec covalence-install-update <deb> <sha256>`
+(polkit asks for the password). That helper copies the package where only root can
+write, checks the SHA-256 of the copy again and installs the copy: a program of the
+session swapping the file in the cache after our check gains nothing. Nothing is
+installed without the user's click.
+
+The digest comes from the same GitHub answer as the download address: it protects
+against a damaged or swapped download, not against a compromised GitHub account.
+Signed packages with a key shipped in Covalence would; see docs/securite.md.
 """
 
 import hashlib
@@ -101,6 +108,18 @@ def _arch():
     except AttributeError:
         return "amd64"
     return {"x86_64": "amd64", "aarch64": "arm64"}.get(machine, machine)
+
+
+def installer_path():
+    """<prefix>/libexec/covalence/covalence-install-update next to this daemon, or ""."""
+    here = os.path.realpath(os.path.dirname(os.path.abspath(__file__)))
+    parts = here.split(os.sep)
+    if len(parts) >= 4 and parts[-3:-1] == ["share", "covalence"]:
+        path = os.path.join(os.sep.join(parts[:-3]), "libexec", "covalence",
+                            "covalence-install-update")
+        if os.access(path, os.X_OK):
+            return path
+    return ""
 
 
 class Updates:
@@ -314,10 +333,15 @@ class Updates:
             self._failed(_("Téléchargement impossible ({reason})").format(reason=error), on_done)
             return
         log("mises à jour : paquet téléchargé et vérifié (SHA-256)")
+        installer = installer_path()
+        if not installer:
+            self._failed(_("Installation impossible (programme d'installation absent)"), on_done)
+            return
+        _url, _size, sha = deb_asset(self.release, _arch())
         self.state_name, self.progress = "installing", 0.9
         self._changed()
         try:
-            process = Gio.Subprocess.new(["pkexec", "apt-get", "install", "-y", target],
+            process = Gio.Subprocess.new(["pkexec", installer, target, sha],
                                          Gio.SubprocessFlags.STDOUT_SILENCE
                                          | Gio.SubprocessFlags.STDERR_PIPE)
         except GLib.Error as failure:

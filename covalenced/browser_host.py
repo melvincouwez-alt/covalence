@@ -106,16 +106,17 @@ def _latest_code():
         bus = Gio.bus_get_sync(Gio.BusType.SESSION, None)
         reply = bus.call_sync(
             "io.github.melvincouwez.Covalence.Daemon", "/io/github/melvincouwez/Covalence/Daemon",
-            "io.github.melvincouwez.Covalence1", "LatestCode", GLib.Variant("(s)", ("browser",)),
-            GLib.VariantType("(su)"), Gio.DBusCallFlags.NO_AUTO_START, 3000, None)
+            "io.github.melvincouwez.Covalence1", "LatestCodeFor", GLib.Variant("(s)", ("browser",)),
+            GLib.VariantType("(suass)"), Gio.DBusCallFlags.NO_AUTO_START, 3000, None)
     except GLib.Error:
         return {"code": "", "age": 0, "error": "daemon"}
-    code, age = reply.unpack()
-    return {"code": code, "age": age}
+    code, age, domains, sender = reply.unpack()
+    return {"code": code, "age": age, "domains": list(domains), "sender": sender}
 
 
 def main():
-    """One request, one answer: {"type": "latest"} -> {"code": "482913", "age": 12}."""
+    """One request, one answer: {"type": "latest"} ->
+    {"code": "482913", "age": 12, "domains": ["example.com"], "sender": "Ma Banque"}."""
     stdin, stdout = sys.stdin.buffer, sys.stdout.buffer
     try:
         request = _read(stdin)

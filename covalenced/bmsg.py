@@ -180,32 +180,53 @@ def parse_call_history(text):
 
 # --- bMessage -----------------------------------------------------------------------------------
 
+def _msg_text(chunk):
+    """Text of a BBODY content: its BEGIN:MSG / END:MSG parts joined (long SMS)."""
+    lines = chunk.replace("\r\n", "\n").replace("\r", "\n").split("\n")
+    parts, current = [], None
+    for line in lines:
+        upper = line.strip().upper()
+        if upper == "BEGIN:MSG":
+            current = []
+        elif upper == "END:MSG":
+            if current is not None:
+                parts.append("\n".join(current))
+            current = None
+        elif current is not None:
+            current.append(line)
+    if current:  # no closing END:MSG (a LENGTH a little short): keep what we have
+        parts.append("\n".join(current))
+    return "\n".join(parts).strip("\n")
+
+
 def parse_bmessage(text):
     """bMessage -> {'status', 'type', 'folder', 'originator', 'recipients', 'body'}.
 
     originator/recipients are vCard dicts as returned by parse_vcards. Nested
     envelopes (forwarded messages) contribute their recipients too.
+
+    The message text is whatever the sender typed, so it must never be read as
+    structure: the body is exactly the LENGTH bytes announced after BEGIN:BBODY
+    (the bMessage specification), and nothing after BEGIN:BBODY counts as an
+    envelope. Otherwise an SMS containing "END:MSG" then "BEGIN:VCARD…TEL:…" lines
+    would cut its own text short and add made-up recipients (moving the message
+    into a forged group conversation). When LENGTH is missing or does not frame a
+    BEGIN:MSG block, the body runs from the first BEGIN:MSG to the LAST END:MSG,
+    which the text cannot fake either.
     """
     result = {"status": "", "type": "", "folder": "", "originator": None,
               "recipients": [], "body": ""}
-    lines = text.replace("\r\n", "\n").replace("\r", "\n").split("\n")
-    depth_benv = 0
-    in_msg = False
-    body = []
-    card = None
-    for line in lines:
+    raw = text.encode("utf-8", "replace")
+    pos, depth_benv, card = 0, 0, None
+    while pos < len(raw):
+        stop = raw.find(b"\n", pos)
+        stop = len(raw) if stop < 0 else stop
+        line = raw[pos:stop].decode("utf-8", "replace").rstrip("\r")
+        pos = stop + 1
         upper = line.strip().upper()
-        if in_msg:
-            if upper == "END:MSG":
-                in_msg = False
-            else:
-                body.append(line)
-            continue
-        if upper == "BEGIN:MSG":
-            in_msg = True
-            if body:
-                body.append("")
-            continue
+        if upper == "BEGIN:BBODY":
+            result["body"] = _read_bbody(raw, pos)
+            break  # the rest is the text itself and closing lines: no more envelope data
         if upper == "BEGIN:VCARD":
             card = [line]
             continue
@@ -229,8 +250,39 @@ def parse_bmessage(text):
             key = key.strip().upper()
             if key in ("STATUS", "TYPE", "FOLDER"):
                 result[key.lower()] = value.strip()
-    result["body"] = "\n".join(body).strip("\n")
     return result
+
+
+def _read_bbody(raw, pos):
+    """The message text of a BBODY starting at byte pos (just after BEGIN:BBODY)."""
+    length = None
+    while pos < len(raw):
+        stop = raw.find(b"\n", pos)
+        stop = len(raw) if stop < 0 else stop
+        line = raw[pos:stop].decode("utf-8", "replace").strip()
+        if line.upper().startswith("BEGIN:MSG"):
+            break  # no LENGTH line before the content
+        pos = stop + 1
+        if line.upper().startswith("LENGTH:"):
+            try:
+                length = int(line.split(":", 1)[1].strip())
+            except ValueError:
+                length = None
+            break
+    if length is not None and 0 <= length <= len(raw) - pos:
+        chunk = raw[pos:pos + length].decode("utf-8", "replace")
+        if chunk.lstrip().upper().startswith("BEGIN:MSG"):
+            return _msg_text(chunk)
+    # Fallback: from the first BEGIN:MSG to the last END:MSG.
+    rest = raw[pos:].decode("utf-8", "replace").replace("\r\n", "\n").replace("\r", "\n")
+    lines = rest.split("\n")
+    upper = [line.strip().upper() for line in lines]
+    try:
+        first = upper.index("BEGIN:MSG")
+    except ValueError:
+        return ""
+    last = max((i for i, u in enumerate(upper) if u == "END:MSG" and i > first), default=len(lines))
+    return "\n".join(lines[first + 1:last]).strip("\n")
 
 
 def build_bmessage(recipient_number, text, recipient_name=""):

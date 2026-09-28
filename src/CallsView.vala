@@ -90,7 +90,11 @@ public class Covalence.CallsView : Gtk.Box {
     }
 
     private async void reload () {
-        var items = yield daemon.call_list ("ListCalls");
+        bool ok;
+        var items = yield daemon.try_list ("ListCalls", null, out ok);
+        if (!ok) {
+            return;  // failed call: keep the history shown
+        }
         Gtk.Widget? child;
         while ((child = list.get_first_child ()) != null) {
             list.remove (child);

@@ -1,9 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 Melvin Couwez
 // Covalence (alpha): below a one-time code field, offer the code the iPhone just received.
-// The code reaches the page only when the user clicks the pill; the pill itself sits in a
-// closed shadow root the page cannot read.
+// HTTPS top-level pages only. A code bound to a site by its SMS ("@example.com #482913")
+// is filled in by itself on that site and never offered anywhere else. Any other code
+// reaches the page only when the user clicks the pill, which names the sender of the SMS;
+// the pill sits in a closed shadow root the page cannot read.
 (() => {
+    if (window.top !== window || location.protocol !== "https:") {
+        return;
+    }
     const POLL_MS = 3000;          // while a code field has the focus and no code is known
     const POLL_FOR_MS = 180000;    // the daemon forgets codes after 3 minutes anyway
     const MAX_AGE = 180;
@@ -92,7 +97,13 @@
         host.style.top = `${rect.bottom + 6}px`;
     }
 
-    function show(code) {
+    /* The SMS binds the code to this site (or a parent domain of it). */
+    function boundHere(domains) {
+        const hostname = location.hostname.toLowerCase();
+        return domains.some((d) => hostname === d || hostname.endsWith("." + d));
+    }
+
+    function show(code, sender) {
         if (shown === code && host) {
             return;
         }
@@ -128,7 +139,9 @@
         const icon = document.createElement("img");
         icon.src = api.runtime.getURL("icons/icon-32.png");
         icon.alt = "";
-        button.append(icon, document.createTextNode(api.i18n.getMessage("pill", [code])));
+        const label = sender ? api.i18n.getMessage("pillFrom", [code, sender])
+                             : api.i18n.getMessage("pill", [code]);
+        button.append(icon, document.createTextNode(label));
         // mousedown would take the focus from the field (and blur would hide the pill).
         button.addEventListener("mousedown", (event) => event.preventDefault());
         button.addEventListener("click", (event) => {
@@ -160,8 +173,16 @@
                 return;
             }
             const code = reply && typeof reply.code === "string" ? reply.code : "";
+            const domains = Array.isArray(reply && reply.domains)
+                ? reply.domains.filter((d) => typeof d === "string") : [];
+            const sender = reply && typeof reply.sender === "string" ? reply.sender.slice(0, 40) : "";
             if (/^\d{4,8}$/.test(code) && reply.age <= MAX_AGE && !used.has(code)) {
-                show(code);
+                if (domains.length === 0) {
+                    show(code, sender);
+                } else if (boundHere(domains)) {
+                    fill(field, code);  // the SMS names this very site
+                }
+                // Bound to another site: never offered here.
             } else if (Date.now() < pollUntil) {
                 timer = setTimeout(ask, POLL_MS);
             }

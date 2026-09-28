@@ -129,7 +129,8 @@ namespace Covalence {
         }
 
         construct {
-            var pc = Markup.escape_text (Environment.get_host_name ());
+            var adapter_name = daemon.get_string ("AdapterName");
+            var pc = Markup.escape_text (adapter_name != "" ? adapter_name : Environment.get_host_name ());
             pair = new SetupStep (1, _("Appairer l'iPhone"),
                 _("Gardez l'iPhone déverrouillé près de ce PC. Un code s'affiche ici et sur l'iPhone : "
                 + "vérifiez qu'ils sont identiques."));
@@ -138,12 +139,15 @@ namespace Covalence {
             settings = new SetupStep (2, _("Autoriser messages et contacts"),
                 _("Sur l'iPhone : Réglages › Bluetooth › ⓘ à côté de « %s », activez "
                 + "<b>Afficher les notifications</b> (messages) et <b>Synchroniser les contacts</b> "
-                + "(noms, photos, journal d'appels).").printf (pc));
+                + "(noms, photos, journal d'appels). Ces options n'apparaissent qu'après une "
+                + "première demande de Covalence : attendez quelques secondes après l'appairage. "
+                + "Covalence redemande ensuite toute seule pendant 10 minutes ; "
+                + "<b>Vérifier</b> relance tout de suite.").printf (pc));
             settings.add_button (_("Vérifier")).clicked.connect (() => daemon.call.begin ("SyncMessages"));
             notifications = new SetupStep (3, _("Notifications et musique"),
-                _("L'iPhone se connecte à « Covalence » en Bluetooth basse consommation. S'il ne le propose "
-                + "pas dans Réglages › Bluetooth, ouvrez l'app nRF Connect, lancez un scan et touchez "
-                + "<b>Connect</b> à côté de « Covalence »."));
+                _("L'iPhone ouvre seul la liaison basse consommation après l'appairage. Sous ⓘ à côté "
+                + "de « %s », activez <b>Partager les notifications système</b>. Si rien n'arrive, "
+                + "coupez puis réactivez le Bluetooth de l'iPhone.").printf (pc));
             calls = new SetupStep (4, _("Appels sur ce PC"),
                 _("Le profil mains libres se connecte seul. Les appels sonnent alors ici ; pendant "
                 + "l'appel, le son passe par ce PC ou reste sur l'iPhone, au choix."));
@@ -244,7 +248,7 @@ namespace Covalence {
 namespace Covalence {
     /* One detached app: icon, name, what it is, Ouvrir, and shown in the Applications menu or not. */
     public Gtk.Widget launcher_row (Mode mode, string name, string text) {
-        var image = new Gtk.Image.from_icon_name (Config.APP_ID + mode.suffix ()) { pixel_size = 32 };
+        var image = new Gtk.Image.from_icon_name (mode.icon_name ()) { pixel_size = 32 };
         var title = new Gtk.Label (name) { xalign = 0 };
         var desc = new Gtk.Label (text) { xalign = 0, wrap = true };
         desc.add_css_class (Granite.CssClass.DIM);

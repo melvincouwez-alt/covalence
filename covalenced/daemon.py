@@ -13,15 +13,22 @@ from .audio import PhoneAudio
 from .calls import Calls
 from .config import Config
 from .contacts import ContactBook
+from .files import Files
 from .headphones import Headphones
+from .hotspot import Hotspot
 from .icloud import ICloud
 from .link import Link
 from .messages import Messages
 from .migrate import migrate
+from .mirror import Mirror
+from .hid import Control
 from .notifications import Notifications
+from .proximity import Proximity
 from .nowplaying import NowPlaying
+from .photos_usb import PhotosUsb
 from .mpris import MprisPlayer
 from .service import Service
+from .cloudprovider import DriveProvider
 from .sounds import Sounds
 from .updates import Updates
 from .i18n import _
@@ -61,6 +68,15 @@ class Daemon:
         self.headphones = Headphones(self.system, self.session, self.config, self._headphones_changed)
         self.audio = PhoneAudio(self.system, self.config, self.link_changed)
         self.updates = Updates(self.config, self.notifier, self.link_changed)
+        self.hotspot = Hotspot(self.system, self._device_info, self.link_changed)
+        self.proximity = Proximity(self.config, in_call=lambda: bool(self.calls.active_calls()),
+                                   on_changed=self.link_changed, session_bus=self.session)
+        self.files = Files(self.config, self.notifier, self.link_changed)
+        self.mirror = Mirror(self.link_changed, self.config)
+        self.control = Control(self.system, self.config,
+                               lambda: self.link.adapter if self.link else None, self.link_changed)
+        self.photos_usb = PhotosUsb(self.config, self.notifier, self.link_changed)
+        self.drive_provider = DriveProvider(self.session)
         self.link = Link(self.system, self.notifier, self.config, self)
         self.now_playing.attach(self.link)
         if self.config.module_enabled("calls"):
@@ -76,15 +92,18 @@ class Daemon:
         link = self.link
         props = link.props if link else {}
         address = props.get("Address", "") or self.config.device_address
+        tethering = self.hotspot.state()
         return {
             "Version": __version__,
             "BluetoothAvailable": bool(link and link.adapter),
             "Advertising": bool(link and link.advertising),
             "Pairing": bool(link and link.pairing),
+            "LinkProblem": link.problem if link else "",
+            "AdapterName": link.adapter_name if link else "",
             "DeviceName": link.name if link and link.device else "",
             "DeviceAddress": address,
             "Paired": bool(props.get("Paired")),
-            "Connected": bool(props.get("Connected")),
+            "Connected": bool(link and link.connected),
             "NotificationsLinked": bool(link and link.ancs),
             "MediaLinked": bool(link and link.ams),
             "CallsLinked": bool(address) and self.calls.ready_for(address),
@@ -110,6 +129,14 @@ class Daemon:
             "Sounds": self.sounds.settings(),
             "NowPlaying": self.now_playing.state(),
             "Update": self.updates.state(),
+            "Tethering": tethering["state"] == "on",
+            "TetheringState": tethering["state"],
+            "TetheringError": tethering["error"],
+            "Proximity": self.proximity.state(),
+            "Files": self.files.state(),
+            "Mirror": self.mirror.state(),
+            "Control": self.control.state(),
+            "PhotosUsb": self.photos_usb.state(),
         }
 
     def link_changed(self):
@@ -232,6 +259,7 @@ class Daemon:
 
     def _refresh(self):
         self.refresh_pending = False
+        self.control.refresh()  # publish the HID accessory once the adapter is there
         if self.link:
             self.calls.device_name = self.link.name
             self.mpris.device_name = self.link.name
@@ -242,6 +270,9 @@ class Daemon:
 
     def pairing_code(self, passkey):
         self.service.pairing_code(passkey)
+
+    def pairing_code_answered(self, matches):
+        self.service.pairing_code_answered(matches)
 
     def _headphones_changed(self):
         if not getattr(self, "headphones_pending", False):
@@ -278,6 +309,8 @@ class Daemon:
             self._contacts_changed()
         elif name == "ancs_actions":
             self._notifications_changed()
+        elif name == "iphone_control":
+            self.control.refresh(force=True)
         self.link_changed()
 
     def _contacts_changed(self):
@@ -307,17 +340,38 @@ class Daemon:
 
     def device_connected(self, device_path, address):
         # PipeWire usually connects HFP itself; if not, ask for it after a moment.
-        GLib.timeout_add_seconds(8, lambda: self.calls.ensure_hfp(device_path, address) and False)
+        # Only while this very connection is still up: asking for a profile opens a
+        # new link, and with a pairing the iPhone forgot that looped every few seconds.
+        GLib.timeout_add_seconds(8, lambda: self._ensure_hfp(device_path, address) and False)
         GLib.timeout_add_seconds(3, lambda: self.media_changed() and False)
         self.messages.device_connected(address)
+        self.proximity.device_connected()
+
+    def _ensure_hfp(self, device_path, address):
+        link = self.link
+        if not link or link.device != device_path or link.bond_lost \
+                or not link.props.get("Connected"):
+            return
+        self.calls.ensure_hfp(device_path, address, on_error=link.connect_failed)
 
     def device_disconnected(self):
         self.messages.device_disconnected()
+        self.proximity.device_disconnected()
 
-    def message_notification(self, title, subtitle, message):
+    def device_rssi(self, value):
+        self.proximity.rssi_sample(value)
+
+    def _device_info(self):
+        """(address, service UUIDs) of the iPhone, for the Bluetooth tethering."""
+        props = self.link.props if self.link else {}
+        address = props.get("Address", "") or self.config.device_address
+        return address, list(props.get("UUIDs", []))
+
+    def message_notification(self, title, subtitle, message, date=None, replay=False, uid=None,
+                             modified=False):
         """ANCS notification from the Messages app: the messages module may take it."""
         return self.config.module_enabled("messages") and \
-            self.messages.ancs_message(title, subtitle, message)
+            self.messages.ancs_message(title, subtitle, message, date, replay, uid, modified)
 
     def suppress_incoming_call(self, title):
         """ANCS incoming-call notification: let the calls module show it when it can."""
@@ -402,6 +456,7 @@ class Daemon:
         GLib.unix_signal_add(GLib.PRIORITY_DEFAULT, signal.SIGTERM, self.stop)
         log(f"covalenced {__version__} démarré")
         self.updates.start()
+        self.drive_provider.start()
         self.loop.run()
 
     def _on_name_lost(self, _conn, _name):
@@ -424,6 +479,10 @@ class Daemon:
         self.mpris.withdraw()
         self.headphones.stop()
         self.messages.stop()
+        self.files.stop()
+        self.mirror.stop()
+        self.control.withdraw()
+        self.photos_usb.cancel()
         self.loop.quit()
         return False
 

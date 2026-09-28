@@ -11,6 +11,7 @@ public class Covalence.PairingDialog : Gtk.Window {
     private Gtk.Stack stack;
     private Gtk.Label code_label;
     private Gtk.Label code_hint;
+    private Gtk.Box confirm_box;
     private bool code_seen = false;
     private bool finished = false;
     private bool started = false;
@@ -37,12 +38,17 @@ public class Covalence.PairingDialog : Gtk.Window {
         title.add_css_class (Granite.HeaderLabel.Size.H2.to_string ());
         steps.append (title);
         steps.append (step (1, _("Gardez l'iPhone déverrouillé, à côté de ce PC.")));
-        steps.append (step (2, _("Sur l'iPhone, touchez « Covalence » dans Réglages > Bluetooth. "
-                            + "S'il n'y figure pas, ouvrez nRF Connect, lancez un scan et touchez "
-                            + "« Connect » à côté de « Covalence ».")));
-        steps.append (step (3, _("Comparez le code ci-dessous avec celui de l'iPhone, puis touchez "
-                            + "« Jumeler ».")));
-        steps.append (step (4, _("Acceptez que Covalence reçoive les notifications de l'iPhone.")));
+        var pc_name = daemon.get_string ("AdapterName");
+        if (pc_name == "") {
+            pc_name = Environment.get_host_name ();
+        }
+        steps.append (step (2, _("Sur l'iPhone, ouvrez Réglages › Bluetooth et touchez « %s » "
+                            + "sous Autres appareils.").printf (pc_name)));
+        steps.append (step (3, _("Comparez le code ci-dessous avec celui de l'iPhone. S'ils sont "
+                            + "identiques, touchez « Jumeler » sur l'iPhone et « Le code correspond » "
+                            + "ici.")));
+        steps.append (step (4, _("Acceptez le partage des notifications et des contacts si l'iPhone "
+                            + "le demande.")));
 
         code_label = new Gtk.Label ("······") {
             margin_top = 12,
@@ -58,6 +64,21 @@ public class Covalence.PairingDialog : Gtk.Window {
         waiting.append (code_hint);
         steps.append (code_label);
         steps.append (waiting);
+
+        // Nothing is paired until the user says the codes match: a device nearby could
+        // otherwise pair on its own while the PC is visible.
+        var match_button = new Gtk.Button.with_label (_("Le code correspond"));
+        match_button.add_css_class (Granite.CssClass.SUGGESTED);
+        match_button.clicked.connect (() => answer (true));
+        var refuse_button = new Gtk.Button.with_label (_("Codes différents"));
+        refuse_button.clicked.connect (() => answer (false));
+        confirm_box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 6) {
+            halign = Gtk.Align.CENTER,
+            visible = false
+        };
+        confirm_box.append (refuse_button);
+        confirm_box.append (match_button);
+        steps.append (confirm_box);
 
         var done_page = new Granite.Placeholder (_("C'est fait")) {
             description = _("L'iPhone est appairé. Ses notifications arriveront ici, "
@@ -99,6 +120,12 @@ public class Covalence.PairingDialog : Gtk.Window {
             code_seen = true;
             code_label.label = "%06u".printf (passkey);
             code_hint.label = _("Le même code doit s'afficher sur l'iPhone");
+            confirm_box.visible = true;
+        });
+        daemon.pairing_code_answered.connect ((matches) => {
+            confirm_box.visible = false;
+            code_hint.label = matches ? _("Code confirmé, appairage en cours…")
+                                      : _("Code refusé. Recommencez depuis l'iPhone si besoin.");
         });
         daemon.changed.connect (() => {
             if (daemon.get_bool ("Pairing")) {
@@ -129,6 +156,11 @@ public class Covalence.PairingDialog : Gtk.Window {
                 stack.visible_child_name = "failed";
             }
         });
+    }
+
+    private void answer (bool matches) {
+        confirm_box.visible = false;
+        daemon.call.begin ("ConfirmPairing", new Variant ("(b)", matches));
     }
 
     private Gtk.Widget step (int number, string text) {

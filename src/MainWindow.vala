@@ -14,6 +14,7 @@ public class Covalence.MainWindow : Gtk.ApplicationWindow {
     private Daemon daemon;
     private Gtk.Stack stack;
     private Gtk.Stack pages;
+    private Gtk.Stack settings_tabs;
     private Sidebar sidebar;
     private Gtk.HeaderBar main_header;
     private Onboarding onboarding;
@@ -21,6 +22,7 @@ public class Covalence.MainWindow : Gtk.ApplicationWindow {
     private Gtk.Label device_status;
     private Gtk.Button pair_button;
     private Gtk.Button reconnect_button;
+    private Gtk.Button forget_button;
     private ModuleRow notifications_row;
     private ModuleRow media_row;
     private ModuleRow calls_row;
@@ -45,7 +47,7 @@ public class Covalence.MainWindow : Gtk.ApplicationWindow {
         sidebar = new Sidebar (pages);
         main_header = new Gtk.HeaderBar () {
             show_title_buttons = true,
-            decoration_layout = ":maximize",
+            decoration_layout = split_layout (false),
             title_widget = new Gtk.Label ("") { visible = false }
         };
         main_header.add_css_class ("flat");
@@ -80,17 +82,25 @@ public class Covalence.MainWindow : Gtk.ApplicationWindow {
         pages.add_titled (contacts_view, "contacts", _("Contacts"));
         pages.add_titled (new NotificationsView (daemon), "notifications", _("Notifications"));
         pages.add_titled (new NowPlayingView (daemon), "nowplaying", _("Lecture en cours"));
+        pages.add_titled (new FilesView (daemon), "files", _("Fichiers"));
+        pages.add_titled (new PhotosView (daemon), "photos", _("Photos"));
+        pages.add_titled (new MirrorView (daemon), "mirror", _("Recopie d'écran"));
         pages.add_titled (new HeadphonesView (daemon), "headphones", _("Écouteurs"));
         pages.add_titled (new ServicesView (daemon), "services", _("Services Apple"));
         pages.add_titled (build_settings_page (), "settings", _("Réglages"));
         sidebar.add ("device", "iPhone", "phone", _("Aperçu"));
-        sidebar.add ("messages", "iPhone", Config.APP_ID + ".Messages", _("Messages"));
+        sidebar.add ("messages", "iPhone", "internet-chat", _("Messages"));
         sidebar.add ("phone", "iPhone", Config.APP_ID + ".Phone", _("Téléphone"));
         sidebar.add ("contacts", "iPhone", Config.APP_ID + ".Contacts", _("Contacts"));
         sidebar.add ("notifications", "iPhone", "preferences-system-notifications", _("Notifications"));
         sidebar.add ("nowplaying", "iPhone", Config.APP_ID + ".NowPlaying", _("Lecture en cours"));
-        sidebar.add ("headphones", _("Accessoires"), Config.APP_ID + ".Headphones", _("Écouteurs"));
+        sidebar.add ("files", "iPhone", "document-send", _("Fichiers"));
+        sidebar.add ("photos", "iPhone", "multimedia-photo-viewer", _("Photos"));
+        sidebar.add ("mirror", "iPhone", Config.APP_ID + ".Mirror", _("Recopie d'écran"));
+        sidebar.add ("headphones", _("Accessoires"), "audio-headphones", _("Écouteurs"));
         sidebar.add ("services", _("Compte Apple"), "preferences-desktop-online-accounts", _("Services Apple"));
+        sidebar.add_footer_action ("guide", "help-contents", _("Guide"));
+        sidebar.action_activated.connect ((id) => open_help ());
         sidebar.add_footer ("settings", "preferences-system", _("Réglages"));
         var mini_player = new MiniPlayer (daemon);
         mini_player.open_requested.connect (() => pages.visible_child_name = "nowplaying");
@@ -105,6 +115,9 @@ public class Covalence.MainWindow : Gtk.ApplicationWindow {
             }
         });
         pages.notify["visible-child-name"].connect (() => {
+            if (pages.visible_child_name == "settings" && UpdatesCard.pending (daemon) > 0) {
+                settings_tabs.visible_child_name = "updates";  // the update card is there
+            }
             messages_view.update_viewing ();
             if (pages.visible_child_name == "phone" && is_active) {
                 daemon.call.begin ("MarkCallsSeen");
@@ -137,10 +150,16 @@ public class Covalence.MainWindow : Gtk.ApplicationWindow {
         brand.append (app_name);
         var sidebar_header = new Gtk.HeaderBar () {
             show_title_buttons = true,
-            decoration_layout = "close:",
+            decoration_layout = split_layout (true),
             title_widget = new Gtk.Label ("") { visible = false }
         };
         sidebar_header.pack_start (brand);
+        // Follow the system's window buttons (e.g. minimize added in the desktop settings):
+        // the left ones over the sidebar, the right ones over the content.
+        Gtk.Settings.get_default ().notify["gtk-decoration-layout"].connect (() => {
+            sidebar_header.decoration_layout = split_layout (true);
+            main_header.decoration_layout = split_layout (false);
+        });
         sidebar_header.add_css_class ("flat");
         var side = new Gtk.Box (Gtk.Orientation.VERTICAL, 0) { width_request = 210 };
         side.add_css_class (Granite.STYLE_CLASS_SIDEBAR);
@@ -186,6 +205,7 @@ public class Covalence.MainWindow : Gtk.ApplicationWindow {
         detached.append (launcher_row (Mode.PHONE, _("Téléphone"), _("Clavier, journal et appel en cours")));
         detached.append (launcher_row (Mode.CONTACTS, _("Contacts"), _("Le répertoire de l'iPhone")));
         detached.append (launcher_row (Mode.HEADPHONES, _("Écouteurs"), _("Batterie et réglages de vos AirPods")));
+        detached.append (launcher_row (Mode.MIRROR, _("Recopie"), _("L'écran de l'iPhone et son contrôle depuis le PC")));
         var detached_hint = new Gtk.Label (
             _("Chaque app a sa propre fenêtre et son icône. L'interrupteur l'affiche ou non dans le menu Applications.")
         ) { xalign = 0, wrap = true };
@@ -209,39 +229,119 @@ public class Covalence.MainWindow : Gtk.ApplicationWindow {
         language.add_css_class (Granite.CssClass.CARD);
         language.append (Language.settings_row (this));
 
-        var content = new Gtk.Box (Gtk.Orientation.VERTICAL, 12) {
+        var alpha_hint = new Gtk.Label (
+            _("Ces fonctionnalités reposent sur des comportements de l'iPhone pas encore vérifiés. "
+              + "Elles peuvent ne rien faire. Désactivées par défaut.")
+        ) { xalign = 0, wrap = true };
+        alpha_hint.add_css_class (Granite.CssClass.DIM);
+        alpha_hint.add_css_class (Granite.CssClass.SMALL);
+
+        settings_tabs = new Gtk.Stack () {
+            transition_type = Gtk.StackTransitionType.CROSSFADE,
+            vexpand = true
+        };
+        // One tab per kind of feature.
+        settings_tabs.add_titled (settings_tab ({
+            new Granite.HeaderLabel (_("Internet via l'iPhone")), build_hotspot_card (),
+            new Granite.HeaderLabel (_("Verrouillage de proximité")), build_proximity_card ()
+        }), "connection", _("Connexion"));
+        settings_tabs.add_titled (settings_tab ({
+            new Granite.HeaderLabel (_("Lecture")), build_read_full_card (),
+            new Granite.HeaderLabel (_("Codes SMS")), new CodesCard (daemon)
+        }), "messages", _("Messages"));
+        settings_tabs.add_titled (settings_tab ({
+            new Granite.HeaderLabel (_("Choix des sons")), new SoundsCard (daemon),
+            new Granite.HeaderLabel (_("Sons de Covalence")), new FreeSoundsCard (daemon, this)
+        }), "sounds", _("Sons"));
+        settings_tabs.add_titled (settings_tab ({
+            new Granite.HeaderLabel (_("Langue")), language,
+            new Granite.HeaderLabel (_("Barre du haut")), indicator_card (),
+            new Granite.HeaderLabel (_("Apps séparées")), detached, detached_hint
+        }), "display", _("Affichage"));
+        settings_tabs.add_titled (settings_tab ({
+            new UpdatesCard (daemon),
+            new ComponentsCard ()
+        }), "updates", _("Mises à jour"));
+        settings_tabs.add_titled (settings_tab ({
+            new Granite.HeaderLabel (_("Fonctionnalités expérimentales")), build_alpha_card (), alpha_hint
+        }), "experimental", _("Expérimental"));
+        settings_tabs.add_titled (settings_tab ({
+            new Granite.HeaderLabel (_("Assistance")), actions
+        }), "about", _("À propos"));
+        var saved = saved_settings_tab ();
+        if (settings_tabs.get_child_by_name (saved) != null) {
+            settings_tabs.visible_child_name = saved;
+        }
+        settings_tabs.notify["visible-child-name"].connect (() => {
+            save_settings_tab (settings_tabs.visible_child_name);
+        });
+
+        var switcher = new Gtk.StackSwitcher () {
+            stack = settings_tabs,
+            halign = Gtk.Align.CENTER,
+            margin_bottom = 6
+        };
+        switcher.add_css_class ("settings-tabs");
+
+        title.halign = Gtk.Align.CENTER;
+        var top = new Gtk.Box (Gtk.Orientation.VERTICAL, 12) {
             margin_top = 18,
+            margin_start = 24,
+            margin_end = 24,
+            halign = Gtk.Align.CENTER
+        };
+        top.append (title);
+        top.append (switcher);
+        var page = new Gtk.Box (Gtk.Orientation.VERTICAL, 0);
+        page.append (top);
+        page.append (settings_tabs);
+        return page;
+    }
+
+    /* The tab of Réglages last shown, kept in apps.conf [general] settings-tab. */
+    private static string settings_prefs_path () {
+        return Path.build_filename (Environment.get_user_config_dir (), "covalence", "apps.conf");
+    }
+
+    private static string saved_settings_tab () {
+        var prefs = new KeyFile ();
+        try {
+            prefs.load_from_file (settings_prefs_path (), KeyFileFlags.NONE);
+            return prefs.get_string ("general", "settings-tab");
+        } catch (Error e) {
+            return "connection";
+        }
+    }
+
+    private static void save_settings_tab (string name) {
+        var prefs = new KeyFile ();
+        try {
+            prefs.load_from_file (settings_prefs_path (), KeyFileFlags.KEEP_COMMENTS);
+        } catch (Error e) {
+            // first choice
+        }
+        prefs.set_string ("general", "settings-tab", name);
+        try {
+            DirUtils.create_with_parents (Path.get_dirname (settings_prefs_path ()), 0700);
+            prefs.save_to_file (settings_prefs_path ());
+        } catch (Error e) {
+            warning ("cannot save the settings tab: %s", e.message);
+        }
+    }
+
+    /* One tab of Réglages: its cards in a centred, scrolling column. */
+    private static Gtk.Widget settings_tab (Gtk.Widget[] children) {
+        var content = new Gtk.Box (Gtk.Orientation.VERTICAL, 12) {
+            margin_top = 6,
             margin_bottom = 24,
             margin_start = 24,
             margin_end = 24,
             width_request = 560,
             halign = Gtk.Align.CENTER
         };
-        content.append (title);
-        content.append (new UpdatesCard (daemon));
-        content.append (new ComponentsCard ());
-        content.append (new Granite.HeaderLabel (_("Langue")));
-        content.append (language);
-        content.append (new Granite.HeaderLabel (_("Codes SMS")));
-        content.append (new CodesCard (daemon));
-        content.append (new Granite.HeaderLabel (_("Apps séparées")));
-        content.append (detached);
-        content.append (detached_hint);
-        content.append (new Granite.HeaderLabel (_("Sons")));
-        content.append (new SoundsCard (daemon));
-        content.append (new Granite.HeaderLabel (_("Messages")));
-        content.append (build_read_full_card ());
-        content.append (new Granite.HeaderLabel (_("Assistance")));
-        content.append (actions);
-        content.append (new Granite.HeaderLabel (_("Fonctions alpha")));
-        content.append (build_alpha_card ());
-        var alpha_hint = new Gtk.Label (
-            _("Expérimental : ces fonctions reposent sur des comportements de l'iPhone pas encore vérifiés. "
-              + "Elles peuvent ne rien faire. Désactivées par défaut.")
-        ) { xalign = 0, wrap = true };
-        alpha_hint.add_css_class (Granite.CssClass.DIM);
-        alpha_hint.add_css_class (Granite.CssClass.SMALL);
-        content.append (alpha_hint);
+        foreach (var child in children) {
+            content.append (child);
+        }
         return new Gtk.ScrolledWindow () {
             child = content,
             hscrollbar_policy = Gtk.PolicyType.NEVER,
@@ -277,7 +377,7 @@ public class Covalence.MainWindow : Gtk.ApplicationWindow {
                 _("Pour avoir le texte complet d'un message non lu, Covalence doit le télécharger : "
                   + "il passera en lu sur l'iPhone dès son arrivée, même si vous ne l'avez pas "
                   + "ouvert."),
-                Config.APP_ID + ".Messages", Gtk.ButtonsType.CANCEL) {
+                "internet-chat", Gtk.ButtonsType.CANCEL) {
                 transient_for = this,
                 modal = true
             };
@@ -344,6 +444,13 @@ public class Covalence.MainWindow : Gtk.ApplicationWindow {
         return new Gtk.ListBoxRow () { child = box, activatable = false };
     }
 
+    private Gtk.Widget indicator_card () {
+        var list = new Gtk.ListBox () { selection_mode = Gtk.SelectionMode.NONE };
+        list.add_css_class (Granite.CssClass.CARD);
+        list.append (IndicatorSetting.row ());
+        return list;
+    }
+
     /* One switch per experimental feature (AlphaFeatures on the daemon). */
     private Gtk.Widget build_alpha_card () {
         var list = new Gtk.ListBox () { selection_mode = Gtk.SelectionMode.NONE, show_separators = true };
@@ -357,6 +464,8 @@ public class Covalence.MainWindow : Gtk.ApplicationWindow {
                                 _("Boutons de l'iPhone (Marquer comme lu, Supprimer…) dans Notifications")));
         list.append (alpha_row ("pbap_favorites", _("Favoris de l'iPhone"),
                                 _("Étoile sur les contacts favoris, lus à la prochaine synchronisation")));
+        list.append (alpha_row ("iphone_control", _("Contrôler l'iPhone depuis le PC"),
+                                _("Le PC comme souris et clavier Bluetooth de l'iPhone (app Recopie)")));
         return list;
     }
 
@@ -453,9 +562,12 @@ public class Covalence.MainWindow : Gtk.ApplicationWindow {
         pair_button.clicked.connect (() => new PairingDialog (this, daemon).present ());
         reconnect_button = new Gtk.Button.with_label (_("Reconnecter"));
         reconnect_button.clicked.connect (() => daemon.call.begin ("Reconnect"));
+        forget_button = new Gtk.Button.with_label (_("Oublier"));
+        forget_button.clicked.connect (confirm_forget);
         var buttons = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 6) { margin_top = 6 };
         buttons.append (pair_button);
         buttons.append (reconnect_button);
+        buttons.append (forget_button);
         buttons.append (Guide.help_button ("link", _("Comment relier l'iPhone")));
         var summary_text = new Gtk.Box (Gtk.Orientation.VERTICAL, 3) {
             valign = Gtk.Align.CENTER,
@@ -472,7 +584,7 @@ public class Covalence.MainWindow : Gtk.ApplicationWindow {
                                            _("Notifications"));
         media_row = new ModuleRow ("media", "applications-multimedia", _("Musique de l'iPhone"));
         calls_row = new ModuleRow ("calls", Config.APP_ID + ".Phone", _("Appels"));
-        messages_row = new ModuleRow ("messages", Config.APP_ID + ".Messages", _("Messages et contacts"));
+        messages_row = new ModuleRow ("messages", "internet-chat", _("Messages et contacts"));
         battery_row = new ModuleRow ("battery", "battery-good", _("Batterie"));
         sound_row = build_sound_row ();
         var list = new Gtk.ListBox () { selection_mode = Gtk.SelectionMode.NONE, show_separators = true };
@@ -504,6 +616,8 @@ public class Covalence.MainWindow : Gtk.ApplicationWindow {
         content.append (summary);
         content.append (new Granite.HeaderLabel (_("Fonctions")));
         content.append (list);
+        content.append (new Granite.HeaderLabel (_("Internet")));
+        content.append (build_hotspot_card ());
         content.append (expander);
         content.append (privacy);
         return new Gtk.ScrolledWindow () {
@@ -511,6 +625,37 @@ public class Covalence.MainWindow : Gtk.ApplicationWindow {
             hscrollbar_policy = Gtk.PolicyType.NEVER,
             vexpand = true
         };
+    }
+
+    /* Removes the iPhone and its keys from this PC, to start pairing again from scratch. */
+    private void confirm_forget () {
+        var dialog = new Granite.MessageDialog.with_image_from_icon_name (
+            _("Oublier cet iPhone ?"),
+            _("Ce PC efface l'appairage. Pour un nouveau départ propre, oubliez aussi ce PC sur "
+              + "l'iPhone (Réglages › Bluetooth › ⓘ › Oublier cet appareil), puis appairez à nouveau."),
+            "bluetooth", Gtk.ButtonsType.CANCEL) {
+            transient_for = this,
+            modal = true
+        };
+        var go = dialog.add_button (_("Oublier"), Gtk.ResponseType.ACCEPT);
+        go.add_css_class (Granite.CssClass.DESTRUCTIVE);
+        dialog.response.connect ((response) => {
+            dialog.destroy ();
+            if (response == Gtk.ResponseType.ACCEPT) {
+                daemon.call.begin ("Forget");
+            }
+        });
+        dialog.present ();
+    }
+
+    /* Bluetooth tethering: a card of its own, shown on the overview and in Réglages. */
+    private Gtk.Widget build_hotspot_card () {
+        return new HotspotCard (daemon);
+    }
+
+    /* Proximity lock settings (Réglages, Général). */
+    private Gtk.Widget build_proximity_card () {
+        return new ProximityCard (daemon);
     }
 
     /* Sound of the iPhone (A2DP) played on this PC: allowed or not, and on which output. */
@@ -599,10 +744,14 @@ public class Covalence.MainWindow : Gtk.ApplicationWindow {
         var bluetooth = daemon.get_bool ("BluetoothAvailable");
         var battery = daemon.get_int ("Battery");
         var name = daemon.get_string ("DeviceName");
+        var bond_lost = daemon.get_string ("LinkProblem") == "bond-lost";
 
         device_name.label = name != "" ? name : _("Aucun iPhone");
         if (!bluetooth) {
             device_status.label = _("Bluetooth indisponible");
+        } else if (bond_lost) {
+            device_status.label = _("L'iPhone ne reconnaît plus ce PC : son appairage a été supprimé "
+                                    + "sur l'iPhone. Appairez à nouveau.");
         } else if (!paired) {
             device_status.label = _("Appairez votre iPhone pour recevoir ses notifications et ses appels.");
         } else if (connected) {
@@ -611,13 +760,15 @@ public class Covalence.MainWindow : Gtk.ApplicationWindow {
             device_status.label = _("Hors de portée ou Bluetooth coupé sur l'iPhone");
         }
         pair_button.visible = bluetooth;
-        pair_button.label = paired ? _("Appairer un autre iPhone…") : _("Appairer un iPhone…");
-        if (paired) {
+        pair_button.label = bond_lost ? _("Appairer à nouveau…")
+            : paired ? _("Appairer un autre iPhone…") : _("Appairer un iPhone…");
+        if (paired && !bond_lost) {
             pair_button.remove_css_class (Granite.CssClass.SUGGESTED);
         } else {
             pair_button.add_css_class (Granite.CssClass.SUGGESTED);
         }
-        reconnect_button.visible = paired && !connected && bluetooth;
+        reconnect_button.visible = paired && !connected && bluetooth && !bond_lost;
+        forget_button.visible = name != "" && bluetooth;
 
         string waiting_le = connected
             ? _("En attente : l'iPhone doit se connecter à « Covalence » en Bluetooth basse consommation")
@@ -699,5 +850,15 @@ public class Covalence.MainWindow : Gtk.ApplicationWindow {
 
     private void open_help () {
         Guide.open (this);
+    }
+
+    /* One side of the system window-button layout, "close:minimize,maximize" → "close:" or
+       ":minimize,maximize", for a window split in two header bars. */
+    public static string split_layout (bool start) {
+        var layout = Gtk.Settings.get_default ().gtk_decoration_layout ?? "close:maximize";
+        var parts = layout.split (":", 2);
+        var left = parts[0];
+        var right = parts.length > 1 ? parts[1] : "";
+        return start ? left + ":" : ":" + right;
     }
 }

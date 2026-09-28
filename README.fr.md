@@ -7,7 +7,7 @@
 **Votre iPhone et votre compte Apple, chez eux sur elementary OS.**
 
 [![Licence : GPL-3.0-or-later](https://img.shields.io/badge/licence-GPL--3.0--or--later-blue)](LICENSE)
-![Version 0.3.3 alpha](https://img.shields.io/badge/version-0.3.3%20alpha-orange)
+![Version 0.5.0 alpha](https://img.shields.io/badge/version-0.5.0%20alpha-orange)
 ![elementary OS 8+](https://img.shields.io/badge/elementary%20OS-8%2B-64baff)
 
 [Site](https://melvincouwez-alt.github.io/covalence/fr/) ·
@@ -23,7 +23,7 @@ contacts, AirPods, courriel, agendas, rappels, iCloud Drive et Photos. Tout tour
 ordinateur. L'iPhone passe par le Bluetooth, iCloud par Internet, et rien ne transite par un
 serveur à nous.
 
-> **Alpha.** La version 0.2 est un premier aperçu public. Elle sert tous les jours sur
+> **Alpha.** La version 0.5 est un aperçu public. Elle sert tous les jours sur
 > l'ordinateur de son auteur, mais attendez-vous à quelques accrocs. L'interface est en
 > français, l'anglais est en bêta.
 
@@ -72,7 +72,7 @@ serveur à nous.
 
 ### Depuis le paquet (conseillé)
 
-1. Téléchargez `covalence_0.3.3-1_amd64.deb` depuis la
+1. Téléchargez `covalence_0.5.0-1_amd64.deb` depuis la
    [dernière version](https://github.com/melvincouwez-alt/covalence/releases/latest).
 2. Double-cliquez dessus. Eddy (elementary OS) ou l'App Center (Ubuntu) installe Covalence et
    tous les paquets nécessaires. En terminal : `sudo apt install ./covalence_*.deb`.
@@ -125,25 +125,31 @@ Des limites honnêtes, fixées surtout par ce qu'un iPhone accepte d'un ordinate
 - Déverrouiller l'ordinateur avec l'iPhone est volontairement exclu : la force du signal
   Bluetooth peut être falsifiée.
 
-## Prochainement (0.4.0)
+## Nouveautés de la 0.5
 
-En cours de développement, susceptible d'évoluer :
+Depuis la 0.3.3 :
 
-- **Internet via l'iPhone** en un clic (partage de connexion Bluetooth).
-- **Indicateur dans la barre du haut** : batterie et réseau de l'iPhone, lecture en cours, appel en cours, messages non lus.
-- **Verrouillage de proximité** : le PC se verrouille quand l'iPhone s'éloigne (jamais de déverrouillage).
-- **Recherche** dans les messages et les contacts, conversations épinglées, « marquer comme non lu ».
-- **Fichiers avec LocalSend**, l'app libre déjà sur l'App Store, dans les deux sens.
-- **État de synchro d'iCloud Drive** dans Fichiers.
-- **Contacts iCloud modifiables**.
-- **Raccourcis** vers Localiser, Notes et Masquer mon e-mail sur iCloud.com.
-- **Recopie de l'écran de l'iPhone** sur le PC avec UxPlay (expérimental).
-- **Import des photos par USB**.
-- **Réglages en onglets**, avec les sons libres de Covalence plus faciles à essayer.
+- **Connexion Bluetooth plus stable** : appairage directement depuis Réglages › Bluetooth de
+  l'iPhone (plus besoin de nRF Connect), fin des boucles connecté/déconnecté, reconnexion
+  espacée et reprise après la veille, bouton « Appairer à nouveau » quand l'iPhone a oublié le PC.
+- **Messages corrigés** : plus de doublons après une reconnexion, les messages de groupe
+  restent dans leur groupe, les réponses arrivent dans la bonne conversation, les iMessage
+  modifiés se mettent à jour.
+- **Passe de sécurité** : code d'appairage confirmé sur le PC, les autres programmes doivent
+  être autorisés avant d'appeler ou d'envoyer, mises à jour revérifiées par un assistant root,
+  AirPlay protégé par un code.
+- **Internet via l'iPhone** (partage de connexion Bluetooth), **indicateur dans la barre du
+  haut**, **verrouillage de proximité** (jamais de déverrouillage), **recherche dans les
+  messages**, conversations épinglées, « marquer comme non lu ».
+- **Fichiers avec LocalSend**, état d'iCloud Drive dans Fichiers, contacts iCloud modifiables,
+  raccourcis iCloud.com, import des photos par USB.
+- **Recopie de l'écran** dans sa propre app avec UxPlay, et contrôle de l'iPhone depuis le PC
+  via AssistiveTouch. Les deux sont **expérimentaux** et désactivés par défaut.
+- Réglages en onglets, 19 sons libres, Guide dans la barre latérale, icônes manquantes corrigées.
 
 ## Aide
 
-Covalence contient un guide intégré, en français et en anglais (F1, ou Réglages › Guide). Il
+Covalence contient un guide intégré, en français et en anglais (F1, ou Guide dans la barre latérale). Il
 explique l'appairage, les réglages à activer sur l'iPhone, iCloud, les AirPods et le
 dépannage. Questions et signalements :
 [Issues](https://github.com/melvincouwez-alt/covalence/issues).
@@ -187,7 +193,7 @@ Covalence repose sur le travail de nombreux logiciels libres :
 
 Un merci particulier à l'équipe de LibrePods pour son remarquable travail de rétro-ingénierie,
 et à [nRF Connect](https://www.nordicsemi.com/Products/Development-tools/nRF-Connect-for-mobile)
-(Nordic Semiconductor), une app iPhone gratuite qui aide à lancer le premier appairage.
+(Nordic Semiconductor), une app iPhone gratuite qui a aidé aux premiers appairages (plus nécessaire).
 
 ## Mentions légales
 

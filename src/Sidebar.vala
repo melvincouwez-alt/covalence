@@ -13,7 +13,11 @@ public class Covalence.Sidebar : Gtk.Box {
     private Gtk.ListBox footer;
     private HashTable<string, Gtk.Label> badges = new HashTable<string, Gtk.Label> (str_hash, str_equal);
     private HashTable<string, string> sections = new HashTable<string, string> (str_hash, str_equal);
+    private GenericSet<string> actions = new GenericSet<string> (str_hash, str_equal);
     private bool syncing = false;
+
+    /* A bottom entry added by add_footer_action () was clicked. */
+    public signal void action_activated (string id);
     private Gtk.Box player_slot;
 
     public Sidebar (Gtk.Stack pages) {
@@ -46,8 +50,16 @@ public class Covalence.Sidebar : Gtk.Box {
         footer = new Gtk.ListBox ();
         footer.add_css_class ("navigation-sidebar");
         footer.row_selected.connect ((row) => {
-            if (row != null && !syncing) {
-                pages.visible_child_name = row.get_data<string> ("page");
+            if (row == null || syncing) {
+                return;
+            }
+            var page = row.get_data<string> ("page");
+            if (actions.contains (page)) {
+                // Opens a window rather than a page: keep the current page selected.
+                sync ();
+                action_activated (page);
+            } else {
+                pages.visible_child_name = page;
             }
         });
         pages.notify["visible-child-name"].connect (sync);
@@ -78,6 +90,12 @@ public class Covalence.Sidebar : Gtk.Box {
     public void add_footer (string page, string icon, string title) {
         footer.append (make_row (page, icon, title));
         sync ();
+    }
+
+    /* A bottom entry that runs an action (opens a window) instead of showing a page. */
+    public void add_footer_action (string id, string icon, string title) {
+        actions.add (id);
+        footer.append (make_row (id, icon, title));
     }
 
     private Gtk.ListBoxRow make_row (string page, string icon, string title) {

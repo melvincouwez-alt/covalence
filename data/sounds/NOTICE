@@ -5,21 +5,31 @@ These sound files are not covered by Covalence's GPL-3.0-or-later license but by
 their own licenses, whose full texts are in the LICENSES folder next to this file.
 Details and sources: docs/credits-sons.md.
 
-rosee.oga, envol.oga, vague.oga, aurore.oga, orbite.oga, horizon.oga
+rosee.oga, envol.oga, vague.oga, echo.oga, duo.oga, clochette.oga,
+aurore.oga, orbite.oga, horizon.oga, ecume.oga, brise.oga, cascade.oga,
+carrousel.oga
   Copyright The Android Open Source Project
   Licensed under the Apache License, Version 2.0 (LICENSES/Apache-2.0.txt)
   Originals: frameworks/base/data/sounds, files notifications/material/ogg/
-  Tethys.ogg, Ariel.ogg, Salacia.ogg and ringtones/material/ogg/Atria.ogg,
-  Ganymede.ogg, Sedna.ogg
+  Tethys.ogg, Ariel.ogg, Salacia.ogg, Titan.ogg, Carme.ogg, Rhea.ogg and
+  ringtones/material/ogg/Atria.ogg, Ganymede.ogg, Sedna.ogg, Luna.ogg,
+  Umbriel.ogg, Dione.ogg, Callisto.ogg
   https://android.googlesource.com/platform/frameworks/base/+/main/data/sounds
   Modified for Covalence (2026): silence trimmed, loudness normalised
   (RMS -20 dBFS, peak at most -1.5 dBFS), resampled to 48 kHz stereo and
-  re-encoded to Ogg Vorbis. Renamed.
+  re-encoded to Ogg Vorbis; Dione and Callisto cut to 10 s with a fade-out.
+  Renamed.
 
-carillon.oga, cristal.oga
+carillon.oga, cristal.oga, pop.oga, bulle.oga, givre.oga
   By Kenney (www.kenney.nl), Interface Sounds 1.0
   Dedicated to the public domain under CC0 1.0 Universal (LICENSES/CC0-1.0.txt)
-  Originals: Audio/confirmation_002.ogg and Audio/glass_001.ogg
+  Originals: Audio/confirmation_002.ogg, glass_001.ogg, pluck_001.ogg,
+  drop_002.ogg and glass_005.ogg
   https://kenney.nl/assets/interface-sounds
   Modified for Covalence (2026): loudness normalised, resampled to 48 kHz
   stereo and re-encoded to Ogg Vorbis. Renamed.
+
+telephone.oga
+  Made for Covalence (2026): a synthesised bell-telephone ring (440 + 480 Hz
+  tones struck at 20 Hz, two rings then a pause). Dedicated to the public
+  domain under CC0 1.0 Universal (LICENSES/CC0-1.0.txt).

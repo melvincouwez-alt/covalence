@@ -15,7 +15,9 @@ configure_file(input: 'dbus.service.in', output: app_id + '.Daemon.service', con
                install: true, install_dir: datadir / 'dbus-1' / 'services')
 configure_file(input: 'app.desktop.in', output: app_id + '.desktop', configuration: conf,
                install: true, install_dir: datadir / 'applications')
-foreach suffix : ['', '.Messages', '.Contacts', '.Phone', '.Headphones', '.NowPlaying']
+install_data('cloud-providers.ini', rename: app_id + '.ini',
+             install_dir: datadir / 'cloud-providers')
+foreach suffix : ['', '.Contacts', '.Phone', '.NowPlaying', '.Mirror']
   install_data('icons' / app_id + suffix + '.svg',
                install_dir: datadir / 'icons' / 'hicolor' / 'scalable' / 'apps')
 endforeach
@@ -28,13 +30,15 @@ configure_file(input: 'phone.desktop.in', output: app_id + '.Phone.desktop', con
                install: true, install_dir: datadir / 'applications')
 configure_file(input: 'headphones.desktop.in', output: app_id + '.Headphones.desktop', configuration: conf,
                install: true, install_dir: datadir / 'applications')
-foreach suffix : ['.Messages', '.Contacts', '.Phone', '.Headphones']
+configure_file(input: 'mirror.desktop.in', output: app_id + '.Mirror.desktop', configuration: conf,
+               install: true, install_dir: datadir / 'applications')
+foreach suffix : ['.Messages', '.Contacts', '.Phone', '.Headphones', '.Mirror']
   install_symlink(app_id + suffix, pointing_to: app_id, install_dir: bindir)
 endforeach
 
 desktop_validate = find_program('desktop-file-validate', required: false)
 if desktop_validate.found()
-  foreach suffix : ['', '.Messages', '.Contacts', '.Phone', '.Headphones']
+  foreach suffix : ['', '.Messages', '.Contacts', '.Phone', '.Headphones', '.Mirror']
     test('desktop file' + suffix, desktop_validate,
          args: [meson.current_build_dir() / app_id + suffix + '.desktop'])
   endforeach

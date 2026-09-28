@@ -30,6 +30,11 @@ class BundledSoundsTest(unittest.TestCase):
         for name, _title in sounds.BUNDLED:
             for text in (credits, notice, copyright):
                 self.assertIn(f"{name}.oga", text)
+        about, cards = read("src", "About.vala"), read("src", "FreeSounds.vala")
+        for name, title in sounds.BUNDLED:
+            short = title.split(" (")[0]
+            self.assertIn(short, about, name)  # the About window names every sound
+            self.assertIn(f'"{name}"', cards, name)  # and Settings › Sounds shows it
         for license in ("Apache-2.0.txt", "CC0-1.0.txt"):
             self.assertTrue(os.path.isfile(os.path.join(SOUNDS, "LICENSES", license)))
 

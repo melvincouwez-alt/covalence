@@ -23,20 +23,31 @@ Comment: The display and the phone come from the elementary icon theme
 License: GPL-3.0-or-later
 
 Files: data/sounds/rosee.oga data/sounds/envol.oga data/sounds/vague.oga
+       data/sounds/echo.oga data/sounds/duo.oga data/sounds/clochette.oga
        data/sounds/aurore.oga data/sounds/orbite.oga data/sounds/horizon.oga
+       data/sounds/ecume.oga data/sounds/brise.oga data/sounds/cascade.oga
+       data/sounds/carrousel.oga
 Copyright: The Android Open Source Project
-Comment: Notification sounds Tethys, Ariel and Salacia and ringtones Atria,
- Ganymede and Sedna from AOSP frameworks/base/data/sounds (material/ogg),
+Comment: Notification sounds Tethys, Ariel, Salacia, Titan, Carme and Rhea
+ and ringtones Atria, Ganymede, Sedna, Luna, Umbriel, Dione and Callisto
+ from AOSP frameworks/base/data/sounds (material/ogg),
  https://android.googlesource.com/platform/frameworks/base/+/main/data/sounds
  Trimmed, loudness-normalised and re-encoded to Ogg Vorbis for Covalence.
  See docs/credits-sons.md.
 License: Apache-2.0
 
-Files: data/sounds/carillon.oga data/sounds/cristal.oga
+Files: data/sounds/carillon.oga data/sounds/cristal.oga data/sounds/pop.oga
+       data/sounds/bulle.oga data/sounds/givre.oga
 Copyright: Kenney (www.kenney.nl)
-Comment: confirmation_002.ogg and glass_001.ogg from the Interface Sounds
- pack 1.0, https://kenney.nl/assets/interface-sounds
+Comment: confirmation_002.ogg, glass_001.ogg, pluck_001.ogg, drop_002.ogg and
+ glass_005.ogg from the Interface Sounds pack 1.0,
+ https://kenney.nl/assets/interface-sounds
  Loudness-normalised and re-encoded to Ogg Vorbis for Covalence.
+License: CC0-1.0
+
+Files: data/sounds/telephone.oga
+Copyright: 2026 Melvin Couwez
+Comment: Bell-telephone ring synthesised for Covalence.
 License: CC0-1.0
 
 License: Apache-2.0

@@ -105,8 +105,11 @@ namespace Covalence {
         public uint unread { get; private set; }
         public string draft { get; set; default = ""; }
         public string number { get; private set; default = ""; }
+        public bool pinned { get; private set; }
+        public bool marked_unread { get; private set; }
 
         private Gtk.Label name_label;
+        private Gtk.Image pin;
         private Gtk.Label time_label;
         private Gtk.Label snippet_label;
         private Gtk.Box dot;
@@ -144,8 +147,15 @@ namespace Covalence {
 
             avatar = new Avatar (40) { valign = Gtk.Align.START };
 
+            pin = new Gtk.Image.from_icon_name ("view-pin-symbolic") {
+                pixel_size = 12,
+                visible = false,
+                tooltip_text = _("Épinglée")
+            };
+            pin.add_css_class (Granite.CssClass.DIM);
             var top = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 6);
             top.append (name_label);
+            top.append (pin);
             top.append (time_label);
             var text = new Gtk.Box (Gtk.Orientation.VERTICAL, 2) { hexpand = true };
             text.append (top);
@@ -169,6 +179,9 @@ namespace Covalence {
             is_group = dict_bool (d, "group");
             title = dict_string (d, "name");
             unread = dict_uint (d, "unread");
+            pinned = dict_bool (d, "pinned");
+            marked_unread = dict_bool (d, "marked_unread");
+            pin.visible = pinned;
             name_label.label = title;
             avatar_path = dict_string (d, "avatar");
             avatar.show_person (title, avatar_path, is_group);
@@ -194,6 +207,84 @@ namespace Covalence {
             }
             var a11y = unread > 0 ? ngettext ("%s, %u non lu", "%s, %u non lus", unread).printf (title, unread) : title;
             update_property (Gtk.AccessibleProperty.LABEL, a11y, -1);
+        }
+    }
+
+    /* One search result: a conversation whose name matches, or a message with its excerpt. */
+    public class SearchRow : Gtk.ListBoxRow {
+        public string thread_id { get; private set; }
+        public string message { get; private set; }
+        public string title { get; private set; }
+        private string avatar_path;
+        private bool is_group;
+
+        public SearchRow (VariantDict d) {
+            thread_id = dict_string (d, "thread");
+            message = dict_string (d, "message");
+            title = dict_string (d, "name");
+            avatar_path = dict_string (d, "avatar");
+            is_group = dict_bool (d, "group");
+            var marked = Markup.escape_text (dict_string (d, "before"))
+                         + "<b>" + Markup.escape_text (dict_string (d, "match")) + "</b>"
+                         + Markup.escape_text (dict_string (d, "after"));
+            var box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 8) {
+                margin_top = 6,
+                margin_bottom = 6,
+                margin_start = 6,
+                margin_end = 12
+            };
+            if (message == "") {
+                // The conversation itself: its name, the matching part in bold.
+                var face = new Avatar (32);
+                face.show_person (title, avatar_path, is_group);
+                box.append (face);
+                var name = new Gtk.Label (marked) {
+                    use_markup = true,
+                    xalign = 0,
+                    hexpand = true,
+                    ellipsize = Pango.EllipsizeMode.END
+                };
+                box.append (name);
+                update_property (Gtk.AccessibleProperty.LABEL, _("Conversation avec %s").printf (title), -1);
+            } else {
+                var text = dict_bool (d, "outgoing") ? _("Vous : %s").printf (marked) : marked;
+                var excerpt = new Gtk.Label (text) {
+                    use_markup = true,
+                    xalign = 0,
+                    hexpand = true,
+                    wrap = true,
+                    wrap_mode = Pango.WrapMode.WORD_CHAR,
+                    lines = 3,
+                    ellipsize = Pango.EllipsizeMode.END,
+                    max_width_chars = 30,
+                    margin_start = 6
+                };
+                var time = new Gtk.Label (short_time (dict_int64 (d, "time"))) { valign = Gtk.Align.START };
+                time.add_css_class (Granite.CssClass.DIM);
+                time.add_css_class (Granite.CssClass.SMALL);
+                box.append (excerpt);
+                box.append (time);
+                update_property (Gtk.AccessibleProperty.LABEL,
+                                 "%s : %s".printf (title, dict_string (d, "before") + dict_string (d, "match")
+                                                   + dict_string (d, "after")), -1);
+            }
+            child = box;
+        }
+
+        /* Above the first message found in a conversation: who it is with. */
+        public Gtk.Widget group_header () {
+            var face = new Avatar (24);
+            face.show_person (title, avatar_path, is_group);
+            var name = new Gtk.Label (title) { xalign = 0, ellipsize = Pango.EllipsizeMode.END };
+            name.add_css_class ("heading");
+            var box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 8) {
+                margin_top = 8,
+                margin_start = 12,
+                margin_end = 12
+            };
+            box.append (face);
+            box.append (name);
+            return box;
         }
     }
 
@@ -233,7 +324,12 @@ namespace Covalence {
         private string current_number = "";  // opened from "new message", no message yet
         private Gtk.MenuButton new_button;
         private Gtk.SearchEntry search;
-        private GenericSet<string> search_hits = new GenericSet<string> (str_hash, str_equal);
+        private Gtk.ListBox search_list;
+        private Gtk.Label search_empty;
+        private uint search_serial = 0;
+        private string? pending_scroll = null;  // message to show once its thread is laid out
+        private HashTable<string, Gtk.Widget> bubble_index =
+            new HashTable<string, Gtk.Widget> (str_hash, str_equal);
         private uint draft_timer = 0;
         private bool loading_draft = false;
         private ContactList picker;
@@ -251,6 +347,28 @@ namespace Covalence {
             // --- conversation list ---
             thread_list = new Gtk.ListBox () { selection_mode = Gtk.SelectionMode.SINGLE };
             thread_list.add_css_class ("navigation-sidebar");
+            thread_list.set_header_func ((row, before) => {
+                var here = row as ThreadRow;
+                var above = before as ThreadRow;
+                if (here != null && here.pinned && above == null) {
+                    var label = new Gtk.Label (_("Épinglées")) {
+                        xalign = 0,
+                        margin_start = 12,
+                        margin_top = 6,
+                        margin_bottom = 2
+                    };
+                    label.add_css_class (Granite.CssClass.DIM);
+                    label.add_css_class (Granite.CssClass.SMALL);
+                    row.set_header (label);
+                } else if (here != null && !here.pinned && above != null && above.pinned) {
+                    row.set_header (new Gtk.Separator (Gtk.Orientation.HORIZONTAL) {
+                        margin_top = 3,
+                        margin_bottom = 3
+                    });
+                } else {
+                    row.set_header (null);
+                }
+            });
             thread_list.row_selected.connect ((row) => {
                 var thread = row as ThreadRow;
                 if (thread != null && (thread.thread_id != current || current_new)) {
@@ -264,7 +382,7 @@ namespace Covalence {
             };
             var list_empty = new Granite.Placeholder (_("Aucune conversation")) {
                 description = _("Les messages de l'iPhone apparaîtront ici."),
-                icon = new ThemedIcon (Config.APP_ID + ".Messages")
+                icon = new ThemedIcon ("internet-chat")
             };
             list_stack = new Gtk.Stack ();
             list_stack.add_named (list_scroll, "list");
@@ -343,32 +461,61 @@ namespace Covalence {
                 margin_end = 12,
                 margin_bottom = 6
             };
-            search.search_changed.connect (() => {
-                var query = search.text.strip ();
-                if (query == "") {
-                    search_hits.remove_all ();
-                    thread_list.invalidate_filter ();
-                    return;
+            search.search_changed.connect (() => run_search.begin ());
+            search.stop_search.connect (() => {
+                search.text = "";
+            });
+            search.activate.connect (() => {
+                var first = search_list.get_row_at_index (0) as SearchRow;
+                if (first != null) {
+                    open_search_hit (first);
                 }
-                daemon.call_strings.begin ("SearchThreads", new Variant ("(s)", query), (obj, res) => {
-                    var ids = daemon.call_strings.end (res);
-                    if (search.text.strip () != query) {
-                        return;
-                    }
-                    search_hits.remove_all ();
-                    foreach (var id in ids) {
-                        search_hits.add (id);
-                    }
-                    thread_list.invalidate_filter ();
-                });
             });
-            thread_list.set_filter_func ((row) => {
-                var thread = row as ThreadRow;
-                var query = search.text.strip ().casefold ();
-                return thread == null || query == ""
-                       || thread.title.casefold ().contains (query)
-                       || search_hits.contains (thread.thread_id);
+
+            // Search results: conversations whose name matches, then messages by conversation.
+            search_list = new Gtk.ListBox () { selection_mode = Gtk.SelectionMode.NONE };
+            search_list.add_css_class ("navigation-sidebar");
+            search_list.row_activated.connect ((row) => open_search_hit ((SearchRow) row));
+            search_list.set_header_func ((row, before) => {
+                var here = (SearchRow) row;
+                var above = before as SearchRow;
+                if (here.message != "" && (above == null || above.thread_id != here.thread_id
+                                           || above.message == "")) {
+                    row.set_header (here.group_header ());
+                } else {
+                    row.set_header (null);
+                }
             });
+            var search_scroll = new Gtk.ScrolledWindow () {
+                child = search_list,
+                hscrollbar_policy = Gtk.PolicyType.NEVER,
+                vexpand = true
+            };
+            search_empty = new Gtk.Label ("") {
+                wrap = true,
+                justify = Gtk.Justification.CENTER,
+                margin_top = 24,
+                margin_start = 12,
+                margin_end = 12,
+                valign = Gtk.Align.START
+            };
+            search_empty.add_css_class (Granite.CssClass.DIM);
+            list_stack.add_named (search_scroll, "search");
+            list_stack.add_named (search_empty, "search-empty");
+
+            // Ctrl+F: search, from anywhere in the Messages page.
+            var shortcuts = new Gtk.ShortcutController () { scope = Gtk.ShortcutScope.MANAGED };
+            shortcuts.add_shortcut (new Gtk.Shortcut (
+                Gtk.ShortcutTrigger.parse_string ("<Control>f"),
+                new Gtk.CallbackAction (() => {
+                    if (!get_mapped ()) {
+                        return false;
+                    }
+                    search.grab_focus ();
+                    search.select_region (0, -1);
+                    return true;
+                })));
+            add_controller (shortcuts);
 
             var sidebar = new Gtk.Box (Gtk.Orientation.VERTICAL, 0) { width_request = 280 };
             sidebar.append (sidebar_header);
@@ -466,7 +613,7 @@ namespace Covalence {
 
             var no_thread = new Granite.Placeholder (_("Messages")) {
                 description = _("Choisissez une conversation."),
-                icon = new ThemedIcon (Config.APP_ID + ".Messages")
+                icon = new ThemedIcon ("internet-chat")
             };
             content_stack = new Gtk.Stack () { hexpand = true };
             content_stack.add_named (no_thread, "none");
@@ -569,7 +716,8 @@ namespace Covalence {
                 default:
                     if (contacts == "forbidden") {
                         text = _("Pour afficher les noms, activez « Synchroniser les contacts » "
-                               + "dans les réglages Bluetooth de l'iPhone pour ce PC.");
+                               + "dans les réglages Bluetooth de l'iPhone pour ce PC. Covalence "
+                               + "redemande toute seule pendant 10 minutes.");
                         retry = true;
                     }
                     break;
@@ -588,7 +736,14 @@ namespace Covalence {
                 return;
             }
             loading_threads = true;
-            var items = yield daemon.call_list ("ListThreads");
+            bool ok;
+            var items = yield daemon.try_list ("ListThreads", null, out ok);
+            if (!ok) {
+                // Daemon restarting or slow: keep the list and the open conversation.
+                loading_threads = false;
+                reload_again = false;
+                return;
+            }
             ThreadRow? to_select = null;
             var want = pending_open ?? current;
 
@@ -600,25 +755,7 @@ namespace Covalence {
                     row = new ThreadRow ();
                     var menu_row = row;
                     var click = new Gtk.GestureClick () { button = Gdk.BUTTON_SECONDARY };
-                    click.pressed.connect ((n, x, y) => {
-                        var remove = new Gtk.Button.with_label (_("Supprimer la conversation…"));
-                        remove.add_css_class ("flat");
-                        var popover = new Gtk.Popover () {
-                            child = remove,
-                            has_arrow = false,
-                            pointing_to = { (int) x, (int) y, 1, 1 }
-                        };
-                        popover.set_parent (menu_row);
-                        popover.closed.connect (() => Idle.add (() => {
-                            popover.unparent ();
-                            return Source.REMOVE;
-                        }));
-                        remove.clicked.connect (() => {
-                            popover.popdown ();
-                            confirm_delete_thread (menu_row.thread_id, menu_row.title);
-                        });
-                        popover.popup ();
-                    });
+                    click.pressed.connect ((n, x, y) => show_thread_menu (menu_row, x, y));
                     row.add_controller (click);
                     thread_list.append (row);
                 }
@@ -632,7 +769,10 @@ namespace Covalence {
             while ((extra = thread_list.get_row_at_index (index)) != null) {
                 thread_list.remove (extra);
             }
-            list_stack.visible_child_name = items.length > 0 ? "list" : "empty";
+            thread_list.invalidate_headers ();
+            if (search.text.strip () == "") {
+                list_stack.visible_child_name = items.length > 0 ? "list" : "empty";
+            }
 
             if (to_select != null) {
                 var reply = pending_reply && to_select.thread_id == pending_open;
@@ -656,6 +796,160 @@ namespace Covalence {
                 reload_again = false;
                 reload_threads.begin ();
             }
+        }
+
+        // --- search ------------------------------------------------------------------
+
+        private async void run_search () {
+            var query = search.text.strip ();
+            var serial = ++search_serial;
+            if (query == "") {
+                list_stack.visible_child_name = thread_list.get_row_at_index (0) != null ? "list" : "empty";
+                return;
+            }
+            var items = yield daemon.call_list ("SearchMessages", new Variant ("(s)", query));
+            if (serial != search_serial) {
+                return;  // typed further in the meantime
+            }
+            Gtk.Widget? old;
+            while ((old = search_list.get_first_child ()) != null) {
+                search_list.remove (old);
+            }
+            foreach (var item in items) {
+                search_list.append (new SearchRow (new VariantDict (item)));
+            }
+            if (items.length == 0) {
+                search_empty.label = _("Aucun résultat pour « %s »").printf (query);
+                list_stack.visible_child_name = "search-empty";
+            } else {
+                list_stack.visible_child_name = "search";
+            }
+        }
+
+        /* Open the conversation of a result and bring the message into view. */
+        private void open_search_hit (SearchRow hit) {
+            for (int i = 0; ; i++) {
+                var row = thread_list.get_row_at_index (i) as ThreadRow;
+                if (row == null) {
+                    return;
+                }
+                if (row.thread_id != hit.thread_id) {
+                    continue;
+                }
+                pending_scroll = hit.message != "" ? hit.message : null;
+                if (current == row.thread_id && !current_new) {
+                    scroll_to_pending ();
+                } else if (thread_list.get_selected_row () == row) {
+                    show_thread (row);
+                } else {
+                    thread_list.select_row (row);
+                }
+                return;
+            }
+        }
+
+        private void scroll_to_pending (int tries = 0) {
+            if (pending_scroll == null) {
+                return;
+            }
+            stick_bottom = false;
+            Timeout.add (tries == 0 ? 60 : 120, () => {
+                var target = pending_scroll != null ? bubble_index[pending_scroll] : null;
+                if (target == null) {
+                    pending_scroll = null;
+                    return Source.REMOVE;
+                }
+                Graphene.Point where = Graphene.Point () { x = 0, y = 0 };
+                var placed = target.get_height () > 0
+                             && target.compute_point (bubbles, Graphene.Point () { x = 0, y = 0 }, out where);
+                if (!placed) {
+                    if (tries < 10) {
+                        scroll_to_pending (tries + 1);
+                    } else {
+                        pending_scroll = null;
+                    }
+                    return Source.REMOVE;
+                }
+                pending_scroll = null;
+                var adj = bubble_scroll.vadjustment;
+                stick_bottom = false;
+                adj.value = (where.y + bubbles.margin_top - adj.page_size / 3)
+                            .clamp (adj.lower, adj.upper - adj.page_size);
+                target.add_css_class ("search-flash");
+                Timeout.add (1800, () => {
+                    target.remove_css_class ("search-flash");
+                    return Source.REMOVE;
+                });
+                return Source.REMOVE;
+            });
+        }
+
+        /* Right click on a conversation: pin, read state (Covalence only), delete. */
+        private void show_thread_menu (ThreadRow row, double x, double y) {
+            var box = new Gtk.Box (Gtk.Orientation.VERTICAL, 0) {
+                margin_top = 3,
+                margin_bottom = 3
+            };
+            var popover = new Gtk.Popover () {
+                child = box,
+                has_arrow = false,
+                pointing_to = { (int) x, (int) y, 1, 1 }
+            };
+            popover.add_css_class ("menu");
+            var id = row.thread_id;
+            var title = row.title;
+            var pinned = row.pinned;
+            var unread = row.unread > 0;
+
+            var pin = menu_item (pinned ? _("Désépingler") : _("Épingler"));
+            pin.clicked.connect (() => {
+                popover.popdown ();
+                daemon.call.begin ("PinThread", new Variant ("(sb)", id, !pinned));
+            });
+            box.append (pin);
+
+            var read = menu_item (unread ? _("Marquer comme lu") : _("Marquer comme non lu"));
+            read.tooltip_text = _("Dans Covalence seulement : l'iPhone n'est pas modifié");
+            read.clicked.connect (() => {
+                popover.popdown ();
+                if (unread) {
+                    daemon.call.begin ("MarkThreadSeen", new Variant ("(s)", id));
+                    return;
+                }
+                if (id == current) {
+                    // Leave it, or opening it would mark it read again at once.
+                    thread_list.unselect_all ();
+                    current = null;
+                    rendered = "";
+                    content_stack.visible_child_name = "none";
+                    update_viewing ();
+                }
+                daemon.call.begin ("MarkThreadUnread", new Variant ("(sb)", id, true));
+            });
+            box.append (read);
+
+            box.append (new Gtk.Separator (Gtk.Orientation.HORIZONTAL) { margin_top = 3, margin_bottom = 3 });
+            var remove = menu_item (_("Supprimer la conversation…"));
+            remove.clicked.connect (() => {
+                popover.popdown ();
+                confirm_delete_thread (id, title);
+            });
+            box.append (remove);
+
+            popover.set_parent (row);
+            popover.closed.connect (() => Idle.add (() => {
+                popover.unparent ();
+                return Source.REMOVE;
+            }));
+            popover.popup ();
+        }
+
+        private static Gtk.Button menu_item (string text) {
+            var button = new Gtk.Button () {
+                child = new Gtk.Label (text) { xalign = 0 }
+            };
+            button.add_css_class ("flat");
+            return button;
         }
 
         // --- thread ------------------------------------------------------------------
@@ -764,13 +1058,14 @@ namespace Covalence {
         }
 
         private async void load_messages (string thread, bool group, bool changed) {
-            var items = yield daemon.call_list ("GetMessages", new Variant ("(s)", thread));
-            if (thread != current) {
-                return;
+            bool ok;
+            var items = yield daemon.try_list ("GetMessages", new Variant ("(s)", thread), out ok);
+            if (thread != current || !ok) {
+                return;  // (failed call: the bubbles on screen stay)
             }
             var adj = bubble_scroll.vadjustment;
             if (changed) {
-                stick_bottom = true;
+                stick_bottom = pending_scroll == null;
             }
 
             // Rebuild only when the thread really changed: a rebuild would destroy an open
@@ -779,12 +1074,19 @@ namespace Covalence {
             sig.append (group ? "|g" : "|1");
             foreach (var item in items) {
                 var d = new VariantDict (item);
-                sig.append_printf ("|%s:%s:%s:%s:%s", dict_string (d, "id"), dict_string (d, "status"),
+                // Everything a bubble shows: a reaction received, a note or a sender name
+                // arriving later must redraw it.
+                var reactions = d.lookup_value ("reactions", null);
+                sig.append_printf ("|%s:%s:%s:%s:%s:%s:%s:%s:%s", dict_string (d, "id"),
+                                   dict_string (d, "status"),
                                    dict_bool (d, "complete") ? "1" : "0",
                                    dict_string (d, "body").length.to_string (),
-                                   dict_string (d, "avatar"));
+                                   dict_string (d, "avatar"), dict_string (d, "sender"),
+                                   dict_int64 (d, "time").to_string (), dict_string (d, "note"),
+                                   reactions != null ? reactions.print (false) : "");
             }
             if (sig.str == rendered) {
+                scroll_to_pending ();
                 return;
             }
             rendered = sig.str;
@@ -793,6 +1095,7 @@ namespace Covalence {
             while ((child = bubbles.get_first_child ()) != null) {
                 bubbles.remove (child);
             }
+            bubble_index.remove_all ();
             int64 previous_time = 0;
             string previous_sender = "";
             bool previous_outgoing = false;
@@ -827,6 +1130,7 @@ namespace Covalence {
                     item_widget = line;
                 }
                 bubbles.append (item_widget);
+                bubble_index[dict_string (d, "id")] = item_widget;
                 previous_time = time;
                 previous_sender = sender;
                 previous_outgoing = outgoing;
@@ -835,6 +1139,7 @@ namespace Covalence {
             if (stick_bottom) {
                 adj.value = adj.upper - adj.page_size;
             }
+            scroll_to_pending ();
         }
 
         private static string prefs_path () {
@@ -1027,7 +1332,7 @@ namespace Covalence {
                 _("L'iPhone ne donne que les 120 premiers caractères d'un message non lu. Pour "
                   + "récupérer la suite, Covalence doit le télécharger : le message passera alors "
                   + "en lu sur l'iPhone."),
-                Config.APP_ID + ".Messages", Gtk.ButtonsType.CANCEL) {
+                "internet-chat", Gtk.ButtonsType.CANCEL) {
                 transient_for = get_root () as Gtk.Window,
                 modal = true
             };
@@ -1071,7 +1376,7 @@ namespace Covalence {
                 _("Le Bluetooth ne transmet que du texte : la réaction part en SMS, par exemple "
                   + "« A adoré « à demain » ». Un iPhone récent peut l'afficher comme une "
                   + "réaction ; d'autres téléphones montreront simplement ce texte."),
-                Config.APP_ID + ".Messages", Gtk.ButtonsType.CANCEL) {
+                "internet-chat", Gtk.ButtonsType.CANCEL) {
                 transient_for = get_root () as Gtk.Window,
                 modal = true
             };

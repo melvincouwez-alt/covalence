@@ -1,3 +1,74 @@
+covalence (0.5.0-1) unstable; urgency=medium
+
+  * Security: the pairing code must be confirmed on the PC; only an
+    iPhone's profiles are accepted, never an input device.
+  * Security: programs other than Covalence must be allowed by the user
+    (notification) before calling, sending, pairing, forgetting the iPhone
+    or installing an update; iPhone control is reserved to the app.
+  * Security: updates installed by a root helper that copies the package
+    and checks its SHA-256 again; LocalSend asks before every reception,
+    20 GB cap, no plain HTTP peers; screen mirroring protected by a PIN.
+  * Security: SMS codes filled in automatically only on the website they
+    name (@site #code), HTTPS top frame only; notification text escaped;
+    bMessage body read by its length; HID reports sent to bluetoothd only;
+    rclone download checked against its PGP signature.
+  * Messages: no duplicates from notifications replayed after a
+    reconnection (iPhone date kept), replies to you in the right
+    conversation, name-only conversations merged with the contact.
+  * Messages: group messages stay in their group, a message sent from
+    Covalence is no longer removed by an older identical one, copies
+    matched per sender, one cache per iPhone (the old one archived),
+    deleted conversations stay deleted, edited iMessages update in place.
+  * Contacts: "Retry" asks the iPhone again; after a refusal Covalence
+    asks every 30 s for 10 minutes.
+  * App: lists are no longer emptied by a transient daemon error;
+    reactions and late names show at once; Messages and Headphones icons.
+  * Daemon: every D-Bus error is answered, sends go before contact reads,
+    artwork and app icon caches are pruned.
+  * Guide in the sidebar, above Settings; icons missing from the
+    elementary theme replaced (Photos, Bluetooth, browser).
+
+ -- Melvin Couwez <301110918+melvincouwez-alt@users.noreply.github.com>  Mon, 28 Sep 2026 12:30:00 +0200
+
+covalence (0.4.2-1) unstable; urgency=medium
+
+  * Pairing from the iPhone's Settings › Bluetooth: the PC is discoverable
+    during the pairing window, nRF Connect is no longer needed.
+  * Paired iPhone marked trusted, so its profiles are no longer refused.
+  * The iPhone listed twice by BlueZ (bonded and LE objects) is one phone.
+  * When the iPhone forgot the PC, retries stop (no more link flapping)
+    and the Overview offers to pair again; "Forget" button.
+  * Reconnection backs off from 10 s to 5 min and restarts after sleep.
+  * No GATT subscription on BlueZ's cached services while disconnected.
+
+ -- Melvin Couwez <301110918+melvincouwez-alt@users.noreply.github.com>  Mon, 28 Sep 2026 11:30:00 +0200
+
+covalence (0.4.1-1) unstable; urgency=medium
+
+  * Recopie becomes a separate app; UxPlay tuned for latency (60 fps,
+    hardware decoding: NVIDIA, VA-API or software), rotation, full screen.
+  * iPhone control from the PC (experimental, off by default): Bluetooth
+    LE mouse and keyboard through AssistiveTouch, with a step-by-step guide.
+  * 11 more free sounds (19 in all).
+  * Settings: one tab per kind of feature; "experimental" instead of "alpha".
+  * About: narrower window, short credits.
+
+ -- Melvin Couwez <301110918+melvincouwez-alt@users.noreply.github.com>  Mon, 28 Sep 2026 02:40:00 +0200
+
+covalence (0.4.0-1) unstable; urgency=medium
+
+  * Internet through the iPhone (Bluetooth tethering, NetworkManager).
+  * Wingpanel indicator: battery, now playing, call, unread messages.
+  * Proximity lock (off by default, never unlocks).
+  * Message search, pinned conversations, mark as unread.
+  * Files with LocalSend, both ways (off by default).
+  * iCloud Drive sync status in Files (libcloudproviders); iCloud.com
+    shortcuts (Find My, Notes, Hide My Email, Reminders, Photos).
+  * Screen mirroring with UxPlay (experimental); photo import over USB.
+  * Settings in tabs; Covalence's free sounds with preview and "Use for".
+
+ -- Melvin Couwez <301110918+melvincouwez-alt@users.noreply.github.com>  Mon, 28 Sep 2026 01:10:00 +0200
+
 covalence (0.3.3-1) unstable; urgency=medium
 
   * Messages: automatic emojis while typing (":)" becomes 🙂, Backspace

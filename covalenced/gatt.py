@@ -32,6 +32,7 @@ class GattClient:
         self.queue = []  # (uuid, bytes, waits_for_response, then)
         self.busy = False
         self.notifying = []
+        self.on_link_lost = None  # set by the link: drop this client, attach again later
 
     def subscribe(self, uuids, then=None):
         """StartNotify on each; `then` runs once every answer came back."""
@@ -41,7 +42,19 @@ class GattClient:
                        on_done=lambda _v, error, u=uuid: self._on_subscribed(u, error, waiting,
                                                                               then))
 
+    def _link_lost(self, error):
+        """« Not connected »: the GATT database is BlueZ's cache, not a live link."""
+        if error is None or "Not connected" not in error.message or not self.on_link_lost:
+            return False
+        log(f"{self.label} : liaison absente, client retiré en attendant l'iPhone")
+        callback, self.on_link_lost = self.on_link_lost, None
+        self.queue = []
+        GLib.idle_add(lambda: callback() and False)
+        return True
+
     def _on_subscribed(self, uuid, error, waiting=None, then=None):
+        if self._link_lost(error):
+            return
         if error:
             log(f"{self.label} : abonnement {uuid[:8]} refusé ({error.message})")
         else:
@@ -78,6 +91,9 @@ class GattClient:
         serial = self.serial
 
         def done(_value, error):
+            if self._link_lost(error):
+                self.busy = False
+                return
             if error:
                 log(f"{self.label} : écriture refusée ({error.message})")
                 self.on_request_failed()

@@ -24,13 +24,15 @@ import urllib.request
 
 from gi.repository import GLib
 
-from . import ams
+from . import ams, cachedir
 from .util import BLUEZ, call_async, log
 
 PLAYER_IFACE = "org.bluez.MediaPlayer1"
 CONTROL_IFACE = "org.bluez.MediaControl1"  # the device's AVRCP link, even with no player
 SEARCH = "https://itunes.apple.com/search?term={}&entity=song&limit=5&country={}"
 RETRY_MISSING = 30 * 24 * 3600
+ARTWORK_MAX_FILES = 300  # covers of the iPhone's music, least recently shown dropped first
+ARTWORK_MAX_DAYS = 90
 RETRY_FAILED = 3600
 
 # AMS gives the player's display name only: known names -> bundle id (for its icon).
@@ -121,6 +123,7 @@ class Artwork:
         self.fetch_json = fetch or _fetch_json
         self.busy = set()
         self.lock = threading.Lock()
+        cachedir.prune(self.dir, ARTWORK_MAX_FILES, ARTWORK_MAX_DAYS)
 
     def enabled(self):
         return self.config.boolean("media", "artwork", True)
@@ -135,6 +138,7 @@ class Artwork:
         key = self._key(artist, title)
         path = os.path.join(self.dir, key + ".jpg")
         if os.path.exists(path):
+            cachedir.touch(path)  # recently used: kept by the next prune
             return path
         missing = os.path.join(self.dir, key + ".missing")
         if os.path.exists(missing) and time.time() - os.path.getmtime(missing) < RETRY_MISSING:

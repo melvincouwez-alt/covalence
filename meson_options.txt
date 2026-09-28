@@ -1,0 +1,3 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+option('indicator', type: 'feature', value: 'auto',
+       description: 'Wingpanel indicator in the top bar (needs the wingpanel-9 development files)')
