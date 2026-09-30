@@ -15,11 +15,13 @@ Comment: The AirPods protocol (AAP over L2CAP, handshake, battery, ear detection
  Many thanks to Kavish Devar and the LibrePods contributors.
 License: GPL-3.0-or-later
 
-Files: data/icons/io.github.melvincouwez.Covalence.svg
+Files: data/icons/*
 Copyright: 2026 Melvin Couwez
            elementary, Inc.
-Comment: The display and the phone come from the elementary icon theme
- (https://github.com/elementary/icons), GPL-3.0.
+Comment: Built from objects of the elementary icon theme
+ (https://github.com/elementary/icons), GPL-3.0: the display, the phone and the
+ handset. The text of the Calendar icon is converted to outlines from Inter
+ Display by Rasmus Andersson (https://github.com/rsms/inter), SIL OFL 1.1.
 License: GPL-3.0-or-later
 
 Files: data/sounds/rosee.oga data/sounds/envol.oga data/sounds/vague.oga

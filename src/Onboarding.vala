@@ -294,7 +294,7 @@ public class Covalence.Onboarding : Gtk.Box {
     private Gtk.Widget apps_page () {
         var list = new Gtk.ListBox () { selection_mode = Gtk.SelectionMode.NONE, show_separators = true };
         list.add_css_class (Granite.CssClass.CARD);
-        list.append (app_choice (Mode.MESSAGES, "internet-chat", _("Messages"),
+        list.append (app_choice (Mode.MESSAGES, Config.APP_ID + ".Messages", _("Messages"),
                                  _("Vos conversations dans leur propre fenêtre, avec leur icône dans le dock.")));
         list.append (app_choice (Mode.PHONE, Config.APP_ID + ".Phone", _("Téléphone"),
                                  _("Clavier, journal d'appels et appel en cours, avec une pastille des appels manqués.")));

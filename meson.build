@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: 2026 Melvin Couwez
 project('io.github.melvincouwez.Covalence', 'vala', 'c',
-  version: '0.5.1',
+  version: '0.6.0',
   license: 'GPL-3.0-or-later',
   meson_version: '>= 1.0',
 )

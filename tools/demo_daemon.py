@@ -32,7 +32,7 @@ NOW = int(time.time())
 MIN, HOUR, DAY = 60, 3600, 86400
 
 PROPS = {
-    "Version": "0.5.1", "BluetoothAvailable": True, "Advertising": True, "Pairing": False, "LinkProblem": "", "AdapterName": "Covalence-PC",
+    "Version": "0.6.0", "BluetoothAvailable": True, "Advertising": True, "Pairing": False, "LinkProblem": "", "AdapterName": "Covalence-PC",
     "DeviceName": "iPhone de Camille", "DeviceAddress": "00:11:22:33:44:55", "Paired": True,
     "Connected": True, "NotificationsLinked": True, "MediaLinked": True, "CallsLinked": True,
     "CallsSupported": True, "Battery": 78, "ICloudState": "connected", "MessagesState": "ready",
@@ -82,7 +82,7 @@ if EN:
         (2, "com.apple.mobilemail", "Mail", "Club newsletter", "This season's programme", 18 * MIN,
          "io.elementary.mail"),
         (3, "com.apple.mobilecal", "Calendar", "Dentist", "Tomorrow at 9:30", HOUR,
-         "x-office-calendar"),
+         "io.github.melvincouwez.Covalence.Calendar"),
         (4, "com.apple.reminders", "Reminders", "Water the plants", "", 2 * HOUR,
          "io.elementary.tasks"),
     ]
@@ -113,7 +113,7 @@ else:
         (2, "com.apple.mobilemail", "Mail", "Newsletter du club", "Programme de la saison", 18 * MIN,
          "io.elementary.mail"),
         (3, "com.apple.mobilecal", "Calendrier", "Dentiste", "Demain à 9:30", HOUR,
-         "x-office-calendar"),
+         "io.github.melvincouwez.Covalence.Calendar"),
         (4, "com.apple.reminders", "Rappels", "Arroser les plantes", "", 2 * HOUR,
          "io.elementary.tasks"),
     ]

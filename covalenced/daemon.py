@@ -31,6 +31,7 @@ from .service import Service
 from .cloudprovider import DriveProvider
 from .sounds import Sounds
 from .updates import Updates
+from .apps import OptionalApps
 from .i18n import _
 from .util import Notifier, log
 
@@ -53,6 +54,7 @@ class Daemon:
         self.service = Service(self.session, self)
         self.calls = Calls(self.session, self.system, self.notifier, self.link_changed)
         self.calls.ringer = self.sounds
+        self.calls.quiet = lambda: self.config.boolean("calls", "quiet")
         self.icloud = ICloud(self.notifier, self.link_changed)
         self.mpris = MprisPlayer(self.session, "iPhone")
         self.messages = Messages(self.session, self.notifier, self)
@@ -68,6 +70,7 @@ class Daemon:
         self.headphones = Headphones(self.system, self.session, self.config, self._headphones_changed)
         self.audio = PhoneAudio(self.system, self.config, self.link_changed)
         self.updates = Updates(self.config, self.notifier, self.link_changed)
+        self.apps = OptionalApps(self.link_changed)
         self.hotspot = Hotspot(self.system, self._device_info, self.link_changed)
         self.proximity = Proximity(self.config, in_call=lambda: bool(self.calls.active_calls()),
                                    on_changed=self.link_changed, session_bus=self.session)
@@ -116,6 +119,7 @@ class Daemon:
             "MessagesSend": self.messages.send_state(),
             "ReactionsSend": self.messages.reactions_enabled(),
             "OneTimeCodes": self.messages.code_mode(),
+            "AutoCopyCodes": self.messages.auto_copy_codes(),
             "ContactsState": self.messages.contacts_state,
             "UnreadMessages": self.messages.unread_total() if self.config.module_enabled("messages") else 0,
             "MissedCalls": self.messages.missed_unseen() if self.config.module_enabled("messages") else 0,
@@ -126,9 +130,11 @@ class Daemon:
             "Modules": self.config.modules(),
             "AlphaFeatures": self.config.alpha_features(),
             "FetchUnread": self.config.boolean("messages", "fetch_unread"),
+            "CallsQuiet": self.config.boolean("calls", "quiet"),
             "Sounds": self.sounds.settings(),
             "NowPlaying": self.now_playing.state(),
             "Update": self.updates.state(),
+            "Apps": self.apps.state(),
             "Tethering": tethering["state"] == "on",
             "TetheringState": tethering["state"],
             "TetheringError": tethering["error"],
@@ -241,7 +247,8 @@ class Daemon:
 
     def _call_started(self, path):
         """Open the in-call window once per call, when it rings out or is answered."""
-        if path in self.call_windows or not self.config.boolean("calls", "window", True):
+        if (path in self.call_windows or self.config.boolean("calls", "quiet")
+                or not self.config.boolean("calls", "window", True)):
             return
         self.call_windows.add(path)
         self._open_call_window()
@@ -293,6 +300,12 @@ class Daemon:
 
     def set_sound(self, kind, value):
         self.sounds.set(kind, value)
+        self.link_changed()
+
+    def set_calls_quiet(self, enabled):
+        self.config.set_boolean("calls", "quiet", bool(enabled))
+        log(f"appels : mode silencieux {'activé' if enabled else 'désactivé'}")
+        self.calls._update_ring()
         self.link_changed()
 
     def set_fetch_unread(self, enabled):

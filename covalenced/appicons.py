@@ -29,12 +29,12 @@ RETRY_FAILED = 3600
 
 # Built-in apps (not on the App Store): themed icon names.
 BUILTIN = {
-    "com.apple.MobileSMS": "internet-chat",
+    "com.apple.MobileSMS": APP_ID + ".Messages",
     "com.apple.mobilephone": APP_ID + ".Phone",
     "com.apple.facetime": APP_ID + ".Phone",
     "com.apple.MobileAddressBook": APP_ID + ".Contacts",
     "com.apple.mobilemail": "io.elementary.mail",
-    "com.apple.mobilecal": "x-office-calendar",
+    "com.apple.mobilecal": APP_ID + ".Calendar",  # same tile as Agenda
     "com.apple.reminders": "io.elementary.tasks",
     "com.apple.Music": APP_ID + ".NowPlaying",  # the elementary 16 px audio icon is blank
     "com.apple.mobileslideshow": "io.elementary.photos",

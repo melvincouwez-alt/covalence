@@ -70,8 +70,8 @@ class MemoryTest(unittest.TestCase):
 
 
 class FakeConfig:
-    def __init__(self, mode):
-        self.values = {("messages", "one_time_codes"): mode}
+    def __init__(self, mode, auto_copy=True):
+        self.values = {("messages", "one_time_codes"): mode, ("messages", "auto_copy_codes"): auto_copy}
 
     def string(self, group, key, default=""):
         return self.values.get((group, key), default)
@@ -80,7 +80,10 @@ class FakeConfig:
         self.values[(group, key)] = value
 
     def boolean(self, group, key, default=False):
-        return default
+        return self.values.get((group, key), default)
+
+    def set_boolean(self, group, key, value):
+        self.values[(group, key)] = value
 
 
 class FlowTest(unittest.TestCase):
@@ -93,6 +96,8 @@ class FlowTest(unittest.TestCase):
         self.m = messages.Messages(None, self.notifier, self.hooks)
         self.m.store = store.Store(self.tmp.name)
         self.m.enabled = True
+        self.copied = []  # the clipboard helper is never started by the tests
+        self.m._copy_code = lambda key, delete: self.copied.append((key, delete))
 
     def tearDown(self):
         self.m.store.close()
@@ -107,6 +112,7 @@ class FlowTest(unittest.TestCase):
             Read=False)])}, initial=False)
 
     def test_one_notification_with_copy(self):
+        self.hooks.config = FakeConfig("copy", auto_copy=False)
         self.receive_ancs_then_map()
         self.assertEqual(len(self.notifier.shown), 1)  # ANCS and MAP: one notification
         keys = [k for k, _ in self.notifier.shown[0]["actions"]]
@@ -119,12 +125,40 @@ class FlowTest(unittest.TestCase):
         self.assertEqual(self.m.latest_code("browser"), ("", 0))  # default mode: copy only
 
     def test_copy_action(self):
+        self.hooks.config = FakeConfig("copy", auto_copy=False)
         self.receive_ancs_then_map()
-        copied = []
-        self.m._copy_code = lambda key, delete: copied.append((key, delete))
         self.notifier.shown[0]["on_action"]("copy-code-delete")
-        self.assertEqual(len(copied), 1)
-        self.assertTrue(copied[0][1])
+        self.assertEqual(len(self.copied), 1)
+        self.assertTrue(self.copied[0][1])
+
+    def test_copied_on_arrival(self):
+        self.receive_ancs_then_map()  # default: copied as soon as it arrives
+        self.assertEqual(len(self.copied), 1)  # ANCS and MAP: one copy
+        self.assertFalse(self.copied[0][1])  # never deleted without a click
+        keys = [k for k, _ in self.notifier.shown[0]["actions"]]
+        self.assertIn("copy-code", keys)  # the buttons stay, to copy again
+
+    def test_copied_even_with_the_conversation_open(self):
+        hello = "Bonjour"
+        self.m._merge({"inbox": dict([listing(
+            "20", SenderAddress="Doctolib", Sender="Doctolib", RecipientAddress="+33600000009",
+            Timestamp=time.strftime("%Y%m%dT%H%M%S"), Subject=hello, Size=len(hello),
+            Read=False)])}, initial=False)
+        self.m.viewing = self.m.store.threads()[0]["id"]  # the conversation is on screen
+        shown = len(self.notifier.shown)
+        self.m._merge({"inbox": dict([listing(
+            "21", SenderAddress="Doctolib", Sender="Doctolib", RecipientAddress="+33600000009",
+            Timestamp=time.strftime("%Y%m%dT%H%M%S"), Subject=self.SMS, Size=len(self.SMS),
+            Read=False)])}, initial=False)
+        self.assertEqual(len(self.notifier.shown), shown)  # no notification for it
+        self.assertEqual(len(self.copied), 1)
+
+    def test_auto_copy_off(self):
+        self.hooks.config = FakeConfig("copy")
+        self.m.set_auto_copy_codes(False)
+        self.receive_ancs_then_map()
+        self.assertEqual(self.copied, [])
+        self.assertFalse(self.m.auto_copy_codes())
 
     def test_browser_mode_and_off(self):
         self.hooks.config = FakeConfig("browser")
@@ -140,6 +174,7 @@ class FlowTest(unittest.TestCase):
         keys = [k for k, _ in self.notifier.shown[0]["actions"]]
         self.assertNotIn("copy-code", keys)
         self.assertEqual(self.m.codes.code, "")
+        self.assertEqual(self.copied, [])  # off: nothing copied either
 
 
 class BrowserHostTest(unittest.TestCase):

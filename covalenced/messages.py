@@ -747,7 +747,7 @@ class Messages:
             self._notify(tid, key)
             self.hooks.message_received(tid, key)
         if len(fresh) > NOTIFY_BURST:
-            self.notifier.notify(f"Covalence ({self.hooks.device_name})", "internet-chat",
+            self.notifier.notify(f"Covalence ({self.hooks.device_name})", "io.github.melvincouwez.Covalence.Messages",
                                  ngettext("{n} nouveau message", "{n} nouveaux messages",
                                           len(fresh)).format(n=len(fresh)), "", own=True)
 
@@ -1176,6 +1176,9 @@ class Messages:
             if code:
                 self.codes.remember(code, key)
                 log("messages : code à usage unique reçu")  # never the code itself
+                if self.auto_copy_codes():
+                    # Straight to the clipboard, even with the conversation on screen.
+                    self._copy_code(key, False)
         if tid == self.viewing:
             return  # the conversation is on screen: the new bubble is enough
         sender = self.store.display_name(m["sender"], m["sender_name"] or _("Inconnu"))
@@ -1199,7 +1202,7 @@ class Messages:
             hints["image-path"] = GLib.Variant("s", photo)
         self._sound(hints)
         self.notifications[tid] = self.notifier.notify(
-            f"Covalence ({self.hooks.device_name})", "internet-chat", summary, body, actions, hints,
+            f"Covalence ({self.hooks.device_name})", "io.github.melvincouwez.Covalence.Messages", summary, body, actions, hints,
             replaces=self.notifications.get(tid, 0),
             on_action=lambda action, t=tid, k=key: self._on_notification_action(t, action, k),
             on_closed=lambda t=tid: self.notifications.pop(t, None))
@@ -1226,6 +1229,16 @@ class Messages:
         config.set_string("messages", "one_time_codes", mode)
         if mode == "off":
             self.codes.forget()
+
+    def auto_copy_codes(self):
+        """Copy a code as soon as it arrives, without waiting for « Copier le code »."""
+        config = getattr(self.hooks, "config", None)
+        return config.boolean("messages", "auto_copy_codes", True) if config else True
+
+    def set_auto_copy_codes(self, enabled):
+        config = getattr(self.hooks, "config", None)
+        if config:
+            config.set_boolean("messages", "auto_copy_codes", bool(enabled))
 
     def latest_code(self, purpose):
         """(code, age in seconds) for the Covalence app ("copy") or the browser extension
@@ -1350,7 +1363,7 @@ class Messages:
             hints["image-path"] = GLib.Variant("s", photo)
         self._sound(hints)
         self.notifications[tid] = self.notifier.notify(
-            f"Covalence ({self.hooks.device_name})", "internet-chat",
+            f"Covalence ({self.hooks.device_name})", "io.github.melvincouwez.Covalence.Messages",
             summary, body, [("default", _("Ouvrir"))], hints,
             replaces=self.notifications.get(tid, 0),
             on_action=lambda action, t=tid: self._on_notification_action(t, action),

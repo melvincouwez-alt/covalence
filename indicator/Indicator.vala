@@ -42,6 +42,8 @@ public class Covalence.Indicator : Wingpanel.Indicator {
     private Gtk.Button messages_button;
     private Gtk.Button tethering_button;
     private bool tethering_on = false;
+    private Gtk.Button quiet_button;
+    private bool quiet_on = false;
 
     public Indicator () {
         Object (code_name: "covalence");
@@ -324,6 +326,12 @@ public class Covalence.Indicator : Wingpanel.Indicator {
         tethering_on = tether != null && tether.is_of_type (VariantType.BOOLEAN) && tether.get_boolean ();
         tethering_button.label = tethering_on ? _("Couper la connexion via l'iPhone")
                                               : _("Se connecter via l'iPhone");
+
+        quiet_button.visible = connected && has_method ("SetCallsQuiet");
+        var quiet = prop ("CallsQuiet");
+        quiet_on = quiet != null && quiet.is_of_type (VariantType.BOOLEAN) && quiet.get_boolean ();
+        quiet_button.label = quiet_on ? _("Appels : rétablir la sonnerie")
+                                      : _("Appels : passer en silence");
     }
 
     private void update_call (string text) {
@@ -414,6 +422,12 @@ public class Covalence.Indicator : Wingpanel.Indicator {
             call_daemon ("SetTethering", new Variant ("(b)", !tethering_on));
             close ();
         });
+        quiet_button = menu_button (_("Appels : passer en silence"));
+        quiet_button.visible = false;
+        quiet_button.clicked.connect (() => {
+            call_daemon ("SetCallsQuiet", new Variant ("(b)", !quiet_on));
+            close ();
+        });
         var open = menu_button (_("Ouvrir Covalence"));
         open.clicked.connect (() => launch (APP_ID));
 
@@ -424,6 +438,7 @@ public class Covalence.Indicator : Wingpanel.Indicator {
         popover_widget.append (new Gtk.Separator (Gtk.Orientation.HORIZONTAL) { margin_top = 3, margin_bottom = 3 });
         popover_widget.append (messages_button);
         popover_widget.append (tethering_button);
+        popover_widget.append (quiet_button);
         popover_widget.append (new Gtk.Separator (Gtk.Orientation.HORIZONTAL) { margin_top = 3, margin_bottom = 3 });
         popover_widget.append (open);
     }

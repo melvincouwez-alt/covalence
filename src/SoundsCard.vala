@@ -15,7 +15,7 @@ public class Covalence.SoundsCard : Gtk.Box {
 
         var list = new Gtk.ListBox () { selection_mode = Gtk.SelectionMode.NONE, show_separators = true };
         list.add_css_class (Granite.CssClass.CARD);
-        rows += new SoundRow (daemon, "messages", "internet-chat", _("Messages"),
+        rows += new SoundRow (daemon, "messages", Config.APP_ID + ".Messages", _("Messages"),
                               _("SMS reçus"));
         rows += new SoundRow (daemon, "notifications", "preferences-system-notifications",
                               _("Notifications de l'iPhone"), _("Autres apps de l'iPhone"));

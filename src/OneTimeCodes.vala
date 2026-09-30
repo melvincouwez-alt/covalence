@@ -63,6 +63,8 @@ public class Covalence.CodesCard : Gtk.Box {
 
     private Daemon daemon;
     private Gtk.DropDown mode;
+    private Gtk.Switch auto_copy;
+    private Gtk.Widget auto_copy_row;
     private Gtk.ListBoxRow browser_row;
     private Gtk.Label browser_status;
     private bool updating = false;
@@ -86,6 +88,16 @@ public class Covalence.CodesCard : Gtk.Box {
         list.append (row ("dialog-password", _("Codes de vérification"),
                           _("Quand un SMS contient un code, la notification propose « Copier le code ». "
                             + "Le presse-papiers est vidé au bout de 2 minutes."), mode));
+
+        auto_copy = new Gtk.Switch () { valign = Gtk.Align.CENTER, active = true };
+        auto_copy.notify["active"].connect (() => {
+            if (!updating) {
+                daemon.call.begin ("SetAutoCopyCodes", new Variant ("(b)", auto_copy.active));
+            }
+        });
+        auto_copy_row = row ("edit-copy", _("Copier dès la réception"),
+                             _("Le code va dans le presse-papiers dès que le SMS arrive, sans cliquer."), auto_copy);
+        list.append (auto_copy_row);
 
         var install = new Gtk.Button.with_label (_("Installer l'intégration navigateur")) {
             valign = Gtk.Align.CENTER
@@ -124,6 +136,11 @@ public class Covalence.CodesCard : Gtk.Box {
         }
         mode.sensitive = daemon.running;
         browser_row.visible = mode.selected == 2;
+        updating = true;
+        auto_copy.active = daemon.get_bool ("AutoCopyCodes");
+        updating = false;
+        auto_copy.sensitive = daemon.running;
+        auto_copy_row.visible = mode.selected != 0;
     }
 
     private async void install_browser_host () {

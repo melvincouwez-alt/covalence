@@ -68,7 +68,12 @@ namespace Covalence {
             "libsecret (LGPL-2.1-or-later) https://gitlab.gnome.org/GNOME/libsecret",
             "GTK (LGPL-2.1-or-later) https://gitlab.gnome.org/GNOME/gtk",
             "Granite (LGPL-3.0-or-later) https://github.com/elementary/granite",
-            _("Icônes elementary, pour l'icône de l'app (GPL-3.0) https://github.com/elementary/icons"),
+            _("Icônes elementary, pour les icônes de Covalence (GPL-3.0) https://github.com/elementary/icons"),
+            _("Police Inter, Rasmus Andersson (SIL OFL 1.1), texte de l'icône Calendrier https://github.com/rsms/inter"),
+            _("LocalSend, protocole v2, pour les fichiers https://github.com/localsend/protocol"),
+            _("UxPlay (GPL-3.0), pour la recopie de l'écran https://github.com/FDH2/UxPlay"),
+            _("libimobiledevice et ifuse (LGPL-2.1), pour l'import des photos par USB https://github.com/libimobiledevice/libimobiledevice"),
+            _("libheif (LGPL-3.0), pour les photos HEIC https://github.com/strukturag/libheif"),
             "Vala (LGPL-2.1-or-later) https://gitlab.gnome.org/GNOME/vala",
             "PyGObject (LGPL-2.1-or-later) https://gitlab.gnome.org/GNOME/pygobject"
         });

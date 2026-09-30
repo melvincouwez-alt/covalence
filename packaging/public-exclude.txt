@@ -4,3 +4,4 @@ docs/dossier-de-conception.md
 traces/
 prototypes/__pycache__/
 prototypes/*.log
+data/icon-proposals

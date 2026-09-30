@@ -52,6 +52,7 @@ class Calls:
         self.on_started = None  # callable(path) when a call starts ringing out or is answered
         self.on_show = None  # callable() to bring the call window up
         self.ringer = None  # sounds.Sounds: the ringtone chosen in Réglages
+        self.quiet = lambda: False  # callable() -> True: no ring, popup or audio taken on this PC
         self.started = {}  # call path -> monotonic time it became active
         self.transport = {}  # gateway path -> {"State", "RejectSCO"}
         # org.pipewire.Telephony first shipped in PipeWire 1.4;
@@ -153,6 +154,10 @@ class Calls:
     def _add(self, path, interfaces):
         if TRANSPORT in interfaces:
             self.transport[path] = dict(interfaces[TRANSPORT])
+            if self.quiet() and self.owner:
+                # Quiet mode: leave the call audio on the iPhone (another app, e.g. Teams, owns it here).
+                call_async(self.session, self.owner, path, "org.freedesktop.DBus.Properties", "Set",
+                           GLib.Variant("(ssv)", (TRANSPORT, "RejectSCO", GLib.Variant("b", True))))
         if GATEWAY in interfaces and path not in self.gateways:
             self.gateways[path] = interfaces[GATEWAY].get("Address", "")
             log("appels : passerelle mains libres de l'iPhone disponible")
@@ -245,6 +250,10 @@ class Calls:
         if state not in STATE_LABELS:
             self._call_gone(path, keep_record=True)
             return
+        if self.quiet() and state in ("incoming", "waiting"):
+            self.notifier.close(self.notifications.pop(path, 0))
+            self._update_ring()
+            return
         summary = f"{_(STATE_LABELS[state])} · {self._caller(props)}"
         body = _("Sur {device}").format(device=self.device_name)
         if state in ("incoming", "waiting"):
@@ -271,6 +280,9 @@ class Calls:
         iPhone already rings in-band: its ringtone then comes over the hands-free audio."""
         if self.ringer is None:
             return
+        if self.quiet():
+            self.ringer.stop_ring()
+            return
         incoming = any(c.get("State") == "incoming" for c in self.calls.values())
         in_band = any(t.get("State") == "active" for t in self.transport.values())
         if incoming and not in_band:
@@ -296,11 +308,24 @@ class Calls:
         if state in ("active", "dialing", "alerting") and self.on_started:
             self.on_started(path)
 
+    def _log_audio_graph(self):
+        """Journal aid: which nodes carry the call audio once the SCO link is up."""
+        try:
+            out = GLib.spawn_command_line_sync("wpctl status")[1].decode("utf-8", "replace")
+            lines = [l.strip(" │├└─") for l in out.splitlines()
+                     if "bluez" in l.lower() or "iphone" in l.lower() or "*" in l.split("[")[0]]
+            log("appels : graphe audio : " + " | ".join(l for l in lines if l)[:600])
+        except GLib.Error as error:
+            log(f"appels : graphe audio illisible ({error.message})")
+        return False
+
     def _on_transport_changed(self, _conn, _sender, path, _iface, _signal, params):
         _interface, changed, _invalid = params.unpack()
         self.transport.setdefault(path, {}).update(changed)
         if "State" in changed:
             log(f"appels : audio {'sur ce PC' if changed['State'] == 'active' else 'hors du PC'}")
+            if changed["State"] == "active":
+                GLib.timeout_add_seconds(2, self._log_audio_graph)
             self._update_ring()
         self._changed()
 

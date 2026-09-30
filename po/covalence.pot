@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: covalence\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-28 12:03+0200\n"
+"POT-Creation-Date: 2026-09-29 20:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -89,8 +89,8 @@ msgid ""
 "rclone, Nick Craig-Wood et contributeurs https://github.com/rclone/rclone"
 msgstr ""
 
-#: src/About.vala:52 src/MainWindow.vala:247 src/SoundsCard.vala:200
-#: src/WhatsNew.vala:62
+#: src/About.vala:52 src/MainWindow.vala:262 src/SoundsCard.vala:200
+#: src/WhatsNew.vala:87
 msgid "Sons"
 msgstr ""
 
@@ -148,11 +148,40 @@ msgstr ""
 
 #: src/About.vala:71
 msgid ""
-"Icônes elementary, pour l'icône de l'app (GPL-3.0) https://github.com/"
+"Icônes elementary, pour les icônes de Covalence (GPL-3.0) https://github.com/"
 "elementary/icons"
 msgstr ""
 
-#: src/AppChoice.vala:24
+#: src/About.vala:72
+msgid ""
+"Police Inter, Rasmus Andersson (SIL OFL 1.1), texte de l'icône Calendrier "
+"https://github.com/rsms/inter"
+msgstr ""
+
+#: src/About.vala:73
+msgid ""
+"LocalSend, protocole v2, pour les fichiers https://github.com/localsend/"
+"protocol"
+msgstr ""
+
+#: src/About.vala:74
+msgid ""
+"UxPlay (GPL-3.0), pour la recopie de l'écran https://github.com/FDH2/UxPlay"
+msgstr ""
+
+#: src/About.vala:75
+msgid ""
+"libimobiledevice et ifuse (LGPL-2.1), pour l'import des photos par USB "
+"https://github.com/libimobiledevice/libimobiledevice"
+msgstr ""
+
+#: src/About.vala:76
+msgid ""
+"libheif (LGPL-3.0), pour les photos HEIC https://github.com/strukturag/"
+"libheif"
+msgstr ""
+
+#: src/AppChoice.vala:24 src/ServicesView.vala:104 src/WhatsNew.vala:19
 msgid "Agenda"
 msgstr ""
 
@@ -164,8 +193,8 @@ msgstr ""
 msgid "Calendrier (elementary)"
 msgstr ""
 
-#: src/AppChoice.vala:30 src/AppWindow.vala:38 src/ContactsView.vala:389
-#: src/MainWindow.vala:82 src/MainWindow.vala:94 src/MainWindow.vala:198
+#: src/AppChoice.vala:30 src/AppWindow.vala:37 src/ContactsView.vala:393
+#: src/MainWindow.vala:88 src/MainWindow.vala:100 src/MainWindow.vala:212
 #: src/Onboarding.vala:301
 msgid "Contacts"
 msgstr ""
@@ -178,10 +207,10 @@ msgstr ""
 msgid "Contacts (elementary)"
 msgstr ""
 
-#: src/AppChoice.vala:174 src/MainWindow.vala:210 src/MainWindow.vala:212
-#: src/PhoneGuide.vala:259 src/ServicesView.vala:53 src/ServicesView.vala:75
-#: src/ServicesView.vala:245 src/ServicesView.vala:346
-#: covalenced/messages.py:1105 covalenced/messages.py:1272
+#: src/AppChoice.vala:174 src/MainWindow.vala:224 src/MainWindow.vala:226
+#: src/PhoneGuide.vala:259 src/ServicesView.vala:55 src/ServicesView.vala:77
+#: src/ServicesView.vala:252 src/ServicesView.vala:353
+#: covalenced/messages.py:1190 covalenced/messages.py:1367
 #: src/WebShortcuts.vala:135 covalenced/cloudprovider.py:215
 msgid "Ouvrir"
 msgstr ""
@@ -194,11 +223,11 @@ msgstr ""
 msgid "App affichée dans le menu Applications"
 msgstr ""
 
-#: src/AppChoice.vala:180 src/ServicesView.vala:255 src/InstallBox.vala:57
+#: src/AppChoice.vala:180 src/ServicesView.vala:262 src/InstallBox.vala:57
 msgid "Installer…"
 msgstr ""
 
-#: src/AppChoice.vala:181 src/ServicesView.vala:256
+#: src/AppChoice.vala:181 src/ServicesView.vala:263
 msgid "Ouvrir la fiche dans AppCenter"
 msgstr ""
 
@@ -207,30 +236,30 @@ msgid ""
 "Pas encore installée : elle deviendra l'app par défaut une fois installée"
 msgstr ""
 
-#: src/AppWindow.vala:37 src/MainWindow.vala:78 src/MainWindow.vala:92
-#: src/MainWindow.vala:196 src/MainWindow.vala:243 src/MessagesView.vala:614
+#: src/AppWindow.vala:36 src/MainWindow.vala:84 src/MainWindow.vala:98
+#: src/MainWindow.vala:210 src/MainWindow.vala:258 src/MessagesView.vala:614
 #: src/SoundsCard.vala:18 src/Onboarding.vala:297 src/FreeSounds.vala:119
-#: src/FreeSounds.vala:172 indicator/Indicator.vala:320
-#: indicator/Indicator.vala:409
+#: src/FreeSounds.vala:172 indicator/Indicator.vala:322
+#: indicator/Indicator.vala:417
 msgid "Messages"
 msgstr ""
 
-#: src/AppWindow.vala:39 src/ContactEditor.vala:82 src/MainWindow.vala:80
-#: src/MainWindow.vala:93 src/MainWindow.vala:197 src/Onboarding.vala:299
+#: src/AppWindow.vala:38 src/ContactEditor.vala:82 src/MainWindow.vala:86
+#: src/MainWindow.vala:99 src/MainWindow.vala:211 src/Onboarding.vala:299
 #: src/FreeSounds.vala:32
 msgid "Téléphone"
 msgstr ""
 
-#: src/AppWindow.vala:40 src/MainWindow.vala:88 src/MainWindow.vala:100
-#: src/MainWindow.vala:199 src/Onboarding.vala:303
+#: src/AppWindow.vala:39 src/MainWindow.vala:94 src/MainWindow.vala:106
+#: src/MainWindow.vala:213 src/Onboarding.vala:303
 msgid "Écouteurs"
 msgstr ""
 
-#: src/AppWindow.vala:41 src/MainWindow.vala:200
+#: src/AppWindow.vala:40 src/MainWindow.vala:214
 msgid "Recopie"
 msgstr ""
 
-#: src/AppWindow.vala:110
+#: src/AppWindow.vala:109
 msgid "Guide (F1)"
 msgstr ""
 
@@ -297,17 +326,17 @@ msgid "Audio PC"
 msgstr ""
 
 #: src/CallWindow.vala:190 src/CallWindow.vala:200 src/CallWindow.vala:414
-#: src/CallWindow.vala:496 covalenced/calls.py:258 indicator/Indicator.vala:391
+#: src/CallWindow.vala:496 covalenced/calls.py:267 indicator/Indicator.vala:399
 msgid "Raccrocher"
 msgstr ""
 
 #: src/CallWindow.vala:192 src/CallWindow.vala:197 src/CallWindow.vala:496
-#: covalenced/calls.py:251 covalenced/service.py:542 covalenced/files.py:166
+#: covalenced/calls.py:260 covalenced/service.py:567 covalenced/files.py:166
 msgid "Refuser"
 msgstr ""
 
 #: src/CallWindow.vala:194 src/CallWindow.vala:198 src/CallWindow.vala:411
-#: covalenced/calls.py:251
+#: covalenced/calls.py:260
 msgctxt "call"
 msgid "Répondre"
 msgstr ""
@@ -326,7 +355,7 @@ msgid "Aucun appel"
 msgstr ""
 
 #: src/CallWindow.vala:327 src/CallWindow.vala:503 covalenced/calls.py:29
-#: covalenced/sounds.py:35 indicator/Indicator.vala:234
+#: covalenced/sounds.py:35 indicator/Indicator.vala:236
 msgid "Appel entrant"
 msgstr ""
 
@@ -338,7 +367,7 @@ msgstr ""
 msgid "Appel en cours de numérotation…"
 msgstr ""
 
-#: src/CallWindow.vala:338 src/CallWindow.vala:504 src/MainWindow.vala:809
+#: src/CallWindow.vala:338 src/CallWindow.vala:504 src/MainWindow.vala:864
 msgid "En attente"
 msgstr ""
 
@@ -377,31 +406,31 @@ msgstr ""
 msgid "Composer un numéro"
 msgstr ""
 
-#: src/CallsView.vala:116
+#: src/CallsView.vala:120
 msgid "Manqué"
 msgstr ""
 
-#: src/CallsView.vala:116
+#: src/CallsView.vala:120
 msgid "Sortant"
 msgstr ""
 
-#: src/CallsView.vala:116
+#: src/CallsView.vala:120
 msgid "Entrant"
 msgstr ""
 
-#: src/CallsView.vala:143 src/ContactsView.vala:548
+#: src/CallsView.vala:147 src/ContactsView.vala:552
 msgid "Envoyer un message"
 msgstr ""
 
-#: src/CallsView.vala:191
+#: src/CallsView.vala:195
 msgid "Appel impossible : l'iPhone n'est pas relié en mains libres"
 msgstr ""
 
-#: src/CallsView.vala:204
+#: src/CallsView.vala:208
 msgid "Appeler depuis l'iPhone"
 msgstr ""
 
-#: src/CallsView.vala:206
+#: src/CallsView.vala:210
 msgid "Appel indisponible : l'iPhone n'est pas relié en mains libres"
 msgstr ""
 
@@ -429,7 +458,7 @@ msgstr ""
 msgid "PackageKit a signalé un échec."
 msgstr ""
 
-#: src/Components.vala:168 covalenced/updates.py:251
+#: src/Components.vala:168 covalenced/updates.py:293
 msgid "Installer"
 msgstr ""
 
@@ -529,7 +558,7 @@ msgstr ""
 msgid "autre"
 msgstr ""
 
-#: src/ContactEditor.vala:31 src/ContactsView.vala:335
+#: src/ContactEditor.vala:31 src/ContactsView.vala:339
 msgid "Nouveau contact"
 msgstr ""
 
@@ -582,7 +611,7 @@ msgid "Enregistrer"
 msgstr ""
 
 #: src/ContactEditor.vala:105 src/ContactEditor.vala:266
-#: src/MessagesView.vala:1176 src/MessagesView.vala:1577
+#: src/MessagesView.vala:1190 src/MessagesView.vala:1591
 msgid "Supprimer"
 msgstr ""
 
@@ -651,73 +680,73 @@ msgid ""
 "pour ce PC dans les réglages Bluetooth de l'iPhone."
 msgstr ""
 
-#: src/ContactsView.vala:340 src/ContactsView.vala:420
+#: src/ContactsView.vala:344 src/ContactsView.vala:424
 msgid "Gestion des fiches de contact"
 msgstr ""
 
-#: src/ContactsView.vala:364
+#: src/ContactsView.vala:368
 msgid "Modifier"
 msgstr ""
 
-#: src/ContactsView.vala:390
+#: src/ContactsView.vala:394
 msgid "Choisissez un contact."
 msgstr ""
 
-#: src/ContactsView.vala:432
+#: src/ContactsView.vala:436
 msgid "Lecture via Bluetooth et cache local"
 msgstr ""
 
-#: src/ContactsView.vala:433
+#: src/ContactsView.vala:437
 msgid ""
 "Aucune modification possible. Simple : repose seulement sur la connexion "
 "avec votre iPhone."
 msgstr ""
 
-#: src/ContactsView.vala:434
+#: src/ContactsView.vala:438
 msgid "Gestion via iCloud"
 msgstr ""
 
-#: src/ContactsView.vala:435
+#: src/ContactsView.vala:439
 msgid ""
 "Créer, modifier et supprimer des fiches. Nécessite le compte iCloud "
 "(Services Apple) et Internet ; iCloud transmet les changements à l'iPhone."
 msgstr ""
 
-#: src/ContactsView.vala:475
+#: src/ContactsView.vala:479
 msgid "Contacts iCloud, modifiables"
 msgstr ""
 
-#: src/ContactsView.vala:478
+#: src/ContactsView.vala:482
 msgid "Ouverture des contacts iCloud…"
 msgstr ""
 
-#: src/ContactsView.vala:481
+#: src/ContactsView.vala:485
 msgid "Compte iCloud non connecté (Services Apple)"
 msgstr ""
 
-#: src/ContactsView.vala:484
+#: src/ContactsView.vala:488
 msgid "Composant EBook manquant (gir1.2-ebook-1.2)"
 msgstr ""
 
-#: src/ContactsView.vala:487
+#: src/ContactsView.vala:491
 msgid "Contacts iCloud momentanément illisibles"
 msgstr ""
 
-#: src/ContactsView.vala:490
+#: src/ContactsView.vala:494
 msgid "Contacts de l'iPhone, lecture seule"
 msgstr ""
 
-#: src/ContactsView.vala:499
+#: src/ContactsView.vala:503
 msgid "Les changements passent par iCloud, qui les transmet à l'iPhone."
 msgstr ""
 
-#: src/ContactsView.vala:500
+#: src/ContactsView.vala:504
 msgid ""
 "Contacts lus sur l'iPhone en Bluetooth, en lecture seule. Pour les modifier, "
 "choisissez « Gestion via iCloud » dans le menu de la liste."
 msgstr ""
 
-#: src/ContactsView.vala:526
+#: src/ContactsView.vala:530
 msgid "téléphone"
 msgstr ""
 
@@ -801,11 +830,11 @@ msgstr ""
 msgid "Options d'iCloud Drive"
 msgstr ""
 
-#: src/DriveOptions.vala:53 src/ServicesView.vala:91
+#: src/DriveOptions.vala:53 src/ServicesView.vala:93
 msgid "iCloud Photos"
 msgstr ""
 
-#: src/DriveOptions.vala:53 src/ServicesView.vala:69
+#: src/DriveOptions.vala:53 src/ServicesView.vala:71
 msgid "iCloud Drive"
 msgstr ""
 
@@ -915,8 +944,8 @@ msgstr ""
 msgid "Emplacement d'%s"
 msgstr ""
 
-#: src/HeadphonesView.vala:19 src/OneTimeCodes.vala:75
-#: src/ServicesView.vala:166 src/FilesView.vala:145
+#: src/HeadphonesView.vala:19 src/OneTimeCodes.vala:77
+#: src/ServicesView.vala:173 src/FilesView.vala:145
 msgid "Désactivé"
 msgstr ""
 
@@ -1022,8 +1051,8 @@ msgid ""
 "documenté par le projet LibrePods, merci à ses contributeurs."
 msgstr ""
 
-#: src/HeadphonesView.vala:261 src/MainWindow.vala:90 src/MainWindow.vala:102
-#: src/MainWindow.vala:191 covalenced/updates.py:249
+#: src/HeadphonesView.vala:261 src/MainWindow.vala:96 src/MainWindow.vala:110
+#: src/MainWindow.vala:205 covalenced/updates.py:291
 msgid "Réglages"
 msgstr ""
 
@@ -1084,7 +1113,7 @@ msgstr ""
 msgid "en charge"
 msgstr ""
 
-#: src/Language.vala:147 src/MainWindow.vala:249
+#: src/Language.vala:147 src/MainWindow.vala:264
 msgid "Langue"
 msgstr ""
 
@@ -1098,488 +1127,499 @@ msgid ""
 "a son propre bouton FR / EN."
 msgstr ""
 
-#: src/MainWindow.vala:40 src/MainWindow.vala:144 src/MainWindow.vala:526
+#: src/MainWindow.vala:40 src/MainWindow.vala:152 src/MainWindow.vala:581
 msgid "Covalence"
 msgstr ""
 
-#: src/MainWindow.vala:83 src/MainWindow.vala:95 src/MainWindow.vala:576
+#: src/MainWindow.vala:89 src/MainWindow.vala:101 src/MainWindow.vala:631
 msgid "Notifications"
 msgstr ""
 
-#: src/MainWindow.vala:84 src/MainWindow.vala:96 src/NowPlayingView.vala:230
+#: src/MainWindow.vala:90 src/MainWindow.vala:102 src/NowPlayingView.vala:230
 #: src/NowPlayingView.vala:398
 msgid "Lecture en cours"
 msgstr ""
 
-#: src/MainWindow.vala:85 src/MainWindow.vala:97 src/ServicesView.vala:215
+#: src/MainWindow.vala:91 src/MainWindow.vala:103 src/ServicesView.vala:222
 #: src/FilesView.vala:33
 msgid "Fichiers"
 msgstr ""
 
-#: src/MainWindow.vala:86 src/MainWindow.vala:98 src/ServicesView.vala:216
+#: src/MainWindow.vala:92 src/MainWindow.vala:104 src/ServicesView.vala:223
 #: src/PhotosView.vala:35 src/WebShortcuts.vala:32
 msgid "Photos"
 msgstr ""
 
-#: src/MainWindow.vala:87 src/MainWindow.vala:99 src/MirrorView.vala:58
+#: src/MainWindow.vala:93 src/MainWindow.vala:105 src/MirrorView.vala:58
 msgid "Recopie d'écran"
 msgstr ""
 
-#: src/MainWindow.vala:89 src/MainWindow.vala:101 src/Onboarding.vala:45
-#: src/Onboarding.vala:241 src/ServicesView.vala:33
+#: src/MainWindow.vala:95 src/MainWindow.vala:107 src/Onboarding.vala:45
+#: src/Onboarding.vala:241 src/ServicesView.vala:35
 msgid "Services Apple"
 msgstr ""
 
-#: src/MainWindow.vala:91
+#: src/MainWindow.vala:97
 msgid "Aperçu"
 msgstr ""
 
-#: src/MainWindow.vala:100
+#: src/MainWindow.vala:106
 msgid "Accessoires"
 msgstr ""
 
-#: src/MainWindow.vala:101
+#: src/MainWindow.vala:107
 msgid "Compte Apple"
 msgstr ""
 
-#: src/MainWindow.vala:133
+#: src/MainWindow.vala:108 src/MainWindow.vala:225
+msgid "Guide"
+msgstr ""
+
+#: src/MainWindow.vala:141
 msgid "Le service Covalence ne répond pas"
 msgstr ""
 
-#: src/MainWindow.vala:134
+#: src/MainWindow.vala:142
 msgid ""
 "Démarrez-le avec « systemctl --user start covalenced », ou consultez son "
 "journal avec « journalctl --user -u covalenced »."
 msgstr ""
 
-#: src/MainWindow.vala:138 src/MessagesView.vala:397 src/MessagesView.vala:1573
+#: src/MainWindow.vala:146 src/MessagesView.vala:397 src/MessagesView.vala:1587
 msgid "Réessayer"
 msgstr ""
 
-#: src/MainWindow.vala:139
+#: src/MainWindow.vala:147
 msgid "Relancer la connexion au service"
 msgstr ""
 
-#: src/MainWindow.vala:196
+#: src/MainWindow.vala:210
 msgid "Vos conversations dans leur propre fenêtre"
 msgstr ""
 
-#: src/MainWindow.vala:197
+#: src/MainWindow.vala:211
 msgid "Clavier, journal et appel en cours"
 msgstr ""
 
-#: src/MainWindow.vala:198
+#: src/MainWindow.vala:212
 msgid "Le répertoire de l'iPhone"
 msgstr ""
 
-#: src/MainWindow.vala:199
+#: src/MainWindow.vala:213
 msgid "Batterie et réglages de vos AirPods"
 msgstr ""
 
-#: src/MainWindow.vala:200
+#: src/MainWindow.vala:214
 msgid "L'écran de l'iPhone et son contrôle depuis le PC"
 msgstr ""
 
-#: src/MainWindow.vala:202
+#: src/MainWindow.vala:216
 msgid ""
 "Chaque app a sa propre fenêtre et son icône. L'interrupteur l'affiche ou non "
 "dans le menu Applications."
 msgstr ""
 
-#: src/MainWindow.vala:209
+#: src/MainWindow.vala:223
 msgid "Configuration initiale"
 msgstr ""
 
-#: src/MainWindow.vala:210
+#: src/MainWindow.vala:224
 msgid "Relancer l'assistant pas à pas"
 msgstr ""
 
-#: src/MainWindow.vala:211
-msgid "Guide"
-msgstr ""
-
-#: src/MainWindow.vala:211
+#: src/MainWindow.vala:225
 msgid "Pas à pas, vie privée et dépannage (F1)"
 msgstr ""
 
-#: src/MainWindow.vala:213
+#: src/MainWindow.vala:227
 msgid "Nouveautés"
 msgstr ""
 
-#: src/MainWindow.vala:214
+#: src/MainWindow.vala:228
 #, c-format
 msgid "Ce qui change dans la version %s"
 msgstr ""
 
-#: src/MainWindow.vala:215 src/MainWindow.vala:218 covalenced/calls.py:258
+#: src/MainWindow.vala:229 src/MainWindow.vala:232 covalenced/calls.py:267
 msgid "Afficher"
 msgstr ""
 
-#: src/MainWindow.vala:216
+#: src/MainWindow.vala:230
 msgid "À propos de Covalence"
 msgstr ""
 
-#: src/MainWindow.vala:217
+#: src/MainWindow.vala:231
 #, c-format
 msgid "Version %s, licence, remerciements"
 msgstr ""
 
-#: src/MainWindow.vala:225
+#: src/MainWindow.vala:239
 msgid ""
 "Ces fonctionnalités reposent sur des comportements de l'iPhone pas encore "
 "vérifiés. Elles peuvent ne rien faire. Désactivées par défaut."
 msgstr ""
 
-#: src/MainWindow.vala:237 src/WhatsNew.vala:27 src/HotspotProximity.vala:33
+#: src/MainWindow.vala:251 src/MainWindow.vala:633 src/SoundsCard.vala:22
+#: src/FreeSounds.vala:121 src/FreeSounds.vala:174
+msgid "Appels"
+msgstr ""
+
+#: src/MainWindow.vala:252 src/WhatsNew.vala:52 src/HotspotProximity.vala:33
 msgid "Internet via l'iPhone"
 msgstr ""
 
-#: src/MainWindow.vala:238 src/WhatsNew.vala:41
+#: src/MainWindow.vala:253 src/WhatsNew.vala:66
 msgid "Verrouillage de proximité"
 msgstr ""
 
-#: src/MainWindow.vala:239 covalenced/sounds.py:43
+#: src/MainWindow.vala:254 covalenced/sounds.py:43
 msgid "Connexion"
 msgstr ""
 
-#: src/MainWindow.vala:241 src/NowPlayingView.vala:56
+#: src/MainWindow.vala:256 src/NowPlayingView.vala:56
 #: src/NowPlayingView.vala:111 src/NowPlayingView.vala:266
-#: src/NowPlayingView.vala:433 indicator/Indicator.vala:316
-#: indicator/Indicator.vala:375
+#: src/NowPlayingView.vala:433 indicator/Indicator.vala:318
+#: indicator/Indicator.vala:383
 msgid "Lecture"
 msgstr ""
 
-#: src/MainWindow.vala:242 src/WhatsNew.vala:54
+#: src/MainWindow.vala:257 src/WhatsNew.vala:79
 msgid "Codes SMS"
 msgstr ""
 
-#: src/MainWindow.vala:245
+#: src/MainWindow.vala:260
 msgid "Choix des sons"
 msgstr ""
 
-#: src/MainWindow.vala:246
+#: src/MainWindow.vala:261
 msgid "Sons de Covalence"
 msgstr ""
 
-#: src/MainWindow.vala:250 src/WhatsNew.vala:29
+#: src/MainWindow.vala:265 src/WhatsNew.vala:54
 msgid "Barre du haut"
 msgstr ""
 
-#: src/MainWindow.vala:251 src/Onboarding.vala:306
+#: src/MainWindow.vala:266 src/Onboarding.vala:306
 msgid "Apps séparées"
 msgstr ""
 
-#: src/MainWindow.vala:252 src/MirrorView.vala:83
+#: src/MainWindow.vala:267 src/MirrorView.vala:83
 msgid "Affichage"
 msgstr ""
 
-#: src/MainWindow.vala:256 src/WhatsNew.vala:65
+#: src/MainWindow.vala:271 src/WhatsNew.vala:90
 msgid "Mises à jour"
 msgstr ""
 
-#: src/MainWindow.vala:258 src/WhatsNew.vala:67
+#: src/MainWindow.vala:273 src/WhatsNew.vala:92
 msgid "Fonctionnalités expérimentales"
 msgstr ""
 
-#: src/MainWindow.vala:259 src/MirrorView.vala:60
+#: src/MainWindow.vala:274 src/MirrorView.vala:60
 msgid "Expérimental"
 msgstr ""
 
-#: src/MainWindow.vala:261
+#: src/MainWindow.vala:276
 msgid "Assistance"
 msgstr ""
 
-#: src/MainWindow.vala:262
+#: src/MainWindow.vala:277
 msgid "À propos"
 msgstr ""
 
-#: src/MainWindow.vala:346
+#: src/MainWindow.vala:361
+msgid "Appels de l'iPhone en silence"
+msgstr ""
+
+#: src/MainWindow.vala:363
+msgid ""
+"Ni sonnerie, ni notification, ni fenêtre, et le son de l'appel reste sur "
+"l'iPhone. Utile quand Teams sonne déjà sur l'ordinateur : l'appel reste "
+"visible dans Téléphone."
+msgstr ""
+
+#: src/MainWindow.vala:401
 msgid "Toujours lire les messages en entier"
 msgstr ""
 
-#: src/MainWindow.vala:348
+#: src/MainWindow.vala:403
 msgid ""
 "Récupère tout de suite le texte complet des messages de plus de 120 "
 "caractères. Ils passent alors en lu sur l'iPhone."
 msgstr ""
 
-#: src/MainWindow.vala:368
+#: src/MainWindow.vala:423
 msgid "Toujours lire les messages en entier ?"
 msgstr ""
 
-#: src/MainWindow.vala:369
+#: src/MainWindow.vala:424
 msgid ""
 "Pour avoir le texte complet d'un message non lu, Covalence doit le "
 "télécharger : il passera en lu sur l'iPhone dès son arrivée, même si vous ne "
 "l'avez pas ouvert."
 msgstr ""
 
-#: src/MainWindow.vala:376
+#: src/MainWindow.vala:431
 msgid "Activer"
 msgstr ""
 
-#: src/MainWindow.vala:416 src/WhatsNew.vala:47
+#: src/MainWindow.vala:471 src/WhatsNew.vala:72
 msgid "Émojis automatiques"
 msgstr ""
 
-#: src/MainWindow.vala:418
+#: src/MainWindow.vala:473
 msgid ""
 "« :) » devient 🙂, « :D » devient 😃, « <3 » devient ❤️… Retour arrière "
 "annule."
 msgstr ""
 
-#: src/MainWindow.vala:450
+#: src/MainWindow.vala:505
 msgid "Historique étendu des messages"
 msgstr ""
 
-#: src/MainWindow.vala:451
+#: src/MainWindow.vala:506
 msgid ""
 "Demande à l'iPhone les messages au-delà de la liste habituelle (pages "
 "suivantes, un an en arrière)"
 msgstr ""
 
-#: src/MainWindow.vala:453
+#: src/MainWindow.vala:508
 msgid "Marquer comme lu sur l'iPhone"
 msgstr ""
 
-#: src/MainWindow.vala:454
+#: src/MainWindow.vala:509
 msgid "Ouvrir une conversation dans Covalence la marque lue sur l'iPhone"
 msgstr ""
 
-#: src/MainWindow.vala:455
+#: src/MainWindow.vala:510
 msgid "Actions des notifications"
 msgstr ""
 
-#: src/MainWindow.vala:456
+#: src/MainWindow.vala:511
 msgid "Boutons de l'iPhone (Marquer comme lu, Supprimer…) dans Notifications"
 msgstr ""
 
-#: src/MainWindow.vala:457
+#: src/MainWindow.vala:512
 msgid "Favoris de l'iPhone"
 msgstr ""
 
-#: src/MainWindow.vala:458
+#: src/MainWindow.vala:513
 msgid "Étoile sur les contacts favoris, lus à la prochaine synchronisation"
 msgstr ""
 
-#: src/MainWindow.vala:459 src/MirrorView.vala:96
+#: src/MainWindow.vala:514 src/MirrorView.vala:96
 msgid "Contrôler l'iPhone depuis le PC"
 msgstr ""
 
-#: src/MainWindow.vala:460
+#: src/MainWindow.vala:515
 msgid "Le PC comme souris et clavier Bluetooth de l'iPhone (app Recopie)"
 msgstr ""
 
-#: src/MainWindow.vala:526
+#: src/MainWindow.vala:581
 msgid "Configurer Covalence"
 msgstr ""
 
-#: src/MainWindow.vala:553 src/MainWindow.vala:756
+#: src/MainWindow.vala:608 src/MainWindow.vala:811
 msgid "Appairer un iPhone…"
 msgstr ""
 
-#: src/MainWindow.vala:555
+#: src/MainWindow.vala:610
 msgid "Reconnecter"
 msgstr ""
 
-#: src/MainWindow.vala:557 src/MainWindow.vala:632
+#: src/MainWindow.vala:612 src/MainWindow.vala:687
 msgid "Oublier"
 msgstr ""
 
-#: src/MainWindow.vala:563
+#: src/MainWindow.vala:618
 msgid "Comment relier l'iPhone"
 msgstr ""
 
-#: src/MainWindow.vala:577
+#: src/MainWindow.vala:632
 msgid "Musique de l'iPhone"
 msgstr ""
 
-#: src/MainWindow.vala:578 src/SoundsCard.vala:22 src/FreeSounds.vala:121
-#: src/FreeSounds.vala:174
-msgid "Appels"
-msgstr ""
-
-#: src/MainWindow.vala:579
+#: src/MainWindow.vala:634
 msgid "Messages et contacts"
 msgstr ""
 
-#: src/MainWindow.vala:580
+#: src/MainWindow.vala:635
 msgid "Batterie"
 msgstr ""
 
-#: src/MainWindow.vala:591 src/ServicesView.vala:106
+#: src/MainWindow.vala:646 src/ServicesView.vala:113
 msgid "Guide de connexion"
 msgstr ""
 
-#: src/MainWindow.vala:594
+#: src/MainWindow.vala:649
 msgid ""
 "Tout passe directement entre ce PC et l'iPhone, en Bluetooth. Les journaux "
 "de Covalence ne contiennent jamais le texte des notifications ni des "
 "messages."
 msgstr ""
 
-#: src/MainWindow.vala:609
+#: src/MainWindow.vala:664
 msgid "Fonctions"
 msgstr ""
 
-#: src/MainWindow.vala:611
+#: src/MainWindow.vala:666
 msgid "Internet"
 msgstr ""
 
-#: src/MainWindow.vala:625
+#: src/MainWindow.vala:680
 msgid "Oublier cet iPhone ?"
 msgstr ""
 
-#: src/MainWindow.vala:626
+#: src/MainWindow.vala:681
 msgid ""
 "Ce PC efface l'appairage. Pour un nouveau départ propre, oubliez aussi ce PC "
 "sur l'iPhone (Réglages › Bluetooth › ⓘ › Oublier cet appareil), puis "
 "appairez à nouveau."
 msgstr ""
 
-#: src/MainWindow.vala:655
+#: src/MainWindow.vala:710
 msgid "Son de l'iPhone"
 msgstr ""
 
-#: src/MainWindow.vala:656 src/MainWindow.vala:674
+#: src/MainWindow.vala:711 src/MainWindow.vala:729
 msgid "Sortie par défaut"
 msgstr ""
 
-#: src/MainWindow.vala:658
+#: src/MainWindow.vala:713
 msgid "Sortie du PC pour le son de l'iPhone"
 msgstr ""
 
-#: src/MainWindow.vala:702
+#: src/MainWindow.vala:757
 msgid "Refusé : vidéos et musique restent sur l'iPhone"
 msgstr ""
 
-#: src/MainWindow.vala:704
+#: src/MainWindow.vala:759
 msgid "En lecture sur ce PC"
 msgstr ""
 
-#: src/MainWindow.vala:706
+#: src/MainWindow.vala:761
 msgid ""
 "Choisissez ce PC dans le bouton AirPlay de l'iPhone pour y envoyer le son"
 msgstr ""
 
-#: src/MainWindow.vala:708 src/MainWindow.vala:767 src/MainWindow.vala:785
-#: src/MainWindow.vala:809
+#: src/MainWindow.vala:763 src/MainWindow.vala:822 src/MainWindow.vala:840
+#: src/MainWindow.vala:864
 msgid "iPhone absent"
 msgstr ""
 
-#: src/MainWindow.vala:741
+#: src/MainWindow.vala:796
 msgid "Aucun iPhone"
 msgstr ""
 
-#: src/MainWindow.vala:743
+#: src/MainWindow.vala:798
 msgid "Bluetooth indisponible"
 msgstr ""
 
-#: src/MainWindow.vala:745
+#: src/MainWindow.vala:800
 msgid ""
 "L'iPhone ne reconnaît plus ce PC : son appairage a été supprimé sur "
 "l'iPhone. Appairez à nouveau."
 msgstr ""
 
-#: src/MainWindow.vala:748
+#: src/MainWindow.vala:803
 msgid "Appairez votre iPhone pour recevoir ses notifications et ses appels."
 msgstr ""
 
-#: src/MainWindow.vala:750
+#: src/MainWindow.vala:805
 #, c-format
 msgid "Connecté · batterie %d %%"
 msgstr ""
 
-#: src/MainWindow.vala:750
+#: src/MainWindow.vala:805
 msgid "Connecté"
 msgstr ""
 
-#: src/MainWindow.vala:752
+#: src/MainWindow.vala:807
 msgid "Hors de portée ou Bluetooth coupé sur l'iPhone"
 msgstr ""
 
-#: src/MainWindow.vala:755
+#: src/MainWindow.vala:810
 msgid "Appairer à nouveau…"
 msgstr ""
 
-#: src/MainWindow.vala:756 src/PhoneGuide.vala:165
+#: src/MainWindow.vala:811 src/PhoneGuide.vala:165
 msgid "Appairer un autre iPhone…"
 msgstr ""
 
-#: src/MainWindow.vala:766
+#: src/MainWindow.vala:821
 msgid ""
 "En attente : l'iPhone doit se connecter à « Covalence » en Bluetooth basse "
 "consommation"
 msgstr ""
 
-#: src/MainWindow.vala:770
+#: src/MainWindow.vala:825
 msgid "Désactivées"
 msgstr ""
 
-#: src/MainWindow.vala:771
+#: src/MainWindow.vala:826
 msgid "Reçues de l'iPhone, avec leurs actions"
 msgstr ""
 
-#: src/MainWindow.vala:772 src/MainWindow.vala:777
+#: src/MainWindow.vala:827 src/MainWindow.vala:832
 msgid "iPhone non appairé"
 msgstr ""
 
-#: src/MainWindow.vala:775
+#: src/MainWindow.vala:830
 msgid "Désactivée"
 msgstr ""
 
-#: src/MainWindow.vala:776
+#: src/MainWindow.vala:831
 msgid "Pilotable depuis Lecture en cours et l'indicateur de son"
 msgstr ""
 
-#: src/MainWindow.vala:782 src/MainWindow.vala:812
+#: src/MainWindow.vala:837 src/MainWindow.vala:867
 msgid "Désactivés"
 msgstr ""
 
-#: src/MainWindow.vala:783
+#: src/MainWindow.vala:838
 msgid "Prêt : les appels entrants s'affichent ici"
 msgstr ""
 
-#: src/MainWindow.vala:784
+#: src/MainWindow.vala:839
 msgid "Profil mains libres non connecté"
 msgstr ""
 
-#: src/MainWindow.vala:792
+#: src/MainWindow.vala:847
 msgid "Lecture depuis l'iPhone ; réponse sur l'iPhone seulement"
 msgstr ""
 
-#: src/MainWindow.vala:793
+#: src/MainWindow.vala:848
 msgid "Messages de l'iPhone lus en Bluetooth"
 msgstr ""
 
-#: src/MainWindow.vala:796
+#: src/MainWindow.vala:851
 msgid ""
 "Refusé : activez « Afficher les notifications » pour ce PC dans les réglages "
 "Bluetooth de l'iPhone"
 msgstr ""
 
-#: src/MainWindow.vala:800
+#: src/MainWindow.vala:855
 msgid "Paquet bluez-obexd manquant"
 msgstr ""
 
-#: src/MainWindow.vala:803
+#: src/MainWindow.vala:858
 msgid "Connexion…"
 msgstr ""
 
-#: src/MainWindow.vala:806
+#: src/MainWindow.vala:861
 msgid "Messages momentanément illisibles"
 msgstr ""
 
-#: src/MainWindow.vala:815
+#: src/MainWindow.vala:870
 msgid "Alertes désactivées"
 msgstr ""
 
-#: src/MainWindow.vala:816
+#: src/MainWindow.vala:871
 #, c-format
 msgid "%d %% · alerte à 20 %% et 10 %%"
 msgstr ""
 
-#: src/MainWindow.vala:817
+#: src/MainWindow.vala:872
 msgid "Niveau inconnu"
 msgstr ""
 
@@ -1629,7 +1669,7 @@ msgstr ""
 msgid "Les messages de l'iPhone apparaîtront ici."
 msgstr ""
 
-#: src/MessagesView.vala:442 src/MessagesView.vala:1012
+#: src/MessagesView.vala:442 src/MessagesView.vala:1019
 msgid "Nouveau message"
 msgstr ""
 
@@ -1687,238 +1727,238 @@ msgid ""
 "pendant 10 minutes."
 msgstr ""
 
-#: src/MessagesView.vala:815
+#: src/MessagesView.vala:822
 #, c-format
 msgid "Aucun résultat pour « %s »"
 msgstr ""
 
-#: src/MessagesView.vala:897
+#: src/MessagesView.vala:904
 msgid "Désépingler"
 msgstr ""
 
-#: src/MessagesView.vala:897
+#: src/MessagesView.vala:904
 msgid "Épingler"
 msgstr ""
 
-#: src/MessagesView.vala:904
+#: src/MessagesView.vala:911
 msgid "Marquer comme lu"
 msgstr ""
 
-#: src/MessagesView.vala:904
+#: src/MessagesView.vala:911
 msgid "Marquer comme non lu"
 msgstr ""
 
-#: src/MessagesView.vala:905
+#: src/MessagesView.vala:912
 msgid "Dans Covalence seulement : l'iPhone n'est pas modifié"
 msgstr ""
 
-#: src/MessagesView.vala:925
+#: src/MessagesView.vala:932
 msgid "Supprimer la conversation…"
 msgstr ""
 
-#: src/MessagesView.vala:1011
+#: src/MessagesView.vala:1018
 msgid "Conversation de groupe"
 msgstr ""
 
-#: src/MessagesView.vala:1025
+#: src/MessagesView.vala:1032
 msgid "Adresse non reconnue"
 msgstr ""
 
-#: src/MessagesView.vala:1165
+#: src/MessagesView.vala:1179
 msgid "Supprimé de Covalence, toujours sur l'iPhone"
 msgstr ""
 
-#: src/MessagesView.vala:1174
+#: src/MessagesView.vala:1188
 msgid "Ne plus m'avertir"
 msgstr ""
 
-#: src/MessagesView.vala:1192
+#: src/MessagesView.vala:1206
 msgid "Supprimer ce message de Covalence ?"
 msgstr ""
 
-#: src/MessagesView.vala:1193
+#: src/MessagesView.vala:1207
 msgid ""
 "Il reste sur l'iPhone : iOS ne permet pas de supprimer un message par "
 "Bluetooth. Il ne réapparaîtra pas dans Covalence."
 msgstr ""
 
-#: src/MessagesView.vala:1199
+#: src/MessagesView.vala:1213
 #, c-format
 msgid "Supprimer la conversation avec %s ?"
 msgstr ""
 
-#: src/MessagesView.vala:1200
+#: src/MessagesView.vala:1214
 msgid ""
 "Les messages restent sur l'iPhone et ne réapparaîtront pas dans Covalence. "
 "Les prochains messages s'afficheront normalement."
 msgstr ""
 
-#: src/MessagesView.vala:1229
+#: src/MessagesView.vala:1243
 #, c-format
 msgid "%s : %s (envoi…)"
 msgstr ""
 
-#: src/MessagesView.vala:1230
+#: src/MessagesView.vala:1244
 #, c-format
 msgid "%s : %s"
 msgstr ""
 
-#: src/MessagesView.vala:1317
+#: src/MessagesView.vala:1331
 msgid "Lire le message en entier ?"
 msgstr ""
 
-#: src/MessagesView.vala:1318
+#: src/MessagesView.vala:1332
 msgid ""
 "L'iPhone ne donne que les 120 premiers caractères d'un message non lu. Pour "
 "récupérer la suite, Covalence doit le télécharger : le message passera alors "
 "en lu sur l'iPhone."
 msgstr ""
 
-#: src/MessagesView.vala:1325 src/MessagesView.vala:1369
+#: src/MessagesView.vala:1339 src/MessagesView.vala:1383
 msgid "Ne plus afficher"
 msgstr ""
 
-#: src/MessagesView.vala:1327 src/MessagesView.vala:1348
-#: src/MessagesView.vala:1600
+#: src/MessagesView.vala:1341 src/MessagesView.vala:1362
+#: src/MessagesView.vala:1614
 msgid "Tout lire"
 msgstr ""
 
-#: src/MessagesView.vala:1344
+#: src/MessagesView.vala:1358
 msgid "Récupération…"
 msgstr ""
 
-#: src/MessagesView.vala:1349
+#: src/MessagesView.vala:1363
 msgid "Texte complet indisponible pour l'instant"
 msgstr ""
 
-#: src/MessagesView.vala:1361
+#: src/MessagesView.vala:1375
 msgid "Réagir par SMS ?"
 msgstr ""
 
-#: src/MessagesView.vala:1362
+#: src/MessagesView.vala:1376
 msgid ""
 "Le Bluetooth ne transmet que du texte : la réaction part en SMS, par exemple "
 "« A adoré « à demain » ». Un iPhone récent peut l'afficher comme une "
 "réaction ; d'autres téléphones montreront simplement ce texte."
 msgstr ""
 
-#: src/MessagesView.vala:1371 src/MessagesView.vala:1653
+#: src/MessagesView.vala:1385 src/MessagesView.vala:1667
 #, c-format
 msgid "Réagir %s"
 msgstr ""
 
-#: src/MessagesView.vala:1389
+#: src/MessagesView.vala:1403
 msgid "Réaction non envoyée"
 msgstr ""
 
-#: src/MessagesView.vala:1412
+#: src/MessagesView.vala:1426
 msgid "Synchroniser avec l'iPhone"
 msgstr ""
 
-#: src/MessagesView.vala:1417
+#: src/MessagesView.vala:1431
 msgid "Synchronisation…"
 msgstr ""
 
-#: src/MessagesView.vala:1436
+#: src/MessagesView.vala:1450
 msgid "Synchronisé : aucun nouveau message"
 msgstr ""
 
-#: src/MessagesView.vala:1437
+#: src/MessagesView.vala:1451
 #, c-format
 msgid "Synchronisé : %u nouveau message"
 msgid_plural "Synchronisé : %u nouveaux messages"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/MessagesView.vala:1441
+#: src/MessagesView.vala:1455
 #, c-format
 msgid "Synchronisation impossible : %s"
 msgstr ""
 
-#: src/MessagesView.vala:1476 src/MessagesView.vala:1661
+#: src/MessagesView.vala:1490 src/MessagesView.vala:1675
 msgid "Autre emoji…"
 msgstr ""
 
-#: src/MessagesView.vala:1477
+#: src/MessagesView.vala:1491
 msgid "Réagir"
 msgstr ""
 
-#: src/MessagesView.vala:1479 src/MessagesView.vala:1681
+#: src/MessagesView.vala:1493 src/MessagesView.vala:1695
 msgid "Copier"
 msgstr ""
 
-#: src/MessagesView.vala:1480 src/MessagesView.vala:1690
+#: src/MessagesView.vala:1494 src/MessagesView.vala:1704
 msgid "Supprimer de Covalence…"
 msgstr ""
 
-#: src/MessagesView.vala:1531
+#: src/MessagesView.vala:1545
 msgid ""
 "\n"
 "Début du message : le texte complet sera récupéré une fois le message lu sur "
 "l'iPhone."
 msgstr ""
 
-#: src/MessagesView.vala:1535
+#: src/MessagesView.vala:1549
 msgid ""
 "\n"
 "Reçu par notification"
 msgstr ""
 
-#: src/MessagesView.vala:1564
+#: src/MessagesView.vala:1578
 msgid "Envoi…"
 msgstr ""
 
-#: src/MessagesView.vala:1570
+#: src/MessagesView.vala:1584
 msgid "Non envoyé"
 msgstr ""
 
-#: src/MessagesView.vala:1593
+#: src/MessagesView.vala:1607
 msgid "Envoyé : l'iPhone confirme l'envoi"
 msgstr ""
 
-#: src/MessagesView.vala:1596
+#: src/MessagesView.vala:1610
 msgid "Envoyé"
 msgstr ""
 
-#: src/MessagesView.vala:1602
+#: src/MessagesView.vala:1616
 msgid "Récupérer le texte complet (le message passera en lu sur l'iPhone)"
 msgstr ""
 
-#: src/MessagesView.vala:1686
+#: src/MessagesView.vala:1700
 msgid "Copié"
 msgstr ""
 
-#: src/MessagesView.vala:1711
+#: src/MessagesView.vala:1725
 msgid ""
 "Les conversations de groupe se lisent ici mais se répondent sur l'iPhone : "
 "le Bluetooth ne sait envoyer qu'un SMS à un seul destinataire."
 msgstr ""
 
-#: src/MessagesView.vala:1714
+#: src/MessagesView.vala:1728
 msgid ""
 "Pas de numéro de téléphone connu pour cette conversation : répondez depuis "
 "l'iPhone."
 msgstr ""
 
-#: src/MessagesView.vala:1722
+#: src/MessagesView.vala:1736
 msgid ""
 "iPhone non connecté pour les messages : ce que vous envoyez sera gardé ici "
 "et pourra être renvoyé."
 msgstr ""
 
-#: src/MessagesView.vala:1725
+#: src/MessagesView.vala:1739
 msgid "Le dernier envoi a été refusé par l'iPhone. Vous pouvez réessayer."
 msgstr ""
 
-#: src/MessagesView.vala:1727
+#: src/MessagesView.vala:1741
 msgid "Premier envoi depuis ce PC : il part en SMS par l'iPhone."
 msgstr ""
 
-#: src/MessagesView.vala:1761
+#: src/MessagesView.vala:1775
 msgid "Message non envoyé : il est gardé, touchez « Réessayer »"
 msgstr ""
 
-#: src/MessagesView.vala:1779
+#: src/MessagesView.vala:1793
 msgid "Message trop long (2 000 caractères au plus)"
 msgstr ""
 
@@ -1984,12 +2024,12 @@ msgstr ""
 msgid "Progression de la lecture"
 msgstr ""
 
-#: src/NowPlayingView.vala:110 indicator/Indicator.vala:377
+#: src/NowPlayingView.vala:110 indicator/Indicator.vala:385
 msgid "Précédent"
 msgstr ""
 
 #: src/NowPlayingView.vala:113 src/NowPlayingView.vala:376
-#: src/NowPlayingView.vala:380 indicator/Indicator.vala:379
+#: src/NowPlayingView.vala:380 indicator/Indicator.vala:387
 msgid "Suivant"
 msgstr ""
 
@@ -2011,60 +2051,68 @@ msgid "Sur l'iPhone"
 msgstr ""
 
 #: src/NowPlayingView.vala:266 src/NowPlayingView.vala:433
-#: indicator/Indicator.vala:316
+#: indicator/Indicator.vala:318
 msgid "Pause"
 msgstr ""
 
-#: src/OneTimeCodes.vala:75
+#: src/OneTimeCodes.vala:77
 msgid "Notification avec copie"
 msgstr ""
 
-#: src/OneTimeCodes.vala:75
+#: src/OneTimeCodes.vala:77
 msgid "Notification et navigateur (expérimental)"
 msgstr ""
 
-#: src/OneTimeCodes.vala:86
+#: src/OneTimeCodes.vala:88
 msgid "Codes de vérification"
 msgstr ""
 
-#: src/OneTimeCodes.vala:87
+#: src/OneTimeCodes.vala:89
 msgid ""
 "Quand un SMS contient un code, la notification propose « Copier le code ». "
 "Le presse-papiers est vidé au bout de 2 minutes."
 msgstr ""
 
-#: src/OneTimeCodes.vala:90
+#: src/OneTimeCodes.vala:98
+msgid "Copier dès la réception"
+msgstr ""
+
+#: src/OneTimeCodes.vala:99
+msgid "Le code va dans le presse-papiers dès que le SMS arrive, sans cliquer."
+msgstr ""
+
+#: src/OneTimeCodes.vala:102
 msgid "Installer l'intégration navigateur"
 msgstr ""
 
-#: src/OneTimeCodes.vala:96
+#: src/OneTimeCodes.vala:108
 msgid "Ouvrir le dossier de l'extension"
 msgstr ""
 
-#: src/OneTimeCodes.vala:103
+#: src/OneTimeCodes.vala:115
 msgid ""
 "Chrome, Chromium, Edge et Firefox. Installez l'intégration, puis chargez "
 "l'extension (mode d'emploi dans le dossier). Le code n'est mis dans la page "
 "que si vous cliquez dessus."
 msgstr ""
 
-#: src/OneTimeCodes.vala:106
+#: src/OneTimeCodes.vala:118
 msgid "Remplissage dans le navigateur (expérimental)"
 msgstr ""
 
-#: src/OneTimeCodes.vala:134
+#: src/OneTimeCodes.vala:151
 msgid ""
 "Aucun navigateur pris en charge trouvé (Chrome, Chromium, Edge, Firefox)."
 msgstr ""
 
-#: src/OneTimeCodes.vala:136
+#: src/OneTimeCodes.vala:153
 #, c-format
 msgid ""
 "Installée pour : %s. Chargez maintenant l'extension, le mode d'emploi est "
 "dans le dossier."
 msgstr ""
 
-#: src/OneTimeCodes.vala:140
+#: src/OneTimeCodes.vala:157
 #, c-format
 msgid "Installation impossible : %s"
 msgstr ""
@@ -2143,11 +2191,11 @@ msgstr ""
 msgid "Commencer"
 msgstr ""
 
-#: src/Onboarding.vala:142 indicator/Indicator.vala:417
+#: src/Onboarding.vala:142 indicator/Indicator.vala:431
 msgid "Ouvrir Covalence"
 msgstr ""
 
-#: src/Onboarding.vala:143 src/WhatsNew.vala:158
+#: src/Onboarding.vala:143 src/WhatsNew.vala:183
 msgid "Continuer"
 msgstr ""
 
@@ -2396,8 +2444,8 @@ msgid ""
 "apparaissent alors dans Courriel, Tâches et Agenda."
 msgstr ""
 
-#: src/PhoneGuide.vala:202 src/PhoneGuide.vala:236 src/ServicesView.vala:45
-#: src/ServicesView.vala:176
+#: src/PhoneGuide.vala:202 src/PhoneGuide.vala:236 src/ServicesView.vala:47
+#: src/ServicesView.vala:183
 msgid "Se connecter…"
 msgstr ""
 
@@ -2416,7 +2464,7 @@ msgstr ""
 msgid "Connecter iCloud Drive…"
 msgstr ""
 
-#: src/PhoneGuide.vala:236 src/ServicesView.vala:176
+#: src/PhoneGuide.vala:236 src/ServicesView.vala:183
 msgid "Se reconnecter…"
 msgstr ""
 
@@ -2429,7 +2477,7 @@ msgstr ""
 msgid "Afficher %s dans le menu des applications"
 msgstr ""
 
-#: src/QuickReply.vala:29 covalenced/messages.py:1113
+#: src/QuickReply.vala:29 covalenced/messages.py:1198
 msgid "Répondre"
 msgstr ""
 
@@ -2475,161 +2523,165 @@ msgid ""
 "renvoyer."
 msgstr ""
 
-#: src/ServicesView.vala:34
+#: src/ServicesView.vala:36
 msgid ""
 "Votre compte Apple par Internet : courriel, agendas, rappels, contacts, "
 "fichiers iCloud et Apple Music dans les apps d'elementary. Indépendant de "
 "l'iPhone."
 msgstr ""
 
-#: src/ServicesView.vala:47
+#: src/ServicesView.vala:49
 msgid "Compte iCloud"
 msgstr ""
 
-#: src/ServicesView.vala:48
+#: src/ServicesView.vala:50
 msgid "Mot de passe pour app : comment faire"
 msgstr ""
 
-#: src/ServicesView.vala:55 src/ServicesView.vala:77 src/ServicesView.vala:185
-#: src/ServicesView.vala:197
+#: src/ServicesView.vala:57 src/ServicesView.vala:79 src/ServicesView.vala:192
+#: src/ServicesView.vala:204
 msgid "Connecter…"
 msgstr ""
 
-#: src/ServicesView.vala:59
+#: src/ServicesView.vala:61
 msgid "Déconnecter iCloud Drive"
 msgstr ""
 
-#: src/ServicesView.vala:65
+#: src/ServicesView.vala:67
 msgid "Options d'iCloud Drive : emplacement, hors ligne, réseau"
 msgstr ""
 
-#: src/ServicesView.vala:70
+#: src/ServicesView.vala:72
 msgid "iCloud Drive et Photos : à lire avant de vous connecter"
 msgstr ""
 
-#: src/ServicesView.vala:81
+#: src/ServicesView.vala:83
 msgid "Déconnecter iCloud Photos"
 msgstr ""
 
-#: src/ServicesView.vala:87
+#: src/ServicesView.vala:89
 msgid "Options d'iCloud Photos : emplacement, hors ligne, réseau"
 msgstr ""
 
-#: src/ServicesView.vala:118
-msgid "Connexions"
+#: src/ServicesView.vala:105
+msgid "Vos agendas iCloud, l'agenda de Covalence"
+msgstr ""
+
+#: src/ServicesView.vala:107
+msgid "Apple Music"
+msgstr ""
+
+#: src/ServicesView.vala:107
+msgid "Écouter avec Cassette, votre compte Apple Music"
 msgstr ""
 
 #: src/ServicesView.vala:125
+msgid "Connexions"
+msgstr ""
+
+#: src/ServicesView.vala:132
 msgid "Apps par défaut"
 msgstr ""
 
-#: src/ServicesView.vala:127
+#: src/ServicesView.vala:134
 msgid "Apps"
 msgstr ""
 
-#: src/ServicesView.vala:129
+#: src/ServicesView.vala:136
 msgid "Sur iCloud.com"
 msgstr ""
 
-#: src/ServicesView.vala:157
+#: src/ServicesView.vala:164
 msgid "Connecté : courriel, agendas, rappels et contacts"
 msgstr ""
 
-#: src/ServicesView.vala:160
+#: src/ServicesView.vala:167
 msgid "Connecté, mais une source n'a pas pu s'authentifier"
 msgstr ""
 
-#: src/ServicesView.vala:163
+#: src/ServicesView.vala:170
 msgid "Mot de passe pour app refusé : créez-en un nouveau"
 msgstr ""
 
-#: src/ServicesView.vala:169
+#: src/ServicesView.vala:176
 msgid "Evolution Data Server indisponible"
 msgstr ""
 
-#: src/ServicesView.vala:172 src/ServicesView.vala:182
+#: src/ServicesView.vala:179 src/ServicesView.vala:189
 msgid "Non connecté"
 msgstr ""
 
-#: src/ServicesView.vala:180
+#: src/ServicesView.vala:187
 #, c-format
 msgid "Dans Fichiers : dossier « %s »"
 msgstr ""
 
-#: src/ServicesView.vala:181 src/ServicesView.vala:193
+#: src/ServicesView.vala:188 src/ServicesView.vala:200
 msgid "Connecté, dossier non monté pour l'instant"
 msgstr ""
 
-#: src/ServicesView.vala:185 src/ServicesView.vala:197
+#: src/ServicesView.vala:192 src/ServicesView.vala:204
 msgid "Reconnecter…"
 msgstr ""
 
-#: src/ServicesView.vala:191
+#: src/ServicesView.vala:198
 #, c-format
 msgid "Dans Fichiers : dossier « %s », en lecture seule"
 msgstr ""
 
-#: src/ServicesView.vala:194
+#: src/ServicesView.vala:201
 msgid "Non connecté : vos albums en lecture seule dans Fichiers"
 msgstr ""
 
-#: src/ServicesView.vala:213
+#: src/ServicesView.vala:220
 msgid "Courriel"
 msgstr ""
 
-#: src/ServicesView.vala:213
+#: src/ServicesView.vala:220
 msgid "Votre boîte iCloud"
 msgstr ""
 
-#: src/ServicesView.vala:214
+#: src/ServicesView.vala:221
 msgid "Tâches"
 msgstr ""
 
-#: src/ServicesView.vala:214
+#: src/ServicesView.vala:221
 msgid "Vos rappels iCloud"
 msgstr ""
 
-#: src/ServicesView.vala:215
+#: src/ServicesView.vala:222
 msgid "iCloud Drive dans la barre latérale"
 msgstr ""
 
-#: src/ServicesView.vala:216
+#: src/ServicesView.vala:223
 msgid "Vos images, y compris celles d'iCloud Drive"
 msgstr ""
 
-#: src/ServicesView.vala:218
-msgid "Apple Music"
-msgstr ""
-
-#: src/ServicesView.vala:218
-msgid "Écouter avec Aria, votre compte Apple Music"
-msgstr ""
-
-#: src/ServicesView.vala:285
+#: src/ServicesView.vala:292
 msgid "Déconnecter iCloud Photos ?"
 msgstr ""
 
-#: src/ServicesView.vala:285
+#: src/ServicesView.vala:292
 msgid "Déconnecter iCloud Drive ?"
 msgstr ""
 
-#: src/ServicesView.vala:286
+#: src/ServicesView.vala:293
 msgid ""
 "Le dossier disparaît de Fichiers et la connexion est oubliée sur ce PC. Vos "
 "photos restent dans iCloud."
 msgstr ""
 
-#: src/ServicesView.vala:288
+#: src/ServicesView.vala:295
 msgid ""
 "Le dossier disparaît de Fichiers et la connexion est oubliée sur ce PC. Vos "
 "fichiers restent dans iCloud."
 msgstr ""
 
-#: src/ServicesView.vala:294
+#: src/ServicesView.vala:301
 msgid "Déconnecter"
 msgstr ""
 
-#: src/ServicesView.vala:345
+#: src/ServicesView.vala:352
 msgid "Non installée"
 msgstr ""
 
@@ -2729,7 +2781,7 @@ msgstr ""
 msgid "le %s"
 msgstr ""
 
-#: covalenced/ancs.py:205
+#: covalenced/ancs.py:218
 msgid "Effacer"
 msgstr ""
 
@@ -2737,20 +2789,20 @@ msgstr ""
 msgid "Appel sortant"
 msgstr ""
 
-#: covalenced/calls.py:31 indicator/Indicator.vala:234
+#: covalenced/calls.py:31 indicator/Indicator.vala:236
 msgid "Appel en cours"
 msgstr ""
 
-#: covalenced/calls.py:240 covalenced/messages.py:101
+#: covalenced/calls.py:245 covalenced/messages.py:105
 msgid "Numéro masqué"
 msgstr ""
 
-#: covalenced/calls.py:249
+#: covalenced/calls.py:258
 #, python-brace-format
 msgid "Sur {device}"
 msgstr ""
 
-#: covalenced/calls.py:319
+#: covalenced/calls.py:344
 msgid "Appel de démonstration"
 msgstr ""
 
@@ -2803,12 +2855,12 @@ msgstr ""
 msgid "Gestion des périphériques audio (WirePlumber)"
 msgstr ""
 
-#: covalenced/daemon.py:396
+#: covalenced/daemon.py:410
 #, python-brace-format
 msgid "Batterie de {device} faible"
 msgstr ""
 
-#: covalenced/daemon.py:397
+#: covalenced/daemon.py:411
 #, python-brace-format
 msgid "Il reste {level} %."
 msgstr ""
@@ -3011,75 +3063,75 @@ msgstr ""
 msgid "L'iPhone affiche-t-il le code {code} ?"
 msgstr ""
 
-#: covalenced/messages.py:447
+#: covalenced/messages.py:471
 msgid "accès aux messages refusé par l'iPhone"
 msgstr ""
 
-#: covalenced/messages.py:448
+#: covalenced/messages.py:472
 msgid "iPhone injoignable"
 msgstr ""
 
-#: covalenced/messages.py:506
+#: covalenced/messages.py:532
 msgid "module Messages désactivé"
 msgstr ""
 
-#: covalenced/messages.py:509
+#: covalenced/messages.py:535
 msgid "iPhone non connecté"
 msgstr ""
 
-#: covalenced/messages.py:525
+#: covalenced/messages.py:551
 msgid "l'iPhone ne répond pas"
 msgstr ""
 
-#: covalenced/messages.py:590
+#: covalenced/messages.py:616
 msgid "connexion à l'iPhone perdue"
 msgstr ""
 
-#: covalenced/messages.py:598
+#: covalenced/messages.py:624
 msgid "lecture des messages impossible"
 msgstr ""
 
-#: covalenced/messages.py:713
+#: covalenced/messages.py:751
 #, python-brace-format
 msgid "{n} nouveau message"
 msgid_plural "{n} nouveaux messages"
 msgstr[0] ""
 msgstr[1] ""
 
-#: covalenced/messages.py:1099 covalenced/messages.py:1260
-#: covalenced/messages.py:1439 covalenced/messages.py:1458
-#: covalenced/messages.py:1472 covalenced/store.py:311
+#: covalenced/messages.py:1184 covalenced/messages.py:1355
+#: covalenced/messages.py:1534 covalenced/messages.py:1553
+#: covalenced/messages.py:1567 covalenced/store.py:415
 msgid "Inconnu"
 msgstr ""
 
-#: covalenced/messages.py:1108
+#: covalenced/messages.py:1193
 msgid "Copier le code"
 msgstr ""
 
-#: covalenced/messages.py:1109
+#: covalenced/messages.py:1194
 msgid "Copier et supprimer"
 msgstr ""
 
-#: covalenced/messages.py:1262
+#: covalenced/messages.py:1357
 #, python-brace-format
 msgid "{name} a réagi {emoji} à « {quote} »"
 msgstr ""
 
-#: covalenced/messages.py:1458 covalenced/messages.py:1470
+#: covalenced/messages.py:1553 covalenced/messages.py:1565
 msgid "Moi"
 msgstr ""
 
-#: covalenced/messages.py:1460
+#: covalenced/messages.py:1555
 #, python-brace-format
 msgid "{name} a retiré {emoji}"
 msgstr ""
 
-#: covalenced/messages.py:1462
+#: covalenced/messages.py:1557
 #, python-brace-format
 msgid "{name} a réagi {emoji}"
 msgstr ""
 
-#: covalenced/messages.py:1465
+#: covalenced/messages.py:1560
 #, python-brace-format
 msgid "à « {quote} »"
 msgstr ""
@@ -3118,110 +3170,115 @@ msgstr ""
 msgid "binaire rclone absent de l'archive"
 msgstr ""
 
-#: covalenced/service.py:438
+#: covalenced/service.py:457
 #, python-brace-format
 msgid "appeler le {number}"
 msgstr ""
 
-#: covalenced/service.py:439
+#: covalenced/service.py:458
 #, python-brace-format
 msgid "envoyer le message « {text} »"
 msgstr ""
 
-#: covalenced/service.py:440
+#: covalenced/service.py:459
 #, python-brace-format
 msgid "envoyer une réaction {emoji}"
 msgstr ""
 
-#: covalenced/service.py:441
+#: covalenced/service.py:460
 msgid "renvoyer un message"
 msgstr ""
 
-#: covalenced/service.py:442
+#: covalenced/service.py:461
 #, python-brace-format
 msgid "envoyer {count} fichier(s) à un appareil du réseau"
 msgstr ""
 
-#: covalenced/service.py:444
+#: covalenced/service.py:463
 msgid "rendre ce PC visible pour appairer un appareil Bluetooth"
 msgstr ""
 
-#: covalenced/service.py:445
+#: covalenced/service.py:464
 msgid "oublier l'iPhone appairé"
 msgstr ""
 
-#: covalenced/service.py:446
+#: covalenced/service.py:465
 msgid "installer une mise à jour de Covalence"
 msgstr ""
 
-#: covalenced/service.py:447
+#: covalenced/service.py:466
+#, python-brace-format
+msgid "installer l'application {name}"
+msgstr ""
+
+#: covalenced/service.py:467
 msgid "installer l'intégration navigateur des codes SMS"
 msgstr ""
 
-#: covalenced/service.py:448
+#: covalenced/service.py:468
 msgid "supprimer un message"
 msgstr ""
 
-#: covalenced/service.py:449
+#: covalenced/service.py:469
 msgid "supprimer une conversation"
 msgstr ""
 
-#: covalenced/service.py:450
+#: covalenced/service.py:470
 msgid "modifier un contact iCloud"
 msgstr ""
 
-#: covalenced/service.py:451
+#: covalenced/service.py:471
 msgid "supprimer un contact iCloud"
 msgstr ""
 
-#: covalenced/service.py:505
+#: covalenced/service.py:530
 msgid "réservé à l'application Covalence"
 msgstr ""
 
-#: covalenced/service.py:510
+#: covalenced/service.py:535
 msgid "fichiers hors du dossier personnel ou cachés"
 msgstr ""
 
-#: covalenced/service.py:518
+#: covalenced/service.py:543
 msgid "refusé par l'utilisateur"
 msgstr ""
 
-#: covalenced/service.py:539
+#: covalenced/service.py:564
 #, python-brace-format
 msgid "Autoriser {program} ?"
 msgstr ""
 
-#: covalenced/service.py:540
+#: covalenced/service.py:565
 #, python-brace-format
 msgid ""
 "« {program} » demande à Covalence de {action}. Refusez si ce n'est pas vous."
 msgstr ""
 
-#: covalenced/service.py:542
+#: covalenced/service.py:567
 msgid "Autoriser"
 msgstr ""
 
-#: covalenced/service.py:569
+#: covalenced/service.py:609
 msgid "aucun code en attente"
 msgstr ""
 
-#: covalenced/service.py:625
+#: covalenced/service.py:665
 msgid "son introuvable"
 msgstr ""
 
-#: covalenced/service.py:635
+#: covalenced/service.py:675
 msgid "lecture impossible"
 msgstr ""
 
-#: covalenced/service.py:671
+#: covalenced/service.py:713
 msgid "notifications de l'iPhone non reliées"
 msgstr ""
 
-#: covalenced/service.py:697
+#: covalenced/service.py:739
 msgid "écouteurs non connectés ou réglage refusé"
 msgstr ""
 
-#: covalenced/service.py:947
+#: covalenced/service.py:1001
 msgid "contacts iCloud non disponibles"
 msgstr ""
 
@@ -3460,219 +3517,299 @@ msgstr ""
 msgid "Covalence · {name}"
 msgstr ""
 
-#: covalenced/updates.py:227
+#: covalenced/updates.py:269
 #, python-brace-format
 msgid "Recherche impossible ({reason})"
 msgstr ""
 
-#: covalenced/updates.py:249
+#: covalenced/updates.py:291
 msgid "Voir les nouveautés"
 msgstr ""
 
-#: covalenced/updates.py:254
+#: covalenced/updates.py:296
 #, python-brace-format
 msgid "Covalence {version} est disponible"
 msgstr ""
 
-#: covalenced/updates.py:255
+#: covalenced/updates.py:297
 msgid "La mise à jour se trouve dans Réglages."
 msgstr ""
 
-#: covalenced/updates.py:276
+#: covalenced/updates.py:318
 msgid "aucune mise à jour à installer"
 msgstr ""
 
-#: covalenced/updates.py:279
+#: covalenced/updates.py:321
 msgid ""
 "pas de paquet vérifiable pour cette version : installez-la depuis la page "
 "GitHub"
 msgstr ""
 
-#: covalenced/updates.py:283
+#: covalenced/updates.py:325
 msgid "adresse de téléchargement inattendue"
 msgstr ""
 
-#: covalenced/updates.py:333
+#: covalenced/updates.py:349
 #, python-brace-format
 msgid "Téléchargement impossible ({reason})"
 msgstr ""
 
-#: covalenced/updates.py:338
+#: covalenced/updates.py:354
 msgid "Installation impossible (programme d'installation absent)"
 msgstr ""
 
-#: covalenced/updates.py:348 covalenced/updates.py:370
+#: covalenced/updates.py:364 covalenced/updates.py:386
 #, python-brace-format
 msgid "Installation impossible ({reason})"
 msgstr ""
 
-#: covalenced/updates.py:367
+#: covalenced/updates.py:383
 msgid "Installation annulée"
 msgstr ""
 
-#: src/WhatsNew.vala:19
+#: src/WhatsNew.vala:20
+msgid ""
+"Installez Agenda depuis Services Apple : vos agendas iCloud par mois, par "
+"semaine ou en fil, vérifié puis installé en un clic."
+msgstr ""
+
+#: src/WhatsNew.vala:22
+msgid "Cassette"
+msgstr ""
+
+#: src/WhatsNew.vala:23
+msgid ""
+"Apple Music dans une fenêtre elementary, à installer depuis Services Apple : "
+"lecture, volume, paroles et file d'attente dans la barre d'en-tête."
+msgstr ""
+
+#: src/WhatsNew.vala:25
+msgid "Codes SMS copiés"
+msgstr ""
+
+#: src/WhatsNew.vala:26
+msgid ""
+"Le code d'un SMS va dans le presse-papiers dès sa réception. Réglable dans "
+"Réglages › Codes SMS."
+msgstr ""
+
+#: src/WhatsNew.vala:28
+msgid "Appels en silence"
+msgstr ""
+
+#: src/WhatsNew.vala:29
+msgid ""
+"Ni sonnerie, ni fenêtre, ni son sur le PC : l'appel reste sur l'iPhone. "
+"Pratique quand Teams sonne déjà. Réglages › Connexion ou barre du haut."
+msgstr ""
+
+#: src/WhatsNew.vala:31
+msgid "Icônes redessinées"
+msgstr ""
+
+#: src/WhatsNew.vala:32
+msgid ""
+"Covalence, Messages, Téléphone, Contacts, Lecture en cours et Recopie, "
+"dessinées pour chaque taille. Les notifications du Calendrier prennent "
+"l'icône d'Agenda."
+msgstr ""
+
+#: src/WhatsNew.vala:34
+msgid "AirPods Pro 3"
+msgstr ""
+
+#: src/WhatsNew.vala:35
+msgid ""
+"Contrôle du bruit, audio adaptatif et détection de conversation sont "
+"reconnus. Des écouteurs plus récents que Covalence gardent toutes leurs "
+"commandes."
+msgstr ""
+
+#: src/WhatsNew.vala:37
+msgid "Sécurité renforcée"
+msgstr ""
+
+#: src/WhatsNew.vala:38
+msgid ""
+"Le code d'appairage se confirme aussi sur le PC. Un autre programme doit "
+"vous demander avant d'appeler, d'envoyer ou d'appairer. Mises à jour, "
+"fichiers LocalSend et recopie mieux protégés ; codes SMS liés à leur site."
+msgstr ""
+
+#: src/WhatsNew.vala:41
+msgid "Messages fiables"
+msgstr ""
+
+#: src/WhatsNew.vala:42
+msgid ""
+"Plus de doublons après une reconnexion, les groupes restent groupés, chaque "
+"iPhone a son propre historique et les contacts se rechargent avec "
+"« Réessayer »."
+msgstr ""
+
+#: src/WhatsNew.vala:44
 msgid "Appairage simplifié"
 msgstr ""
 
-#: src/WhatsNew.vala:20
+#: src/WhatsNew.vala:45
 msgid ""
 "L'iPhone trouve ce PC dans Réglages › Bluetooth, sans app en plus. La "
 "reconnexion est plus stable et un bouton « Oublier » permet de repartir de "
 "zéro."
 msgstr ""
 
-#: src/WhatsNew.vala:22
+#: src/WhatsNew.vala:47
 msgid "Recopie et contrôle"
 msgstr ""
 
-#: src/WhatsNew.vala:23
+#: src/WhatsNew.vala:48
 msgid ""
 "La recopie d'écran devient une app, plus fluide. Expérimental : pilotez "
 "l'iPhone avec la souris et le clavier du PC (guide dans l'app)."
 msgstr ""
 
-#: src/WhatsNew.vala:25
+#: src/WhatsNew.vala:50
 msgid "19 sons libres"
 msgstr ""
 
-#: src/WhatsNew.vala:26
+#: src/WhatsNew.vala:51
 msgid ""
 "Onze sons de plus pour les notifications et les appels (Réglages › Sons)."
 msgstr ""
 
-#: src/WhatsNew.vala:28
+#: src/WhatsNew.vala:53
 msgid ""
 "Un bouton dans l'Aperçu utilise le partage de connexion de l'iPhone, en "
 "Bluetooth."
 msgstr ""
 
-#: src/WhatsNew.vala:30
+#: src/WhatsNew.vala:55
 msgid ""
 "Batterie, lecture en cours, appel et messages non lus à côté de l'horloge. "
 "Se déconnecter une fois pour l'afficher."
 msgstr ""
 
-#: src/WhatsNew.vala:32
+#: src/WhatsNew.vala:57
 msgid "Recherche et épingles"
 msgstr ""
 
-#: src/WhatsNew.vala:33
+#: src/WhatsNew.vala:58
 msgid ""
 "Ctrl+F cherche dans les messages. Épinglez une conversation ou marquez-la "
 "non lue d'un clic droit."
 msgstr ""
 
-#: src/WhatsNew.vala:35
+#: src/WhatsNew.vala:60
 msgid "Fichiers, recopie et photos"
 msgstr ""
 
-#: src/WhatsNew.vala:36
+#: src/WhatsNew.vala:61
 msgid ""
 "Échangez des fichiers avec l'app LocalSend, affichez l'écran de l'iPhone "
 "(expérimental) et importez les photos par câble USB."
 msgstr ""
 
-#: src/WhatsNew.vala:38
+#: src/WhatsNew.vala:63
 msgid "iCloud"
 msgstr ""
 
-#: src/WhatsNew.vala:39
+#: src/WhatsNew.vala:64
 msgid ""
 "État de synchro d'iCloud Drive dans Fichiers, raccourcis vers Localiser, "
 "Notes et Masquer mon adresse e-mail."
 msgstr ""
 
-#: src/WhatsNew.vala:42
+#: src/WhatsNew.vala:67
 msgid ""
 "Le PC se verrouille quand l'iPhone s'éloigne (désactivé par défaut, jamais "
 "de déverrouillage)."
 msgstr ""
 
-#: src/WhatsNew.vala:44
+#: src/WhatsNew.vala:69
 msgid "Réglages en onglets"
 msgstr ""
 
-#: src/WhatsNew.vala:45
+#: src/WhatsNew.vala:70
 msgid ""
 "Connexion, Messages, Sons, Affichage, Mises à jour, Expérimental, À propos ; "
 "les sons libres de Covalence s'essaient d'un clic."
 msgstr ""
 
-#: src/WhatsNew.vala:48
+#: src/WhatsNew.vala:73
 msgid ""
 "« :) » devient 🙂 pendant la saisie. Retour arrière annule ; réglable dans "
 "Réglages."
 msgstr ""
 
-#: src/WhatsNew.vala:49
+#: src/WhatsNew.vala:74
 msgid "Messages envoyés"
 msgstr ""
 
-#: src/WhatsNew.vala:50
+#: src/WhatsNew.vala:75
 msgid ""
 "Une petite coche apparaît sous un message dès que l'iPhone confirme son "
 "envoi."
 msgstr ""
 
-#: src/WhatsNew.vala:51
+#: src/WhatsNew.vala:76
 msgid "Réactions"
 msgstr ""
 
-#: src/WhatsNew.vala:52
+#: src/WhatsNew.vala:77
 msgid ""
 "Les réactions reçues s'affichent sur le bon message, sans doublon, et se "
 "cumulent. Au survol d'un message : réagir, copier ou supprimer."
 msgstr ""
 
-#: src/WhatsNew.vala:55
+#: src/WhatsNew.vala:80
 msgid ""
 "Un code reçu par SMS se copie depuis la notification. Expérimental : "
 "remplissage dans Chrome, Chromium, Edge et Firefox (Réglages › Codes SMS)."
 msgstr ""
 
-#: src/WhatsNew.vala:57
+#: src/WhatsNew.vala:82
 msgid "Messages en entier"
 msgstr ""
 
-#: src/WhatsNew.vala:58
+#: src/WhatsNew.vala:83
 msgid ""
 "« Tout lire » récupère la suite d'un message long non lu, ou toujours, au "
 "choix dans Réglages. Le message passe alors en lu sur l'iPhone."
 msgstr ""
 
-#: src/WhatsNew.vala:60
+#: src/WhatsNew.vala:85
 msgid "Synchroniser"
 msgstr ""
 
-#: src/WhatsNew.vala:61
+#: src/WhatsNew.vala:86
 msgid ""
 "Un bouton dans Messages relit les messages, les contacts et le journal "
 "d'appels."
 msgstr ""
 
-#: src/WhatsNew.vala:63
+#: src/WhatsNew.vala:88
 msgid ""
 "Choisissez le son des messages, des notifications de l'iPhone et la sonnerie "
 "des appels, dont 8 sons libres fournis avec Covalence (Réglages › Sons)."
 msgstr ""
 
-#: src/WhatsNew.vala:66
+#: src/WhatsNew.vala:91
 msgid ""
 "Covalence recherche les nouvelles versions et s'installe depuis Réglages."
 msgstr ""
 
-#: src/WhatsNew.vala:68
+#: src/WhatsNew.vala:93
 msgid ""
 "À essayer dans Réglages : historique étendu, marquer comme lu sur l'iPhone, "
 "actions des notifications, favoris des contacts."
 msgstr ""
 
-#: src/WhatsNew.vala:151
+#: src/WhatsNew.vala:176
 #, c-format
 msgid "Nouveautés de Covalence %s"
 msgstr ""
 
-#: src/WhatsNew.vala:152
+#: src/WhatsNew.vala:177
 msgid "Ce qui change dans cette version."
 msgstr ""
 
@@ -3754,43 +3891,51 @@ msgstr ""
 msgid "L'indicateur n'est pas installé avec cette version de Covalence."
 msgstr ""
 
-#: indicator/Indicator.vala:292
+#: indicator/Indicator.vala:294
 #, c-format
 msgid "%s relié"
 msgstr ""
 
-#: indicator/Indicator.vala:293
+#: indicator/Indicator.vala:295
 #, c-format
 msgid "%s non relié"
 msgstr ""
 
-#: indicator/Indicator.vala:301
+#: indicator/Indicator.vala:303
 msgid "Non relié"
 msgstr ""
 
-#: indicator/Indicator.vala:303
+#: indicator/Indicator.vala:305
 #, c-format
 msgid "Relié · batterie %d %%"
 msgstr ""
 
-#: indicator/Indicator.vala:305
+#: indicator/Indicator.vala:307
 msgid "Relié"
 msgstr ""
 
-#: indicator/Indicator.vala:319
+#: indicator/Indicator.vala:321
 #, c-format
 msgid "Messages · %u non lu"
 msgid_plural "Messages · %u non lus"
 msgstr[0] ""
 msgstr[1] ""
 
-#: indicator/Indicator.vala:325
+#: indicator/Indicator.vala:327
 msgid "Couper la connexion via l'iPhone"
 msgstr ""
 
-#: indicator/Indicator.vala:326 indicator/Indicator.vala:411
+#: indicator/Indicator.vala:328 indicator/Indicator.vala:419
 #: src/HotspotProximity.vala:45 src/HotspotProximity.vala:74
 msgid "Se connecter via l'iPhone"
+msgstr ""
+
+#: indicator/Indicator.vala:333
+msgid "Appels : rétablir la sonnerie"
+msgstr ""
+
+#: indicator/Indicator.vala:334 indicator/Indicator.vala:425
+msgid "Appels : passer en silence"
 msgstr ""
 
 #: src/HotspotProximity.vala:74

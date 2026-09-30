@@ -22,11 +22,10 @@ namespace Covalence {
             }
         }
 
-        /* Messages and Écouteurs use elementary's own icons (d9ecca9): their
-           Covalence SVGs are gone, so the app id is no icon name for them. */
+        /* Écouteurs uses elementary's own icon (d9ecca9): its Covalence SVG
+           is gone, so the app id is no icon name for it. */
         public string icon_name () {
             switch (this) {
-                case MESSAGES: return "internet-chat";
                 case HEADPHONES: return "audio-headphones";
                 default: return Config.APP_ID + suffix ();
             }

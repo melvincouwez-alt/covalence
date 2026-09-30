@@ -16,6 +16,21 @@ namespace Covalence.WhatsNew {
 
     private static Item[] items () {
         return {
+            { "x-office-calendar-symbolic", _("Agenda"),
+              _("Installez Agenda depuis Services Apple : vos agendas iCloud par mois, par semaine "
+                + "ou en fil, vérifié puis installé en un clic.") },
+            { "audio-x-generic-symbolic", _("Cassette"),
+              _("Apple Music dans une fenêtre elementary, à installer depuis Services Apple : "
+                + "lecture, volume, paroles et file d'attente dans la barre d'en-tête.") },
+            { "edit-copy-symbolic", _("Codes SMS copiés"),
+              _("Le code d'un SMS va dans le presse-papiers dès sa réception. Réglable dans "
+                + "Réglages › Codes SMS.") },
+            { "audio-volume-muted-symbolic", _("Appels en silence"),
+              _("Ni sonnerie, ni fenêtre, ni son sur le PC : l'appel reste sur l'iPhone. Pratique "
+                + "quand Teams sonne déjà. Réglages › Connexion ou barre du haut.") },
+            { "applications-graphics-symbolic", _("Icônes redessinées"),
+              _("Covalence, Messages, Téléphone, Contacts, Lecture en cours et Recopie, dessinées "
+                + "pour chaque taille. Les notifications du Calendrier prennent l'icône d'Agenda.") },
             { "audio-headphones-symbolic", _("AirPods Pro 3"),
               _("Contrôle du bruit, audio adaptatif et détection de conversation sont reconnus. "
                 + "Des écouteurs plus récents que Covalence gardent toutes leurs commandes.") },

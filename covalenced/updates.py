@@ -82,17 +82,59 @@ def pick(releases, current):
     return best
 
 
-def deb_asset(release, arch="amd64"):
-    """(url, size, sha256 or "") of the release's .deb for this architecture."""
+def deb_asset(release, arch="amd64", package="covalence"):
+    """(url, size, sha256 or "") of the release's .deb of that package for this architecture.
+
+    A release may carry several packages (Covalence and its optional apps, such as
+    Agenda): only a file named after the package counts, never the first .deb found.
+    """
     for asset in release.get("assets") or []:
         name = asset.get("name") or ""
-        if name.endswith(f"_{arch}.deb") or (name.endswith(".deb") and arch in name):
+        if not name.startswith(f"{package}_") or not name.endswith(".deb"):
+            continue
+        if name.endswith((f"_{arch}.deb", "_all.deb")) or arch in name:
             digest = asset.get("digest") or ""
             sha = digest[7:].lower() if digest.lower().startswith("sha256:") else ""
             if not re.fullmatch(r"[0-9a-f]{64}", sha):
                 sha = ""
             return asset.get("browser_download_url") or "", int(asset.get("size") or 0), sha
     return "", 0, ""
+
+
+def download_verified(url, size, sha, target, report):
+    """Download url to target, checking it against sha (SHA-256). Raises on any failure.
+
+    report(fraction) is called from the download thread's side through GLib.idle_add.
+    """
+    digest = hashlib.sha256()
+    done = 0
+    request = urllib.request.Request(url, headers={"User-Agent": f"Covalence/{__version__}"})
+    try:
+        with urllib.request.urlopen(request, timeout=TIMEOUT) as reply, \
+                open(target + ".part", "wb") as out:
+            last = 0.0
+            while True:
+                chunk = reply.read(256 * 1024)
+                if not chunk:
+                    break
+                done += len(chunk)
+                if done > MAX_DEB:
+                    raise OSError("package too large")
+                digest.update(chunk)
+                out.write(chunk)
+                if size and done / size - last >= 0.02:
+                    last = done / size
+                    GLib.idle_add(report, min(last, 1.0))
+        if digest.hexdigest() != sha:
+            raise ValueError("SHA-256 mismatch")
+        os.chmod(target + ".part", 0o644)  # apt's _apt user reads it
+        os.replace(target + ".part", target)
+    except Exception:
+        try:
+            os.unlink(target + ".part")
+        except OSError:
+            pass
+        raise
 
 
 def _get_json(url):
@@ -286,7 +328,7 @@ class Updates:
         target = os.path.join(self.dir, url.rsplit("/", 1)[-1])
 
         def report(fraction):
-            self.progress = fraction
+            self.progress = fraction * 0.9
             self._changed()
             return False
 
@@ -294,36 +336,10 @@ class Updates:
             error = None
             try:
                 os.makedirs(self.dir, mode=0o700, exist_ok=True)
-                digest = hashlib.sha256()
-                done = 0
-                request = urllib.request.Request(url, headers={
-                    "User-Agent": f"Covalence/{__version__}"})
-                with urllib.request.urlopen(request, timeout=TIMEOUT) as reply, \
-                        open(target + ".part", "wb") as out:
-                    last = 0.0
-                    while True:
-                        chunk = reply.read(256 * 1024)
-                        if not chunk:
-                            break
-                        done += len(chunk)
-                        if done > MAX_DEB:
-                            raise OSError("package too large")
-                        digest.update(chunk)
-                        out.write(chunk)
-                        if size and done / size - last >= 0.02:
-                            last = done / size
-                            GLib.idle_add(report, min(last, 1.0) * 0.9)
-                if digest.hexdigest() != sha:
-                    raise ValueError("SHA-256 mismatch")
-                os.chmod(target + ".part", 0o644)  # apt's _apt user reads it
-                os.replace(target + ".part", target)
+                download_verified(url, size, sha, target, report)
             except Exception as failure:
                 error = type(failure).__name__ if not isinstance(failure, ValueError) \
                     else str(failure)
-                try:
-                    os.unlink(target + ".part")
-                except OSError:
-                    pass
             GLib.idle_add(lambda: self._downloaded(target, error, on_done) and False)
 
         threading.Thread(target=job, name="covalence-update-download", daemon=True).start()

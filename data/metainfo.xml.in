@@ -22,7 +22,13 @@
   <url type="vcs-browser">https://github.com/melvincouwez-alt/covalence</url>
   <content_rating type="oars-1.1"/>
   <releases>
-    <release version="@VERSION@" date="2026-09-28" type="development">
+    <release version="@VERSION@" date="2026-09-29" type="development">
+      <description>
+        <p>Agenda and Cassette (Apple Music) install from Apple Services; SMS codes are copied as soon as they arrive; a quiet mode leaves calls to the iPhone (settings and top bar); icons redrawn for every size; credits completed.</p>
+        <p xml:lang="fr">Agenda et Cassette (Apple Music) s'installent depuis Services Apple ; les codes SMS sont copiés dès leur réception ; un mode silencieux laisse les appels à l'iPhone (réglages et barre du haut) ; icônes redessinées pour chaque taille ; crédits complétés.</p>
+      </description>
+    </release>
+    <release version="0.5.1" date="2026-09-28" type="development">
       <description>
         <p>AirPods Pro 3 recognised: noise control, adaptive audio and conversation awareness are back; headphones newer than Covalence keep every control. The app-specific password step no longer runs past its card.</p>
         <p xml:lang="fr">AirPods Pro 3 reconnus : contrôle du bruit, audio adaptatif et détection de conversation reviennent ; des écouteurs plus récents que Covalence gardent toutes leurs commandes. L'étape du mot de passe pour app ne déborde plus de sa carte.</p>

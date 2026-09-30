@@ -84,7 +84,7 @@ class SoundsTest(unittest.TestCase):
 
     def test_ring_follows_the_call(self):
         c = calls.Calls.__new__(calls.Calls)
-        c.calls, c.transport, c.ringer = {}, {}, self.s
+        c.calls, c.transport, c.ringer, c.quiet = {}, {}, self.s, lambda: False
         c.calls["/call1"] = {"State": "incoming"}
         c._update_ring()
         self.assertTrue(self.s.ringing)

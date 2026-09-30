@@ -76,6 +76,9 @@ XML = f"""
       <arg name="distance" type="s" direction="in"/>
       <arg name="delay" type="u" direction="in"/>
     </method>
+    <method name="SetCallsQuiet">
+      <arg name="enabled" type="b" direction="in"/>
+    </method>
     <method name="SetFetchUnread">
       <arg name="enabled" type="b" direction="in"/>
     </method>
@@ -89,6 +92,7 @@ XML = f"""
     </method>
     <property name="AlphaFeatures" type="a{{sb}}" access="read"/>
     <property name="FetchUnread" type="b" access="read"/>
+    <property name="CallsQuiet" type="b" access="read"/>
     <property name="Sounds" type="a{{ss}}" access="read"/>
     <method name="SetDraft">
       <arg name="thread" type="s" direction="in"/>
@@ -180,6 +184,9 @@ XML = f"""
     <method name="SetOneTimeCodes">
       <arg name="mode" type="s" direction="in"/>
     </method>
+    <method name="SetAutoCopyCodes">
+      <arg name="enabled" type="b" direction="in"/>
+    </method>
     <method name="CheckUpdates">
       <arg name="latest" type="s" direction="out"/>
     </method>
@@ -188,7 +195,12 @@ XML = f"""
       <arg name="enabled" type="b" direction="in"/>
     </method>
     <method name="RestartDaemon"/>
+    <method name="CheckApps"/>
+    <method name="InstallApp">
+      <arg name="package" type="s" direction="in"/>
+    </method>
     <property name="Update" type="a{{sv}}" access="read"/>
+    <property name="Apps" type="a{{sv}}" access="read"/>
     <property name="Tethering" type="b" access="read"/>
     <property name="TetheringState" type="s" access="read"/>
     <property name="TetheringError" type="s" access="read"/>
@@ -261,6 +273,7 @@ XML = f"""
       <arg name="browsers" type="as" direction="out"/>
     </method>
     <property name="OneTimeCodes" type="s" access="read"/>
+    <property name="AutoCopyCodes" type="b" access="read"/>
     <method name="DeleteMessage">
       <arg name="message" type="s" direction="in"/>
     </method>
@@ -365,11 +378,11 @@ SIGNATURES = {
     "NotificationsLinked": "b", "MediaLinked": "b", "CallsLinked": "b", "CallsSupported": "b",
     "Battery": "i",
     "ICloudState": "s", "Modules": "a{sb}", "MessagesState": "s", "MessagesSend": "s", "ReactionsSend": "b",
-    "OneTimeCodes": "s",
+    "OneTimeCodes": "s", "AutoCopyCodes": "b",
     "ContactsState": "s", "AudioOnPC": "b", "MicMuted": "b",
     "PhoneAudio": "s", "PhoneAudioOutput": "s", "ContactsSource": "s", "ContactsBook": "s",
-    "UnreadMessages": "u", "MissedCalls": "u", "NowPlaying": "a{sv}", "AlphaFeatures": "a{sb}", "FetchUnread": "b", "Sounds": "a{ss}",
-    "Update": "a{sv}", "Proximity": "a{sv}",
+    "UnreadMessages": "u", "MissedCalls": "u", "NowPlaying": "a{sv}", "AlphaFeatures": "a{sb}", "FetchUnread": "b", "CallsQuiet": "b", "Sounds": "a{ss}",
+    "Update": "a{sv}", "Apps": "a{sv}", "Proximity": "a{sv}",
     "Tethering": "b", "TetheringState": "s", "TetheringError": "s",
     "Files": "a{sv}", "Mirror": "a{sv}", "PhotosUsb": "a{sv}", "Control": "a{sv}",
 }
@@ -388,6 +401,12 @@ def _variant(name, value):
         from .updates import TYPES as UPDATE_TYPES
         return GLib.Variant("a{sv}", {k: GLib.Variant(UPDATE_TYPES[k], v)
                                       for k, v in value.items() if k in UPDATE_TYPES})
+    if name == "Apps":
+        from .apps import TYPES as APP_TYPES
+        return GLib.Variant("a{sv}", {
+            package: GLib.Variant("a{sv}", {k: GLib.Variant(APP_TYPES[k], v)
+                                            for k, v in entry.items() if k in APP_TYPES})
+            for package, entry in value.items()})
     if name == "Proximity":
         return GLib.Variant("a{sv}", {k: GLib.Variant(PROXIMITY_TYPES[k], v)
                                       for k, v in value.items() if k in PROXIMITY_TYPES})
@@ -444,6 +463,7 @@ GUARDED = {
     "StartPairing": lambda a: _("rendre ce PC visible pour appairer un appareil Bluetooth"),
     "Forget": lambda a: _("oublier l'iPhone appairé"),
     "InstallUpdate": lambda a: _("installer une mise à jour de Covalence"),
+    "InstallApp": lambda a: _("installer l'application {name}").format(name=_excerpt(a[0], 20)),
     "InstallBrowserHost": lambda a: _("installer l'intégration navigateur des codes SMS"),
     "DeleteMessage": lambda a: _("supprimer un message"),
     "DeleteConversation": lambda a: _("supprimer une conversation"),
@@ -673,6 +693,8 @@ class Service:
             except ValueError as error:
                 invocation.return_dbus_error(f"{INTERFACE}.Error.InvalidArgs", str(error))
                 return
+        elif method == "SetCallsQuiet":
+            d.set_calls_quiet(params.unpack()[0])
         elif method == "SetFetchUnread":
             d.set_fetch_unread(params.unpack()[0])
         elif method == "SetAlphaFeature":
@@ -819,6 +841,9 @@ class Service:
         elif method == "SetOneTimeCodes":
             d.messages.set_code_mode(params.unpack()[0])
             d.link_changed()
+        elif method == "SetAutoCopyCodes":
+            d.messages.set_auto_copy_codes(params.unpack()[0])
+            d.link_changed()
         elif method == "SetLocalSend":
             d.files.set_enabled(params.unpack()[0])
         elif method == "ListFilePeers":
@@ -901,6 +926,15 @@ class Service:
             d.updates.install(lambda error: refused.append(error) if error else None)
             if refused and d.updates.state_name not in ("downloading", "installing"):
                 invocation.return_dbus_error(f"{INTERFACE}.Error.UpdateFailed", refused[0])
+                return
+        elif method == "CheckApps":
+            d.apps.check()
+        elif method == "InstallApp":
+            # Like InstallUpdate: returns at once, the Apps property carries the rest.
+            refused = []
+            d.apps.install(params.unpack()[0], lambda error: refused.append(error) if error else None)
+            if refused:
+                invocation.return_dbus_error(f"{INTERFACE}.Error.InstallFailed", refused[0])
                 return
         elif method == "SetUpdateChecks":
             d.updates.set_auto(params.unpack()[0])

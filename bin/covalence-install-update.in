@@ -3,13 +3,13 @@
 # SPDX-FileCopyrightText: 2026 Melvin Couwez
 """Install a downloaded Covalence update, as root (started by pkexec from covalenced).
 
-Usage: covalence-install-update <path to the .deb> <expected SHA-256>
+Usage: covalence-install-update <path to the .deb> <expected SHA-256> [package]
 
 The .deb sits in the user's cache, which any program of the session may write to:
 checking it there and then handing that path to apt would leave a window to swap
 the file between the two. So this helper copies it into a directory only root can
-reach, computes the SHA-256 of that copy, checks it is a « covalence » package,
-and installs the copy. Self-contained (python3 -I, standard library only): as root
+reach, computes the SHA-256 of that copy, checks it is the expected package
+(« covalence », or an optional app: « agenda » or « cassette »), and installs the copy. Self-contained (python3 -I, standard library only): as root
 it never imports code from a user-writable place.
 """
 
@@ -23,7 +23,8 @@ import sys
 import tempfile
 
 MAX_DEB = 200 * 1024 * 1024
-PACKAGE = "covalence"
+# Covalence and the optional apps it offers to install (covalenced/apps.py).
+PACKAGES = ("covalence", "agenda", "cassette")
 ENV = {"PATH": "/usr/sbin:/usr/bin:/sbin:/bin", "LANG": "C.UTF-8",
        "DEBIAN_FRONTEND": "noninteractive"}
 
@@ -34,9 +35,12 @@ def fail(message, code=1):
 
 
 def main(argv):
-    if len(argv) != 3:
-        return fail("usage: covalence-install-update <file.deb> <sha256>", 2)
+    if len(argv) not in (3, 4):
+        return fail("usage: covalence-install-update <file.deb> <sha256> [package]", 2)
     source, expected = argv[1], argv[2].lower()
+    package = argv[3] if len(argv) == 4 else "covalence"
+    if package not in PACKAGES:
+        return fail("not a package Covalence installs", 2)
     if not re.fullmatch(r"[0-9a-f]{64}", expected):
         return fail("invalid SHA-256", 2)
     if not source.endswith(".deb"):
@@ -68,8 +72,8 @@ def main(argv):
             return fail("SHA-256 mismatch: the package was changed after its check")
         name = subprocess.run(["dpkg-deb", "--field", copy, "Package"], env=ENV,
                               capture_output=True, text=True, timeout=60).stdout.strip()
-        if name != PACKAGE:
-            return fail(f"not the {PACKAGE} package")
+        if name != package:
+            return fail(f"not the {package} package")
         # _apt cannot read the root-only copy: apt warns and installs it as root, as wanted.
         return subprocess.run(["apt-get", "install", "-y", copy], env=ENV).returncode
     finally:

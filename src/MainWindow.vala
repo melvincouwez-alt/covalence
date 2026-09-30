@@ -38,6 +38,12 @@ public class Covalence.MainWindow : Gtk.ApplicationWindow {
 
     public MainWindow (Gtk.Application app) {
         Object (application: app, title: _("Covalence"), default_width: 1080, default_height: 740);
+        // Development (screenshots): COVALENCE_SNAPSHOT_SIZE=1080x860.
+        var size = Environment.get_variable ("COVALENCE_SNAPSHOT_SIZE");
+        if (size != null && size.contains ("x")) {
+            var parts = size.split ("x");
+            set_default_size (int.parse (parts[0]), int.parse (parts[1]));
+        }
     }
 
     construct {
@@ -89,7 +95,7 @@ public class Covalence.MainWindow : Gtk.ApplicationWindow {
         pages.add_titled (new ServicesView (daemon), "services", _("Services Apple"));
         pages.add_titled (build_settings_page (), "settings", _("Réglages"));
         sidebar.add ("device", "iPhone", "phone", _("Aperçu"));
-        sidebar.add ("messages", "iPhone", "internet-chat", _("Messages"));
+        sidebar.add ("messages", "iPhone", Config.APP_ID + ".Messages", _("Messages"));
         sidebar.add ("phone", "iPhone", Config.APP_ID + ".Phone", _("Téléphone"));
         sidebar.add ("contacts", "iPhone", Config.APP_ID + ".Contacts", _("Contacts"));
         sidebar.add ("notifications", "iPhone", "preferences-system-notifications", _("Notifications"));
@@ -242,6 +248,7 @@ public class Covalence.MainWindow : Gtk.ApplicationWindow {
         };
         // One tab per kind of feature.
         settings_tabs.add_titled (settings_tab ({
+            new Granite.HeaderLabel (_("Appels")), build_calls_quiet_card (),
             new Granite.HeaderLabel (_("Internet via l'iPhone")), build_hotspot_card (),
             new Granite.HeaderLabel (_("Verrouillage de proximité")), build_proximity_card ()
         }), "connection", _("Connexion"));
@@ -349,6 +356,46 @@ public class Covalence.MainWindow : Gtk.ApplicationWindow {
         };
     }
 
+    /* Quiet calls (CallsQuiet): no ring, popup or audio on the PC, e.g. when Teams rings there too. */
+    private Gtk.Widget build_calls_quiet_card () {
+        var title_label = new Gtk.Label (_("Appels de l'iPhone en silence")) { xalign = 0 };
+        var subtitle_label = new Gtk.Label (
+            _("Ni sonnerie, ni notification, ni fenêtre, et le son de l'appel reste sur l'iPhone. "
+              + "Utile quand Teams sonne déjà sur l'ordinateur : l'appel reste visible dans Téléphone.")
+        ) { xalign = 0, wrap = true };
+        subtitle_label.add_css_class (Granite.CssClass.DIM);
+        subtitle_label.add_css_class (Granite.CssClass.SMALL);
+        var text = new Gtk.Box (Gtk.Orientation.VERTICAL, 2) { hexpand = true, valign = Gtk.Align.CENTER };
+        text.append (title_label);
+        text.append (subtitle_label);
+        var sw = new Gtk.Switch () { valign = Gtk.Align.CENTER, active = daemon.get_bool ("CallsQuiet") };
+        sw.update_property (Gtk.AccessibleProperty.LABEL, title_label.label, -1);
+        bool updating = false;
+        sw.state_set.connect ((wanted) => {
+            if (!updating) {
+                daemon.call.begin ("SetCallsQuiet", new Variant ("(b)", wanted));
+            }
+            return false;
+        });
+        daemon.changed.connect (() => {
+            var wanted = daemon.get_bool ("CallsQuiet");
+            if (sw.active != wanted) {
+                updating = true;
+                sw.active = wanted;
+                updating = false;
+            }
+        });
+        var box = new Gtk.Box (Gtk.Orientation.HORIZONTAL, 12) {
+            margin_top = 9, margin_bottom = 9, margin_start = 12, margin_end = 12
+        };
+        box.append (text);
+        box.append (sw);
+        var list = new Gtk.ListBox () { selection_mode = Gtk.SelectionMode.NONE, show_separators = true };
+        list.add_css_class (Granite.CssClass.CARD);
+        list.append (new Gtk.ListBoxRow () { child = box, activatable = false });
+        return list;
+    }
+
     /* Whole text of unread messages (FetchUnread): downloading marks them read on the iPhone. */
     private Gtk.Widget build_read_full_card () {
         var title_label = new Gtk.Label (_("Toujours lire les messages en entier")) { xalign = 0 };
@@ -377,7 +424,7 @@ public class Covalence.MainWindow : Gtk.ApplicationWindow {
                 _("Pour avoir le texte complet d'un message non lu, Covalence doit le télécharger : "
                   + "il passera en lu sur l'iPhone dès son arrivée, même si vous ne l'avez pas "
                   + "ouvert."),
-                "internet-chat", Gtk.ButtonsType.CANCEL) {
+                Config.APP_ID + ".Messages", Gtk.ButtonsType.CANCEL) {
                 transient_for = this,
                 modal = true
             };
@@ -584,7 +631,7 @@ public class Covalence.MainWindow : Gtk.ApplicationWindow {
                                            _("Notifications"));
         media_row = new ModuleRow ("media", "applications-multimedia", _("Musique de l'iPhone"));
         calls_row = new ModuleRow ("calls", Config.APP_ID + ".Phone", _("Appels"));
-        messages_row = new ModuleRow ("messages", "internet-chat", _("Messages et contacts"));
+        messages_row = new ModuleRow ("messages", Config.APP_ID + ".Messages", _("Messages et contacts"));
         battery_row = new ModuleRow ("battery", "battery-good", _("Batterie"));
         sound_row = build_sound_row ();
         var list = new Gtk.ListBox () { selection_mode = Gtk.SelectionMode.NONE, show_separators = true };

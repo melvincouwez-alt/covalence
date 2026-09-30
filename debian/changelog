@@ -1,3 +1,22 @@
+covalence (0.6.0-1) unstable; urgency=medium
+
+  * Apple Services: Agenda and Cassette are published with Covalence's
+    releases and installed from the tab, checked by their SHA-256. The
+    install helper accepts the cassette package.
+  * SMS codes: copied to the clipboard as soon as the text arrives, on by
+    default (Settings › SMS codes).
+  * Calls: quiet mode in Settings › Connection and in the top bar. No ring,
+    notification, window or audio taken on the PC; the call stays on the
+    iPhone.
+  * Icons: Covalence, Messages, Phone, Contacts, Now Playing and Mirror
+    redrawn for each size (16 to 64 px installed); iPhone Calendar
+    notifications use Agenda's tile.
+  * Credits: elementary icons, Inter, LocalSend, UxPlay, libimobiledevice,
+    ifuse, libheif and the sounds listed in the README, the site and About;
+    debian/copyright covers every icon.
+
+ -- Melvin Couwez <301110918+melvincouwez-alt@users.noreply.github.com>  Tue, 29 Sep 2026 20:45:00 +0200
+
 covalence (0.5.1-1) unstable; urgency=medium
 
   * Headphones: AirPods Pro 3 (A3063, A3064, A3065) recognised, with noise

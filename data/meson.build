@@ -17,9 +17,16 @@ configure_file(input: 'app.desktop.in', output: app_id + '.desktop', configurati
                install: true, install_dir: datadir / 'applications')
 install_data('cloud-providers.ini', rename: app_id + '.ini',
              install_dir: datadir / 'cloud-providers')
-foreach suffix : ['', '.Contacts', '.Phone', '.NowPlaying', '.Mirror']
+foreach suffix : ['', '.Messages', '.Contacts', '.Phone', '.NowPlaying', '.Mirror', '.Calendar']
   install_data('icons' / app_id + suffix + '.svg',
                install_dir: datadir / 'icons' / 'hicolor' / 'scalable' / 'apps')
+endforeach
+# Versions dessinées pour chaque taille (traits d'un pixel), produites par l'atelier d'icônes.
+foreach size : ['16', '24', '32', '48', '64']
+  foreach suffix : ['', '.Messages', '.Contacts', '.Phone', '.NowPlaying', '.Mirror']
+    install_data('icons' / size / app_id + suffix + '.svg',
+                 install_dir: datadir / 'icons' / 'hicolor' / size + 'x' + size / 'apps')
+  endforeach
 endforeach
 # Messages and Contacts: the same program under their own application ids.
 configure_file(input: 'messages.desktop.in', output: app_id + '.Messages.desktop', configuration: conf,

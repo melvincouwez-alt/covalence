@@ -23,6 +23,8 @@ public class Covalence.ServicesView : Gtk.Box {
     private Gtk.Button photos_remove;
     private Gtk.Button photos_options;
     private Gtk.ListBox apps;
+    private OptionalAppRow agenda_row;
+    private OptionalAppRow cassette_row;
     private bool updating = false;
 
     public ServicesView (Daemon daemon) {
@@ -97,7 +99,12 @@ public class Covalence.ServicesView : Gtk.Box {
         services.append (drive);
         services.append (photos);
 
-        // Apps that show the account: open them, or install them from AppCenter
+        // Apps that show the account: open them, or install them from AppCenter;
+        // Agenda and Cassette come with Covalence's releases and are installed from here.
+        agenda_row = new OptionalAppRow (daemon, "agenda", "io.github.melvincouwez.Agenda", _("Agenda"),
+                                         _("Vos agendas iCloud, l'agenda de Covalence"));
+        cassette_row = new OptionalAppRow (daemon, "cassette", "io.github.melvincouwez.Cassette",
+                                           _("Apple Music"), _("Écouter avec Cassette, votre compte Apple Music"));
         apps = new Gtk.ListBox () { selection_mode = Gtk.SelectionMode.NONE, show_separators = true };
         apps.add_css_class (Granite.CssClass.CARD);
         fill_apps ();
@@ -215,13 +222,13 @@ public class Covalence.ServicesView : Gtk.Box {
             { _("Fichiers"), _("iCloud Drive dans la barre latérale"), "io.elementary.files", null, null },
             { _("Photos"), _("Vos images, y compris celles d'iCloud Drive"), "io.elementary.photos",
               "io.elementary.photos", null },
-            { _("Apple Music"), _("Écouter avec Aria, votre compte Apple Music"), "io.github.melvincouwez.Aria",
-              null, null },
         };
         Gtk.Widget? child;
         while ((child = apps.get_first_child ()) != null) {
             apps.remove (child);
         }
+        apps.append (agenda_row);
+        apps.append (cassette_row);
         foreach (var e in entries) {
             var row = catalog_row (e);
             if (row != null) {

@@ -382,7 +382,7 @@ namespace Covalence {
             };
             var list_empty = new Granite.Placeholder (_("Aucune conversation")) {
                 description = _("Les messages de l'iPhone apparaîtront ici."),
-                icon = new ThemedIcon ("internet-chat")
+                icon = new ThemedIcon (Config.APP_ID + ".Messages")
             };
             list_stack = new Gtk.Stack ();
             list_stack.add_named (list_scroll, "list");
@@ -613,7 +613,7 @@ namespace Covalence {
 
             var no_thread = new Granite.Placeholder (_("Messages")) {
                 description = _("Choisissez une conversation."),
-                icon = new ThemedIcon ("internet-chat")
+                icon = new ThemedIcon (Config.APP_ID + ".Messages")
             };
             content_stack = new Gtk.Stack () { hexpand = true };
             content_stack.add_named (no_thread, "none");
@@ -1332,7 +1332,7 @@ namespace Covalence {
                 _("L'iPhone ne donne que les 120 premiers caractères d'un message non lu. Pour "
                   + "récupérer la suite, Covalence doit le télécharger : le message passera alors "
                   + "en lu sur l'iPhone."),
-                "internet-chat", Gtk.ButtonsType.CANCEL) {
+                Config.APP_ID + ".Messages", Gtk.ButtonsType.CANCEL) {
                 transient_for = get_root () as Gtk.Window,
                 modal = true
             };
@@ -1376,7 +1376,7 @@ namespace Covalence {
                 _("Le Bluetooth ne transmet que du texte : la réaction part en SMS, par exemple "
                   + "« A adoré « à demain » ». Un iPhone récent peut l'afficher comme une "
                   + "réaction ; d'autres téléphones montreront simplement ce texte."),
-                "internet-chat", Gtk.ButtonsType.CANCEL) {
+                Config.APP_ID + ".Messages", Gtk.ButtonsType.CANCEL) {
                 transient_for = get_root () as Gtk.Window,
                 modal = true
             };

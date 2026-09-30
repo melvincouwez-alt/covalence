@@ -20,6 +20,9 @@ concurrency:
 
 jobs:
   deploy:
+    # The site is published from the public repository only: the private one has no
+    # GitHub Pages, and every push there used to fail and send a mail.
+    if: github.repository == 'melvincouwez-alt/covalence'
     runs-on: ubuntu-latest
     environment:
       name: github-pages

@@ -7,7 +7,7 @@
 **Votre iPhone et votre compte Apple, chez eux sur elementary OS.**
 
 [![Licence : GPL-3.0-or-later](https://img.shields.io/badge/licence-GPL--3.0--or--later-blue)](LICENSE)
-![Version 0.5.1 alpha](https://img.shields.io/badge/version-0.5.1%20alpha-orange)
+![Version 0.6.0 alpha](https://img.shields.io/badge/version-0.6.0%20alpha-orange)
 ![elementary OS 8+](https://img.shields.io/badge/elementary%20OS-8%2B-64baff)
 
 [Site](https://melvincouwez-alt.github.io/covalence/fr/) ·
@@ -72,7 +72,7 @@ serveur à nous.
 
 ### Depuis le paquet (conseillé)
 
-1. Téléchargez `covalence_0.5.1-1_amd64.deb` depuis la
+1. Téléchargez `covalence_0.6.0-1_amd64.deb` depuis la
    [dernière version](https://github.com/melvincouwez-alt/covalence/releases/latest).
 2. Double-cliquez dessus. Eddy (elementary OS) ou l'App Center (Ubuntu) installe Covalence et
    tous les paquets nécessaires. En terminal : `sudo apt install ./covalence_*.deb`.
@@ -190,6 +190,19 @@ Covalence repose sur le travail de nombreux logiciels libres :
 | [Evolution Data Server](https://gitlab.gnome.org/GNOME/evolution-data-server) | Comptes iCloud | LGPL |
 | [libsecret](https://gitlab.gnome.org/GNOME/libsecret) | Mots de passe dans le trousseau | LGPL-2.1-or-later |
 | [GTK](https://gitlab.gnome.org/GNOME/gtk), [Granite](https://github.com/elementary/granite), [Vala](https://gitlab.gnome.org/GNOME/vala), [PyGObject](https://gitlab.gnome.org/GNOME/pygobject) | L'application et le service | LGPL (Granite : LGPL-3.0-or-later) |
+| [LocalSend](https://github.com/localsend/protocol) | Fichiers avec l'iPhone, protocole v2 | protocole public |
+| [UxPlay](https://github.com/FDH2/UxPlay) | Recopie de l'écran (lancé par Covalence, facultatif) | GPL-3.0 |
+| [libimobiledevice](https://github.com/libimobiledevice/libimobiledevice) et [ifuse](https://github.com/libimobiledevice/ifuse) | Import des photos par câble USB (facultatif) | LGPL-2.1-or-later |
+| [libheif](https://github.com/strukturag/libheif) | Photos HEIC converties en JPEG (facultatif) | LGPL-3.0 |
+| [Icônes elementary](https://github.com/elementary/icons) | Objets à partir desquels les icônes de Covalence sont dessinées | GPL-3.0 |
+| [Inter](https://github.com/rsms/inter) (Rasmus Andersson) | Texte de l'icône Calendrier, en contours | SIL OFL 1.1 |
+| Android Open Source Project et [Kenney](https://kenney.nl/assets/interface-sounds) | Sons des notifications (détail dans [docs/credits-sons.md](docs/credits-sons.md)) | Apache-2.0 / CC0 |
+
+Covalence publie aussi deux applications avec ses versions : **Agenda**
+([code source](https://github.com/melvincouwez-alt/agenda), GPL-3.0-or-later) et **Cassette**,
+un client Apple Music issu de [Sidra](https://github.com/wimpysworld/sidra), de Martin Wimpress,
+et construit sur [CastLabs Electron](https://github.com/castlabs/electron-releases)
+([code source](https://github.com/melvincouwez-alt/cassette), Blue Oak Model License 1.0.0).
 
 Un merci particulier à l'équipe de LibrePods pour son remarquable travail de rétro-ingénierie,
 et à [nRF Connect](https://www.nordicsemi.com/Products/Development-tools/nRF-Connect-for-mobile)
